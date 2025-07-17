@@ -40,7 +40,7 @@ function initThreeJS() {
     renderer.setPixelRatio(window.devicePixelRatio);
 
     // Create multiple small cubes
-    const numCubes = 100; // Number of cubes to represent interconnected services
+    const numCubes = 50; // Number of cubes to represent interconnected services
     const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3); // Small cubes
     const material = new THREE.MeshPhongMaterial({
         color: 0x4299e1, // A blue-ish color for tech/cloud
@@ -55,9 +55,9 @@ function initThreeJS() {
         const cube = new THREE.Mesh(geometry, material);
 
         // Randomly position cubes within a certain range
-        cube.position.x = (Math.random() - 0.5) * 30;
-        cube.position.y = (Math.random() - 0.5) * 30;
-        cube.position.z = (Math.random() - 0.5) * 20;
+        cube.position.x = (Math.random() - 0.5) * 10;
+        cube.position.y = (Math.random() - 0.5) * 10;
+        cube.position.z = (Math.random() - 0.5) * 10;
 
         // Random initial rotation
         cube.rotation.x = Math.random() * Math.PI;
