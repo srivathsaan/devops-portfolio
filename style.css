@@ -45,44 +45,6 @@
     animation-delay: 0.2s;
 }
 
-/* Speech bubble styling */
-.speech-bubble {
-    position: absolute;
-    top: 20px; /* Adjust as needed */
-    left: -80px; /* Adjust as needed */
-    background-color: white;
-    color: #334155;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 1.25rem; /* text-xl */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    white-space: nowrap;
-    animation: bounceIn 0.8s ease-out forwards;
-    opacity: 0;
-    transform: scale(0.5);
-}
-
-.speech-bubble::before {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid white;
-    bottom: -8px; /* Position the tail */
-    left: 50%;
-    transform: translateX(-50%) rotate(180deg); /* Point upwards */
-}
-
-@keyframes bounceIn {
-    0% { opacity: 0; transform: scale(0.5); }
-    60% { opacity: 1; transform: scale(1.1); }
-    80% { transform: scale(0.9); }
-    100% { transform: scale(1); }
-}
-
 /* Modal specific styles */
 .modal-overlay {
     position: fixed;
