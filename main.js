@@ -112,7 +112,7 @@ function onDocumentMouseMove(event) {
 
 function onDocumentTouchMove(event) {
     if (event.touches.length === 1) {
-        event.preventDefault(); // Prevent scrolling
+        // event.preventDefault(); // This line was preventing scrolling on mobile. It should be removed.
         mouseX = (event.touches[0].pageX - windowHalfX) * 0.0005;
         mouseY = (event.touches[0].pageY - windowHalfY) * 0.0005;
     }
