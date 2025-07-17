@@ -92,7 +92,7 @@ function initThreeJS() {
     // Event Listeners for responsiveness and interactivity
     window.addEventListener('resize', onWindowResize, false);
     document.addEventListener('mousemove', onDocumentMouseMove, false);
-    document.addEventListener('touchmove', onDocumentTouchMove, { passive: false });
+    document.addEventListener('touchmove', onDocumentTouchMove, { passive: true });
 }
 
 function onWindowResize() {
