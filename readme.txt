@@ -1,1 +1,1 @@
-This a portfolio website of a devops engineer
+This is a portfolio website of a DevOps engineer.
