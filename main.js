@@ -111,11 +111,8 @@ function onDocumentMouseMove(event) {
 }
 
 function onDocumentTouchMove(event) {
-    if (event.touches.length === 1) {
-        // event.preventDefault(); // This line was preventing scrolling on mobile. It should be removed.
-        mouseX = (event.touches[0].pageX - windowHalfX) * 0.0005;
-        mouseY = (event.touches[0].pageY - windowHalfY) * 0.0005;
-    }
+    mouseX = (event.touches[0].pageX - windowHalfX) * 0.0005;
+    mouseY = (event.touches[0].pageY - windowHalfY) * 0.0005;
 }
 
 function animate() {
@@ -149,65 +146,31 @@ window.onload = function() {
     animate();
 };
 
-// --- Gemini API Integration for Project Descriptions ---
+// --- Project Description Modal ---
 const descriptionModal = document.getElementById('description-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const modalProjectTitle = document.getElementById('modal-project-title');
 const modalDescriptionContent = document.getElementById('modal-description-content');
 const generateButtons = document.querySelectorAll('.generate-desc-btn');
 
+// Static descriptions for each project
+const projectDescriptions = {
+    'Automated CI/CD Pipeline': 'This project built a full CI/CD pipeline using Jenkins to automatically build, test and deploy Dockerized microservices to Kubernetes. The automated workflow eliminated manual steps and reduced release times from days to minutes.',
+    'Cloud Infrastructure Automation': 'Using Terraform and Ansible, complete AWS environments were defined as code. Infrastructure components could be spun up and configured consistently, enabling rapid and repeatable deployments.',
+    'Centralized Logging & Monitoring': 'An ELK stack gathered logs from all services while Grafana dashboards provided real-time metrics and alerts. This centralized visibility improved troubleshooting and shortened recovery time.',
+    'Container Orchestration with Kubernetes': 'Kubernetes and Helm charts were used to manage container workloads across cloud clusters. The approach standardised deployments and improved scalability and reliability.',
+    'Configuration Management with Puppet': 'Reusable Puppet modules enforced consistent configuration of Linux servers. This eliminated configuration drift and simplified maintenance across all environments.',
+    'Disaster Recovery Planning & Implementation': 'Comprehensive backup and replication strategies were developed and tested. Regular drills ensured systems could be restored quickly during an outage.'
+};
+
 generateButtons.forEach(button => {
-    button.addEventListener('click', async (event) => {
+    button.addEventListener('click', (event) => {
         const projectCard = event.target.closest('.group');
-        const projectTitle = projectCard.querySelector('h3').textContent;
-        const projectShortDesc = projectCard.querySelector('p').textContent;
-        const projectTechTags = Array.from(projectCard.querySelectorAll('.flex.flex-wrap.gap-2 span')).map(span => span.textContent).join(', ');
-
-        // Show modal and loading spinner
+        const projectTitle = projectCard.querySelector('h3').textContent.trim();
         modalProjectTitle.textContent = projectTitle;
-        modalDescriptionContent.innerHTML = '<div class="loading-spinner"></div><p class="text-center text-gray-500 mt-4">Generating detailed description...</p>';
+        const description = projectDescriptions[projectTitle] || 'Description not available.';
+        modalDescriptionContent.innerHTML = `<p>${description}</p>`;
         descriptionModal.classList.add('open');
-
-        const prompt = `As a highly experienced DevOps Engineer, write a detailed and professional project description for the following project. Focus on the DevOps aspects, challenges, solutions, and impact.
-        Project Title: "${projectTitle}"
-        Short Description: "${projectShortDesc}"
-        Technologies Used: ${projectTechTags}
-
-        Please provide a comprehensive explanation (around 300-400 words), covering:
-        1.  **Problem Statement/Challenge:** What problem did this project aim to solve from a DevOps perspective?
-        2.  **Solution Implemented:** Detail the DevOps tools, practices, and architecture used.
-        3.  **Key Responsibilities/Contributions:** Your specific role and contributions.
-        4.  **Impact/Results:** Quantifiable achievements (e.g., reduced deployment time, improved reliability, cost savings).
-        5.  **Lessons Learned/Future Improvements:** Any insights gained or potential next steps.`;
-
-        try {
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // Leave as-is, Canvas will provide at runtime
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            if (result.candidates && result.candidates.length > 0 &&
-                result.candidates[0].content && result.candidates[0].content.parts &&
-                result.candidates[0].content.parts.length > 0) {
-                const detailedDescription = result.candidates[0].content.parts[0].text;
-                modalDescriptionContent.innerHTML = `<p>${detailedDescription.replace(/\n/g, '<br>')}</p>`; // Replace newlines with <br> for HTML display
-            } else {
-                modalDescriptionContent.innerHTML = '<p class="text-red-500">Failed to generate description. Please try again.</p>';
-                console.error('Gemini API response structure unexpected:', result);
-            }
-        } catch (error) {
-            modalDescriptionContent.innerHTML = '<p class="text-red-500">An error occurred while fetching the description. Please check your network connection or try again later.</p>';
-            console.error('Error calling Gemini API:', error);
-        }
     });
 });
 
