@@ -27,9 +27,10 @@
             <ul class="hidden md:flex space-x-6">
                 <li><a href="#hero" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Home</a></li>
                 <li><a href="#about" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">About</a></li>
-                <li><a href="#projects" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Projects</a></li>
+                <!-- <li><a href="#projects" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Projects</a></li>
                 <li><a href="#skills" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Skills</a></li>
                 <li><a href="#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Contact</a></li>
+             -->
             </ul>
             <!-- Mobile Menu Button (Hamburger) -->
             <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2">
@@ -48,16 +49,17 @@
             <ul class="flex flex-col space-y-6 text-center">
                 <li><a href="#hero" class="text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Home</a></li>
                 <li><a href="#about" class="text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block" onclick="document.getElementById('mobile-menu').classList.add('hidden')">About</a></li>
-                <li><a href="#projects" class="text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Projects</a></li>
+               <!--<li><a href="#projects" class="text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Projects</a></li>
                 <li><a href="#skills" class="text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Skills</a></li>
                 <li><a href="#contact" class="text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Contact</a></li>
+                --> 
             </ul>
         </div>
     </header>
 
     <main>
         <!-- Hero Section -->
-        <section id="hero" class="relative bg-gradient-to-r from-indigo-700 to-blue-800 text-white flex items-center md:items-end justify-center min-h-[90vh] md:min-h-screen overflow-hidden">
+        <section id="hero" class="relative bg-gradient-to-r from-indigo-700 to-blue-800 text-white flex items-center md:items-end justify-center min-h-[calc(90vh-72px)] md:min-h-[calc(100vh-72px)] overflow-hidden">
             <!-- Three.js Canvas as a background -->
             <canvas id="threejs-canvas" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
 
@@ -67,7 +69,7 @@
                     <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-up">I'm Srivathsaan</h1>
                     <p class="text-xl md:text-2xl font-light mb-8 animate-fade-in-up delay-200">A dedicated DevOps Engineer</p>
                     <div class="flex justify-center md:justify-start space-x-4">
-                        <a href="#projects" class="inline-block bg-white text-indigo-700 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">View My Projects</a>
+                        <a href="#Resume" class="inline-block bg-white text-indigo-700 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">View My Projects</a>
                         <a href="#contact" class="inline-block border-2 border-white text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-white hover:text-indigo-700 transform hover:scale-105 transition duration-300 ease-in-out">Connect With Me</a>
                     </div>
                 </div>
@@ -88,7 +90,7 @@
                         <img src="images/aboutme.png" alt="aboutme of Srivathsaan" class="rounded-lg shadow-xl w-full h-auto object-cover">
                     </div>
                     <div class="md:w-2/3 text-lg leading-relaxed text-gray-700 text-justify">
-                        <p class="mb-4">Hello! I'm Srivathsaan, a passionate DevOps Engineer with a focus on streamlining development workflows and building robust, scalable infrastructure. With 2+ years of experience, I specialize in automating CI/CD pipelines, managing cloud resources, and implementing infrastructure as code (IaC) solutions.</p>
+                        <p class="mb-4">Hello! I'm Srivathsaan, a passionate DevOps Engineer with a focus on streamlining development workflows and building robust, scalable infrastructure. With 2+ years of experience, I specialize in creating CI/CD pipelines, managing cloud resources, and implementing infrastructure as code (IaC) solutions.</p>
                         <p class="mb-4">My expertise lies in bridging the gap between development and operations, ensuring seamless collaboration and efficient software delivery. I thrive on optimizing system performance, enhancing security, and fostering a culture of continuous improvement.</p>
                         <p>Beyond the command line, I enjoy exploring new open-source technologies, contributing to tech communities, and solving complex puzzles. I am always eager to take on new challenges and contribute to projects that push the boundaries of what's possible.</p>
                     </div>
@@ -96,12 +98,13 @@
             </div>
         </section>
 
-        <!-- Projects Section -->
+        <!-- Projects Section 
         <section id="projects" class="py-16 md:py-24 bg-gray-50 overflow-hidden">
             <div class="container mx-auto px-6 md:px-0 max-w-6xl">
                 <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">My DevOps Projects</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Project Card 1: Automated CI/CD Pipeline -->
+                    -->
+                    <!-- Project Card 1: Automated CI/CD Pipeline 
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
                         <img src="images/cicd.png" alt="CI/CD Pipeline Image" class="w-full h-48 object-cover">
                         <div class="p-6">
@@ -120,11 +123,11 @@
                                 <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
                             </a>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <!-- Project Card 2: Cloud Infrastructure Automation -->
+                    <!-- Project Card 2: Cloud Infrastructure Automation 
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
-                        <img src="https://placehold.co/600x400/10B981/D1FAE5?text=Cloud+IaC" alt="Cloud IaC Image" class="w-full h-48 object-cover">
+                        <img src="images/Iac.png" alt="Cloud IaC Image" class="w-full h-48 object-cover">
                         <div class="p-6">
                             <h3 class="text-2xl font-semibold text-gray-800 mb-2" id="project-title-2">Cloud Infrastructure Automation</h3>
                             <p class="text-gray-600 mb-4" id="project-desc-2">Automated provisioning and management of AWS infrastructure using Terraform and Ansible.</p>
@@ -141,9 +144,9 @@
                                 <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
                             </a>
                         </div>
-                    </div>
+                    </div>-->
 
-                    <!-- Project Card 3: Centralized Logging & Monitoring -->
+                    <!-- Project Card 3: Centralized Logging & Monitoring 
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
                         <img src="https://placehold.co/600x400/EF4444/FEE2E2?text=Monitoring+Dashboard" alt="Monitoring Dashboard Image" class="w-full h-48 object-cover">
                         <div class="p-6">
@@ -163,9 +166,9 @@
                                 <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
                             </a>
                         </div>
-                    </div>
+                    </div>-->
 
-                    <!-- Project Card 4: Container Orchestration with Kubernetes -->
+                    <!-- Project Card 4: Container Orchestration with Kubernetes
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
                         <img src="https://placehold.co/600x400/6366F1/E0E7FF?text=Kubernetes" alt="Kubernetes Image" class="w-full h-48 object-cover">
                         <div class="p-6">
@@ -184,9 +187,9 @@
                                 <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
                             </a>
                         </div>
-                    </div>
+                    </div>-->
 
-                    <!-- Project Card 5: Configuration Management with Puppet -->
+                    <!-- Project Card 5: Configuration Management with Puppet
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
                         <img src="https://placehold.co/600x400/FACC15/78350F?text=Puppet" alt="Puppet Image" class="w-full h-48 object-cover">
                         <div class="p-6">
@@ -205,9 +208,9 @@
                                 <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
                             </a>
                         </div>
-                    </div>
+                    </div>-->
 
-                    <!-- Project Card 6: Disaster Recovery Planning -->
+                    <!-- Project Card 6: Disaster Recovery Planning 
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
                         <img src="https://placehold.co/600x400/9CA3AF/F3F4F6?text=DRP" alt="Disaster Recovery Image" class="w-full h-48 object-cover">
                         <div class="p-6">
@@ -229,58 +232,59 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> 
+    -->
 
-        <!-- Skills Section -->
+        <!-- Skills Section 
         <section id="skills" class="py-16 md:py-24 bg-white">
             <div class="container mx-auto px-6 md:px-0 max-w-4xl">
                 <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">My DevOps Skills</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 text-center">
-                    <!-- Skill Card 1: Cloud Platforms -->
+                    
                     <div class="flex flex-col items-center p-4 sm:p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
                         <img src="https://placehold.co/80x80?text=Cloud" alt="Cloud Icon" class="w-16 h-16 mb-4">
                         <span class="text-base sm:text-lg font-semibold text-gray-700">Cloud (AWS, Azure, GCP)</span>
                     </div>
-                    <!-- Skill Card 2: Containerization -->
+                    
                     <div class="flex flex-col items-center p-4 sm:p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
                         <img src="https://placehold.co/80x80?text=Docker" alt="Docker Icon" class="w-16 h-16 mb-4">
                         <span class="text-base sm:text-lg font-semibold text-gray-700">Docker</span>
                     </div>
-                    <!-- Skill Card 3: Orchestration -->
+                    
                     <div class="flex flex-col items-center p-4 sm:p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
                         <img src="https://placehold.co/80x80?text=K8s" alt="Kubernetes Icon" class="w-16 h-16 mb-4">
                         <span class="text-base sm:text-lg font-semibold text-gray-700">Kubernetes</span>
                     </div>
-                    <!-- Skill Card 4: CI/CD -->
+                    
                     <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
                         <img src="https://placehold.co/80x80?text=CI%2FCD" alt="CI/CD Icon" class="w-16 h-16 mb-4">
-                        <span class="text-xl font-semibold text-gray-700">CI/CD (Jenkins, GitLab CI)</span>
+                        <span class="text-xl font-semibold text-gray-700">CI/CD (Jenkins, AWS Codepipeline )</span>
                     </div>
-                    <!-- Skill Card 5: Infrastructure as Code -->
+                    
                     <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
                         <img src="https://placehold.co/80x80?text=IaC" alt="Terraform Icon" class="w-16 h-16 mb-4">
-                        <span class="text-xl font-semibold text-gray-700">IaC (Terraform, Ansible)</span>
+                        <span class="text-xl font-semibold text-gray-700">IaC (Terraform, CloudFormation)</span>
                     </div>
-                    <!-- Skill Card 6: Scripting -->
+                    
                     <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
                         <img src="https://placehold.co/80x80?text=Python" alt="Python Icon" class="w-16 h-16 mb-4">
                         <span class="text-xl font-semibold text-gray-700">Scripting (Python, Bash)</span>
                     </div>
-                    <!-- Skill Card 7: Monitoring -->
+                   
                     <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
                         <img src="https://placehold.co/80x80?text=Monitor" alt="Monitoring Icon" class="w-16 h-16 mb-4">
-                        <span class="text-xl font-semibold text-gray-700">Monitoring (Prometheus, Grafana)</span>
+                        <span class="text-xl font-semibold text-gray-700">Monitoring (Sumo Logic, Site24x7)</span>
                     </div>
-                    <!-- Skill Card 8: Version Control -->
+                   
                     <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
                         <img src="https://placehold.co/80x80?text=Git" alt="Git Icon" class="w-16 h-16 mb-4">
                         <span class="text-xl font-semibold text-gray-700">Git & GitHub/GitLab</span>
                     </div>
                 </div>
             </div>
-        </section>
+        </section>-->
 
-        <!-- Contact Section -->
+        <!-- Contact Section
         <section id="contact" class="py-16 md:py-24 bg-gray-50">
             <div class="container mx-auto px-6 md:px-0 max-w-3xl">
                 <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Let's Connect!</h2>
@@ -319,7 +323,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
     </main>
 
     <!-- Modal for Detailed Description -->
