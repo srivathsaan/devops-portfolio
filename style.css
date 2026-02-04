@@ -48,7 +48,40 @@ html {
 
 /* Hero: ensure it respects header height when JS not yet run */
 #hero{
-  min-height: calc(100vh - var(--header-height));
+  min-height: auto;
+  padding-bottom: 2rem;
+}
+
+/* inner container should fill hero and center items */
+#hero .hero-inner {
+  min-height: auto;
+  /* Allow clicks to pass through the container to the canvas behind... */
+  pointer-events: none;
+}
+/* ...but re-enable clicks for the actual content (text, buttons, images) */
+#hero .hero-inner > * {
+  pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  #hero, #hero .hero-inner {
+    min-height: calc(100vh - var(--header-height));
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  #about {
+    min-height: calc(100vh - var(--header-height));
+    display: flex;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+/* keep existing responsive spacing for internal elements */
+#hero .hero-inner > .w-full.md\:w-1\/2 {
+  /* no-op: left column spacing handled via utilities; override only if needed */
 }
 
 /* Three.js canvas background should fully cover hero */
@@ -57,7 +90,7 @@ html {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: none;
+  pointer-events: auto; /* Enable interaction */
 }
 
 /* Modal overlay and content */
@@ -168,11 +201,6 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus{
     height: 100%;
     display: block;
     z-index: 0; /* Ensure it's behind the content */
-    /* Add a mask to fade out the edges gracefully */
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%),
-                        linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%),
-                linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 /* Add a subtle doodle pattern to the About Me section background 
