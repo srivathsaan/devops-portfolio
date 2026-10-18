@@ -17,10 +17,9 @@ type Props = {
   onZoneChange: (zone: ZoneContent | null) => void;
 };
 
-// Camera leads the character (positioned ahead, in +x) and looks back at them,
-// so you see their front/face as they walk toward the camera, rather than a
-// chase-cam watching their back.
-const CAMERA_OFFSET = new THREE.Vector3(6.5, 4.6, 3.2);
+// Chase cam: fixed world-space offset behind/above the spawn point, trailing
+// the character as they move.
+const CAMERA_OFFSET = new THREE.Vector3(-6.5, 4.6, -3.2);
 const LOOK_OFFSET = new THREE.Vector3(0, 1.15, 0);
 const SUN_OFFSET = new THREE.Vector3(-4, 8, 6);
 const CAMERA_LERP = 3.2;
