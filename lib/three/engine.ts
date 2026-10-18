@@ -58,8 +58,8 @@ export function createEngine(canvas: HTMLCanvasElement): Engine {
   // chase-cam logic (components/scene-canvas.tsx) — this is just a safe default
   // before the first frame runs.
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 160);
-  camera.position.set(-6.5, 5.2, 7.5);
-  camera.lookAt(2.5, 1.1, 0);
+  camera.position.set(6.5, 4.6, 3.2);
+  camera.lookAt(0, 1.15, 0);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.shadowMap.enabled = true;

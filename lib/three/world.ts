@@ -64,6 +64,23 @@ function plant(group: THREE.Group, x: number, z: number, scale: number) {
   });
 }
 
+/** University wordmark sign mounted flush on the B.Tech building's front wall. */
+function campusSign(group: THREE.Group, x: number, z: number) {
+  const aspect = 1280 / 289;
+  const width = 3.4;
+  const logoTexture = new THREE.TextureLoader().load("/images/amrita-logo.png");
+  logoTexture.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.MeshStandardMaterial({
+    map: logoTexture,
+    transparent: true,
+    roughness: 0.6,
+    metalness: 0,
+  });
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(width, width / aspect), mat);
+  sign.position.set(x, 1.75, z);
+  group.add(sign);
+}
+
 function building(group: THREE.Group, x: number, z: number, scale: number, variant: string) {
   cloneModel(`/models/city/building-skyscraper-${variant}.glb`).then((model) => {
     enableShadows(model);
@@ -106,6 +123,7 @@ function buildBtechZone(world: THREE.Group, cx: number) {
 
   const buildingMat = new THREE.MeshStandardMaterial({ color: 0xe7ded0, roughness: 0.85 });
   roundedBox(world, 5, 2.6, 2, cx + 2, 1.3, -5.5, buildingMat, 0.1);
+  campusSign(world, cx + 2, -4.47);
 
   tree(world, cx - 7, -2.6, 1.1, 0.3, "tree");
   tree(world, cx - 2.5, -2.8, 0.95, -0.4, "tree-high");
