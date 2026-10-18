@@ -1,52 +1,41 @@
 import * as THREE from "three";
-import { roundedBox, ball, cyl, spokedWheel } from "./helpers";
-import { buildRider } from "./build-figure";
+import { AnimationMixer, type AnimationAction } from "three";
+import { cloneModel, loadModelWithAnimations, enableShadows } from "./load-gltf";
+import { roundedBox } from "./helpers";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
+
+const MOTORCYCLE_SCALE = 0.015;
+const RIDER_SCALE = 1.3;
 
 /** Scene 2 — the kid riding a motorbike, representing the Bounteous CloudOps years. */
 export function buildBikeRig(): Rig {
   const mover = new THREE.Group();
   mover.position.x = REST_X;
 
-  const tireMat = new THREE.MeshStandardMaterial({ color: 0x15171d, roughness: 0.7 });
-  const hubMat = new THREE.MeshStandardMaterial({ color: 0xb9bec4, roughness: 0.35, metalness: 0.5 });
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1baf7a, roughness: 0.3, metalness: 0.25 });
-  const trimMat = new THREE.MeshStandardMaterial({ color: 0x0f1a16, roughness: 0.4, metalness: 0.3 });
-  const seatMat = new THREE.MeshStandardMaterial({ color: 0x20242e, roughness: 0.55 });
-  const headlightMat = new THREE.MeshStandardMaterial({
-    color: 0xfff3d0,
-    emissive: 0xffdf8a,
-    emissiveIntensity: 1.1,
+  let mixer: AnimationMixer | null = null;
+  let driveAction: AnimationAction | null = null;
+
+  cloneModel("/models/motorcycle.glb").then((bike) => {
+    enableShadows(bike);
+    bike.scale.setScalar(MOTORCYCLE_SCALE);
+    bike.rotation.y = Math.PI / 2;
+    mover.add(bike);
   });
-  const exhaustMat = new THREE.MeshStandardMaterial({ color: 0xc7ccd1, roughness: 0.3, metalness: 0.7 });
 
-  const rearWheel = spokedWheel(mover, 0.48, 0.1, -0.62, 0.48, 0, tireMat, hubMat, 7);
-  const frontWheel = spokedWheel(mover, 0.48, 0.1, 0.62, 0.48, 0, tireMat, hubMat, 7);
+  loadModelWithAnimations("/models/character.glb").then(({ scene, animations }) => {
+    enableShadows(scene);
+    scene.scale.setScalar(RIDER_SCALE);
+    scene.position.set(-0.18, 0.55, 0);
+    mover.add(scene);
 
-  // Slim frame + tank (one slender body, not a thick stack) with the seat clearly on top.
-  roundedBox(mover, 1.0, 0.15, 0.17, -0.06, 0.66, 0, bodyMat, 0.06);
-  roundedBox(mover, 0.3, 0.13, 0.2, -0.3, 0.78, 0, bodyMat, 0.06);
-  roundedBox(mover, 0.42, 0.08, 0.22, -0.4, 0.88, 0, seatMat, 0.035);
-  ball(mover, 0.1, 0.58, 0.72, 0, headlightMat, 12);
-  roundedBox(mover, 0.045, 0.045, 0.38, 0.5, 0.86, 0, trimMat, 0.015);
-  roundedBox(mover, 0.24, 0.035, 0.035, 0.5, 1.04, 0, trimMat, 0.015);
-  ball(mover, 0.03, 0.46, 1.08, 0.17, trimMat, 10);
-  cyl(mover, 0.025, 0.025, 0.36, -0.68, 0.52, 0.17, exhaustMat, 10);
-
-  const rider = buildRider(mover, {
-    skin: 0xe8b589,
-    hair: 0x241a12,
-    shirt: 0x1f2937,
-    shirtTrim: 0x101722,
-    pants: 0x27314a,
-    shoes: 0x14161b,
+    mixer = new AnimationMixer(scene);
+    const clip = animations.find((c) => c.name === "drive") ?? animations.find((c) => c.name === "sit");
+    if (clip) {
+      driveAction = mixer.clipAction(clip);
+      driveAction.play();
+    }
   });
-  rider.group.position.set(-0.32, 0.93, 0);
-  rider.frontLeg.rotation.z = 0.55;
-  rider.backLeg.rotation.z = 0.6;
-  rider.frontArm.rotation.z = 0.75;
-  rider.backArm.rotation.z = 0.6;
 
   const environment = buildCityGround();
 
@@ -54,10 +43,8 @@ export function buildBikeRig(): Rig {
     mover,
     environment,
     background: 0xaeb9c7,
-    update(delta, riding) {
-      const speed = riding ? 15 : 3.2;
-      rearWheel.rotation.z -= delta * speed;
-      frontWheel.rotation.z -= delta * speed;
+    update(delta) {
+      mixer?.update(delta);
     },
   };
 }

@@ -1,76 +1,40 @@
 import * as THREE from "three";
-import { box, roundedBox, tube, spokedWheel } from "./helpers";
-import { buildRider } from "./build-figure";
+import { AnimationMixer, type AnimationAction } from "three";
+import { cloneModel, loadModelWithAnimations, enableShadows } from "./load-gltf";
+import { roundedBox } from "./helpers";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
+
+const BIKE_SCALE = 0.45;
+const RIDER_SCALE = 1.3;
 
 /** Scene 1 — the kid riding a cycle, representing undergrad (B.Tech). */
 export function buildCycleRig(): Rig {
   const mover = new THREE.Group();
   mover.position.x = REST_X;
 
-  const tireMat = new THREE.MeshStandardMaterial({ color: 0x1b1e26, roughness: 0.75 });
-  const hubMat = new THREE.MeshStandardMaterial({ color: 0xaab0b8, roughness: 0.4, metalness: 0.4 });
-  const frameMat = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.4, metalness: 0.15 });
-  const seatMat = new THREE.MeshStandardMaterial({ color: 0x2a2d33, roughness: 0.6 });
-  const gripMat = new THREE.MeshStandardMaterial({ color: 0x14161b, roughness: 0.55 });
+  let mixer: AnimationMixer | null = null;
+  let driveAction: AnimationAction | null = null;
 
-  const rearWheel = spokedWheel(mover, 0.42, 0.065, -0.52, 0.42, 0, tireMat, hubMat, 6);
-  const frontWheel = spokedWheel(mover, 0.42, 0.065, 0.52, 0.42, 0, tireMat, hubMat, 6);
-
-  tube(
-    mover,
-    [
-      [-0.52, 0.42, 0],
-      [-0.08, 0.88, 0],
-      [0.28, 0.92, 0],
-      [0.52, 0.42, 0],
-    ],
-    0.042,
-    frameMat
-  );
-  tube(
-    mover,
-    [
-      [-0.08, 0.88, 0],
-      [-0.14, 1.12, 0],
-    ],
-    0.042,
-    frameMat
-  );
-  roundedBox(mover, 0.22, 0.09, 0.13, -0.15, 1.17, 0, seatMat, 0.035);
-  tube(
-    mover,
-    [
-      [0.48, 0.52, 0],
-      [0.4, 1.0, 0],
-    ],
-    0.038,
-    frameMat
-  );
-  roundedBox(mover, 0.3, 0.045, 0.045, 0.4, 1.01, 0, gripMat, 0.02);
-
-  const crank = new THREE.Group();
-  crank.position.set(-0.1, 0.42, 0);
-  mover.add(crank);
-  box(crank, 0.22, 0.04, 0.04, 0.1, 0, 0.12, frameMat);
-  box(crank, 0.22, 0.04, 0.04, -0.1, 0, -0.12, frameMat);
-  roundedBox(crank, 0.1, 0.02, 0.14, 0.19, 0, 0.12, gripMat, 0.008);
-  roundedBox(crank, 0.1, 0.02, 0.14, -0.19, 0, -0.12, gripMat, 0.008);
-
-  const rider = buildRider(mover, {
-    skin: 0xe8b589,
-    hair: 0x2b2017,
-    shirt: 0x2f6fed,
-    shirtTrim: 0x1d4fc4,
-    pants: 0x27314a,
-    shoes: 0xf4f1ea,
+  cloneModel("/models/bicycle.glb").then((bike) => {
+    enableShadows(bike);
+    bike.scale.setScalar(BIKE_SCALE);
+    mover.add(bike);
   });
-  rider.group.position.set(-0.03, 0.97, 0);
-  rider.frontArm.rotation.z = 0.55;
-  rider.backArm.rotation.z = 0.4;
-  rider.frontLeg.rotation.z = 0.25;
-  rider.backLeg.rotation.z = -0.15;
+
+  loadModelWithAnimations("/models/character.glb").then(({ scene, animations }) => {
+    enableShadows(scene);
+    scene.scale.setScalar(RIDER_SCALE);
+    scene.position.set(-0.12, 0.42, 0);
+    mover.add(scene);
+
+    mixer = new AnimationMixer(scene);
+    const clip = animations.find((c) => c.name === "drive") ?? animations.find((c) => c.name === "sit");
+    if (clip) {
+      driveAction = mixer.clipAction(clip);
+      driveAction.play();
+    }
+  });
 
   const environment = buildCampusGround();
 
@@ -78,11 +42,8 @@ export function buildCycleRig(): Rig {
     mover,
     environment,
     background: 0xbfe3f2,
-    update(delta, riding) {
-      const speed = riding ? 11 : 2.6;
-      rearWheel.rotation.z -= delta * speed;
-      frontWheel.rotation.z -= delta * speed;
-      crank.rotation.z -= delta * speed;
+    update(delta) {
+      mixer?.update(delta);
     },
   };
 }

@@ -1,27 +1,28 @@
 import * as THREE from "three";
-import { buildRider } from "./build-figure";
+import { AnimationMixer, type AnimationAction } from "three";
+import { loadModelWithAnimations, enableShadows } from "./load-gltf";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
 
-/** Scene 0 — a simple standing figure. Intentionally sparse: this is the title card. */
+/** Scene 0 — the animated character standing idle. This is the title card. */
 export function buildLandingRig(): Rig {
   const mover = new THREE.Group();
-  mover.position.x = REST_X;
+  mover.position.set(REST_X, 0, 0);
 
-  const rider = buildRider(mover, {
-    skin: 0xe8b589,
-    hair: 0x2b2017,
-    shirt: 0xff7a1a,
-    shirtTrim: 0xe8650a,
-    pants: 0x27314a,
-    shoes: 0x1c222e,
+  let mixer: AnimationMixer | null = null;
+  let idleAction: AnimationAction | null = null;
+
+  loadModelWithAnimations("/models/character.glb").then(({ scene, animations }) => {
+    enableShadows(scene);
+    mover.add(scene);
+
+    mixer = new AnimationMixer(scene);
+    const idleClip = animations.find((clip) => clip.name === "idle");
+    if (idleClip) {
+      idleAction = mixer.clipAction(idleClip);
+      idleAction.play();
+    }
   });
-  rider.group.position.set(0, 0.73, 0);
-  rider.frontLeg.position.set(0.06, -0.01, 0);
-  rider.backLeg.position.set(-0.06, -0.01, 0);
-  rider.frontArm.position.set(0.15, 0.33, 0);
-  rider.backArm.position.set(-0.15, 0.33, 0);
-  rider.backArm.rotation.z = 0.15;
 
   const environment = buildPlainGround();
 
@@ -29,9 +30,8 @@ export function buildLandingRig(): Rig {
     mover,
     environment,
     background: 0xbfe3f2,
-    update() {
-      rider.group.rotation.y = Math.sin(performance.now() / 900) * 0.12;
-      rider.frontArm.rotation.z = Math.sin(performance.now() / 350) * 0.4 - 0.5;
+    update(delta) {
+      mixer?.update(delta);
     },
   };
 }

@@ -1,57 +1,42 @@
 import * as THREE from "three";
-import { roundedBox, ball, cyl, spokedWheel } from "./helpers";
+import { AnimationMixer, type AnimationAction } from "three";
+import { cloneModel, loadModelWithAnimations, enableShadows } from "./load-gltf";
+import { roundedBox } from "./helpers";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
 
-/** Scene 4 — the plane landed in Singapore. Final scene: contact details overlay on top. */
+const PLANE_SCALE = 0.011;
+const RIDER_SCALE = 1.3;
+
+/** Scene 4 — landed in Singapore. Final scene: contact details overlay on top. */
 export function buildContactRig(): Rig {
   const mover = new THREE.Group();
   mover.position.set(REST_X, 0, 0);
 
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf4f1ea, roughness: 0.35, metalness: 0.15 });
-  const accentMat = new THREE.MeshStandardMaterial({ color: 0x1baf7a, roughness: 0.4 });
-  const windowMat = new THREE.MeshStandardMaterial({
-    color: 0x9fd7ff,
-    emissive: 0x6fb8e8,
-    emissiveIntensity: 0.4,
+  let mixer: AnimationMixer | null = null;
+  let waveAction: AnimationAction | null = null;
+
+  cloneModel("/models/airplane.glb").then((plane) => {
+    enableShadows(plane);
+    plane.scale.setScalar(PLANE_SCALE);
+    plane.rotation.y = Math.PI / 2;
+    plane.position.set(-1.6, 0.78, 0);
+    mover.add(plane);
   });
-  const cockpitMat = new THREE.MeshStandardMaterial({
-    color: 0x5fa8d8,
-    roughness: 0.2,
-    metalness: 0.3,
-    emissive: 0x2a5e80,
-    emissiveIntensity: 0.3,
+
+  loadModelWithAnimations("/models/character.glb").then(({ scene, animations }) => {
+    enableShadows(scene);
+    scene.scale.setScalar(RIDER_SCALE);
+    scene.position.set(0.6, 0, 0.3);
+    mover.add(scene);
+
+    mixer = new AnimationMixer(scene);
+    const clip = animations.find((c) => c.name === "emote-yes") ?? animations.find((c) => c.name === "idle");
+    if (clip) {
+      waveAction = mixer.clipAction(clip);
+      waveAction.play();
+    }
   });
-  const propHubMat = new THREE.MeshStandardMaterial({ color: 0x3a4049, roughness: 0.4, metalness: 0.4 });
-  const propMat = new THREE.MeshStandardMaterial({ color: 0x1f232a, roughness: 0.35, metalness: 0.3 });
-  const tireMat = new THREE.MeshStandardMaterial({ color: 0x15171d, roughness: 0.7 });
-  const hubMat = new THREE.MeshStandardMaterial({ color: 0xb9bec4, roughness: 0.35, metalness: 0.5 });
-
-  cyl(mover, 0.3, 0.3, 2.6, 0, 1.1, 0, bodyMat, 16).rotation.z = Math.PI / 2;
-  ball(mover, 0.3, 1.3, 1.1, 0, bodyMat, 16);
-  roundedBox(mover, 0.28, 0.2, 0.46, 1.08, 1.18, 0, cockpitMat, 0.06);
-  roundedBox(mover, 0.1, 0.06, 1.9, -0.3, 1.12, 0, accentMat, 0.025);
-  roundedBox(mover, 2.1, 0.07, 0.55, -0.1, 1.1, 0, bodyMat, 0.03);
-  roundedBox(mover, 0.5, 0.5, 0.07, -1.05, 1.45, 0, accentMat, 0.04);
-  roundedBox(mover, 0.42, 0.07, 0.32, -1.1, 1.17, 0, accentMat, 0.025);
-
-  for (let i = -3; i <= 3; i++) {
-    const win = new THREE.Mesh(new THREE.CircleGeometry(0.09, 12), windowMat);
-    win.position.set(i * 0.28, 1.18, 0.3);
-    win.rotation.y = Math.PI / 2;
-    mover.add(win);
-  }
-
-  const propeller = new THREE.Group();
-  propeller.position.set(1.58, 1.1, 0);
-  mover.add(propeller);
-  roundedBox(propeller, 0.07, 0.44, 0.03, 0, 0, 0, propMat, 0.03);
-  roundedBox(propeller, 0.07, 0.03, 0.44, 0, 0, 0, propMat, 0.03);
-  cyl(propeller, 0.08, 0.08, 0.08, 0, 0, 0, propHubMat, 12).rotation.x = Math.PI / 2;
-
-  for (const x of [-0.6, 0.9]) {
-    spokedWheel(mover, 0.16, 0.05, x, 0.78, 0, tireMat, hubMat, 5);
-  }
 
   const environment = buildRunway();
 
@@ -59,8 +44,8 @@ export function buildContactRig(): Rig {
     mover,
     environment,
     background: 0x7fc4e8,
-    update(delta, riding) {
-      propeller.rotation.x += delta * (riding ? 28 : 3);
+    update(delta) {
+      mixer?.update(delta);
     },
   };
 }
