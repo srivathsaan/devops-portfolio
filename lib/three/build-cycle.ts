@@ -22,7 +22,7 @@ export function buildCycleRig(): Rig {
     mover.add(bike);
   });
 
-  loadModelWithAnimations("/models/character.glb").then(({ scene, animations }) => {
+  loadModelWithAnimations("/models/character/character.glb").then(({ scene, animations }) => {
     enableShadows(scene);
     scene.scale.setScalar(RIDER_SCALE);
     scene.position.set(-0.12, 0.42, 0);
@@ -64,21 +64,53 @@ function buildCampusGround(): THREE.Group {
   path.receiveShadow = true;
   group.add(path);
 
-  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4a33, roughness: 0.9 });
-  const leafMat = new THREE.MeshStandardMaterial({ color: 0x3f8f4a, roughness: 0.8 });
-  for (const x of [-7, -2.5, 4, 8.5]) {
-    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.13, 1.1, 8), trunkMat);
-    trunk.position.set(x, 0.55, -2.6);
-    trunk.castShadow = true;
-    group.add(trunk);
-    const leaves = new THREE.Mesh(new THREE.ConeGeometry(0.65, 1.3, 8), leafMat);
-    leaves.position.set(x, 1.5, -2.6);
-    leaves.castShadow = true;
-    group.add(leaves);
-  }
-
   const buildingMat = new THREE.MeshStandardMaterial({ color: 0xe7ded0, roughness: 0.85 });
   roundedBox(group, 5, 2.6, 2, 2, 1.3, -5.5, buildingMat, 0.1);
+
+  const treeSpots: Array<[number, number, number, number, "tree" | "tree-high"]> = [
+    [-7, -2.6, 1.1, 0.3, "tree"],
+    [-2.5, -2.8, 0.95, -0.4, "tree-high"],
+    [4, -2.5, 1.15, 0.5, "tree"],
+    [8.5, -2.7, 1.0, -0.2, "tree-high"],
+    [-9.5, -1.8, 0.85, 1.1, "tree"],
+    [10.5, -2.0, 1.05, 2.4, "tree-high"],
+  ];
+  for (const [x, z, scale, rotation, kind] of treeSpots) {
+    cloneModel(`/models/forest/${kind}.glb`).then((tree) => {
+      enableShadows(tree);
+      tree.scale.setScalar(scale);
+      tree.rotation.y = rotation;
+      tree.position.set(x, 0, z);
+      group.add(tree);
+    });
+  }
+
+  const rockSpots: Array<[number, number, number]> = [
+    [-4.5, -1.6, 0.6],
+    [6.2, -1.4, 0.5],
+  ];
+  for (const [x, z, scale] of rockSpots) {
+    cloneModel("/models/forest/rocks-low.glb").then((rock) => {
+      enableShadows(rock);
+      rock.scale.setScalar(scale);
+      rock.position.set(x, 0, z);
+      group.add(rock);
+    });
+  }
+
+  const plantSpots: Array<[number, number, number]> = [
+    [-1, 1.4, 1.4],
+    [2.5, 1.5, 1.2],
+    [-5.5, 1.3, 1.6],
+  ];
+  for (const [x, z, scale] of plantSpots) {
+    cloneModel("/models/forest/plant.glb").then((plant) => {
+      enableShadows(plant);
+      plant.scale.setScalar(scale);
+      plant.position.set(x, 0, z);
+      group.add(plant);
+    });
+  }
 
   return group;
 }

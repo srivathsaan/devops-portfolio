@@ -24,7 +24,7 @@ export function buildContactRig(): Rig {
     mover.add(plane);
   });
 
-  loadModelWithAnimations("/models/character.glb").then(({ scene, animations }) => {
+  loadModelWithAnimations("/models/character/character.glb").then(({ scene, animations }) => {
     enableShadows(scene);
     scene.scale.setScalar(RIDER_SCALE);
     scene.position.set(0.6, 0, 0.3);

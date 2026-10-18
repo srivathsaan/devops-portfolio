@@ -10,14 +10,47 @@ export type Engine = {
   dispose: () => void;
 };
 
+const SKY_VERTEX_SHADER = `
+  varying vec3 vWorldPosition;
+  void main() {
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+    vWorldPosition = worldPosition.xyz;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const SKY_FRAGMENT_SHADER = `
+  uniform vec3 topColor;
+  uniform vec3 bottomColor;
+  varying vec3 vWorldPosition;
+  void main() {
+    float h = normalize(vWorldPosition).y;
+    gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), 0.7), 0.0)), 1.0);
+  }
+`;
+
 /**
  * One persistent scene/camera/renderer for the whole app lifetime. Individual
  * scene builders (build-cycle.ts etc.) only ever add/remove a Group under
- * `rigRoot` — the renderer, camera and base lighting are created once here.
+ * `rigRoot` — the renderer, camera, base lighting and sky are created once here.
  */
 export function createEngine(canvas: HTMLCanvasElement): Engine {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xbfe3f2);
+  scene.fog = new THREE.Fog(0xbfe3f2, 14, 34);
+
+  const skyMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      topColor: { value: new THREE.Color(0x6fb3e0) },
+      bottomColor: { value: new THREE.Color(0xbfe3f2) },
+    },
+    vertexShader: SKY_VERTEX_SHADER,
+    fragmentShader: SKY_FRAGMENT_SHADER,
+    side: THREE.BackSide,
+    depthWrite: false,
+    fog: false,
+  });
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(70, 20, 14), skyMaterial);
+  scene.add(sky);
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
   camera.position.set(0, 2.4, 9);
@@ -56,8 +89,13 @@ export function createEngine(canvas: HTMLCanvasElement): Engine {
   }
 
   function setBackground(color: THREE.ColorRepresentation) {
-    scene.background = new THREE.Color(color);
+    const bottom = new THREE.Color(color);
+    const top = bottom.clone().multiplyScalar(0.72).lerp(new THREE.Color(0x1a3a63), 0.18);
+    skyMaterial.uniforms.bottomColor.value.copy(bottom);
+    skyMaterial.uniforms.topColor.value.copy(top);
+    (scene.fog as THREE.Fog).color.copy(bottom);
   }
+  setBackground(0xbfe3f2);
 
   function dispose() {
     // Deliberately NOT calling renderer.forceContextLoss() here: React 18 Strict

@@ -57,7 +57,7 @@ export default function PortfolioExperience() {
         Srivathsaan Nakkeeran
       </div>
       <div className="pointer-events-none absolute bottom-2 right-3 z-10 max-w-[220px] text-right font-mono text-[9px] leading-tight text-white/50 sm:right-4">
-        3D: Bicycle, Motorcycle, Airplane by Poly by Google (CC-BY) via Poly Pizza · Character by Kenney (CC0)
+        3D: Bicycle, Motorcycle, Airplane by Poly by Google (CC-BY) via Poly Pizza · Character, trees &amp; buildings by Kenney (CC0)
       </div>
       <SceneOverlay sceneIndex={sceneIndex} />
       <NavControls

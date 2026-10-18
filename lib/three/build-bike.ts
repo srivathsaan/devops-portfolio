@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { AnimationMixer, type AnimationAction } from "three";
 import { cloneModel, loadModelWithAnimations, enableShadows } from "./load-gltf";
-import { roundedBox } from "./helpers";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
 
@@ -23,7 +22,7 @@ export function buildBikeRig(): Rig {
     mover.add(bike);
   });
 
-  loadModelWithAnimations("/models/character.glb").then(({ scene, animations }) => {
+  loadModelWithAnimations("/models/character/character.glb").then(({ scene, animations }) => {
     enableShadows(scene);
     scene.scale.setScalar(RIDER_SCALE);
     scene.position.set(-0.18, 0.55, 0);
@@ -65,21 +64,23 @@ function buildCityGround(): THREE.Group {
     group.add(stripe);
   }
 
-  const buildingMat = new THREE.MeshStandardMaterial({ color: 0x8995a6, roughness: 0.7 });
-  const windowMat = new THREE.MeshStandardMaterial({
-    color: 0xfff6cf,
-    emissive: 0xffe9a6,
-    emissiveIntensity: 0.6,
-  });
-  const heights = [2.2, 3.4, 2.7, 4.1, 2.9];
-  heights.forEach((h, i) => {
-    const x = -8 + i * 4.2;
-    roundedBox(group, 2.2, h, 2, x, h / 2, -6, buildingMat, 0.08);
-    for (let row = 0; row < Math.floor(h); row++) {
-      const win = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.3), windowMat);
-      win.position.set(x, 0.6 + row * 0.7, -4.99);
-      group.add(win);
-    }
+  const variants = ["a", "b", "c", "d", "e", "c", "a"];
+  const spots: Array<[number, number, number]> = [
+    [-13, 0.95, -6.5],
+    [-8.5, 1.35, -7],
+    [-4, 1.0, -6],
+    [1, 1.5, -7.2],
+    [6, 1.1, -6.3],
+    [10.5, 0.9, -7.5],
+    [15, 1.25, -6.8],
+  ];
+  spots.forEach(([x, scale, z], i) => {
+    cloneModel(`/models/city/building-skyscraper-${variants[i]}.glb`).then((building) => {
+      enableShadows(building);
+      building.scale.setScalar(scale);
+      building.position.set(x, 0, z);
+      group.add(building);
+    });
   });
 
   return group;
