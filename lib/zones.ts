@@ -51,6 +51,7 @@ export const zones: ZoneContent[] = [
       "Analyzed telemetry across 20+ client environments (Splunk, Sumo Logic, Site24x7, CloudWatch)",
       "Investigated 200+ infrastructure and 30+ security incidents; turned attack traffic patterns into targeted Cloudflare WAF rules",
       "Led the NGINX → AWS ECS Fargate migration; optimized ECS scaling to 99.99% uptime",
+      "Started as a Software Engineer Intern (Jan–May 2023) building full-stack features with React, Node.js, and MongoDB; earned an upgraded full-time offer",
     ],
     x: 40,
     z: 0,
@@ -71,8 +72,9 @@ export const zones: ZoneContent[] = [
     eyebrow: "Get in touch",
     title: "Let's talk fintech, ML, and infra.",
     bullets: [
-      "Side project: Android ransomware detector (deep learning, 98.3% binary accuracy)",
-      "Certifications: Google Cybersecurity Professional, Cloudflare ACE, Bloomberg Finance Fundamentals",
+      "Projects: credit card fraud classifier (flags 72.6% of fraud at 88.5% precision) and an Android ransomware detector (deep learning, 98.3% binary accuracy)",
+      "Certifications: Bloomberg Market Concepts, Bloomberg Finance Fundamentals, Google Cybersecurity Professional, Cloudflare ACE",
+      "Also: Bloomberg Global Trading Challenge 2026, TEDxNTU volunteer (Logistics & Ops)",
     ],
     links: {
       email: "srivathsaan11@gmail.com",
