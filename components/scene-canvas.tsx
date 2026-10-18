@@ -17,10 +17,8 @@ type Props = {
   onZoneChange: (zone: ZoneContent | null) => void;
 };
 
-// Chase cam: fixed world-space offset behind/above the spawn point, trailing
-// the character as they move.
-const CAMERA_OFFSET = new THREE.Vector3(-6.5, 4.6, -3.2);
-const LOOK_OFFSET = new THREE.Vector3(0, 1.15, 0);
+const CAMERA_OFFSET = new THREE.Vector3(-6.5, 5.2, 7.5);
+const LOOK_OFFSET = new THREE.Vector3(2.5, 1.1, 0);
 const SUN_OFFSET = new THREE.Vector3(-4, 8, 6);
 const CAMERA_LERP = 3.2;
 
