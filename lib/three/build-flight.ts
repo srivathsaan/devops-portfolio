@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { box, ball, cyl } from "./helpers";
+import { roundedBox, ball, cyl } from "./helpers";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
 
@@ -8,25 +8,34 @@ export function buildFlightRig(): Rig {
   const mover = new THREE.Group();
   mover.position.set(REST_X, 2.6, 0);
 
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf4f1ea, roughness: 0.4, metalness: 0.1 });
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf4f1ea, roughness: 0.35, metalness: 0.15 });
   const accentMat = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.4 });
   const windowMat = new THREE.MeshStandardMaterial({
     color: 0x9fd7ff,
     emissive: 0x6fb8e8,
     emissiveIntensity: 0.4,
   });
-  const propMat = new THREE.MeshStandardMaterial({ color: 0x2a2f38, roughness: 0.5 });
+  const cockpitMat = new THREE.MeshStandardMaterial({
+    color: 0x5fa8d8,
+    roughness: 0.2,
+    metalness: 0.3,
+    emissive: 0x2a5e80,
+    emissiveIntensity: 0.3,
+  });
+  const propHubMat = new THREE.MeshStandardMaterial({ color: 0x3a4049, roughness: 0.4, metalness: 0.4 });
+  const propMat = new THREE.MeshStandardMaterial({ color: 0x1f232a, roughness: 0.35, metalness: 0.3 });
 
   cyl(mover, 0.3, 0.3, 2.6, 0, 0, 0, bodyMat, 16).rotation.z = Math.PI / 2;
   ball(mover, 0.3, 1.3, 0, 0, bodyMat, 16);
-  box(mover, 0.1, 0.06, 1.9, -0.3, 0.02, 0, accentMat);
+  roundedBox(mover, 0.28, 0.2, 0.46, 1.08, 0.08, 0, cockpitMat, 0.06);
+  roundedBox(mover, 0.1, 0.06, 1.9, -0.3, 0.02, 0, accentMat, 0.025);
 
-  box(mover, 2.1, 0.07, 0.55, -0.1, 0, 0, bodyMat);
-  box(mover, 0.5, 0.5, 0.07, -1.05, 0.35, 0, bodyMat);
-  box(mover, 0.4, 0.07, 0.3, -1.1, 0.07, 0, bodyMat);
+  roundedBox(mover, 2.1, 0.07, 0.55, -0.1, 0, 0, bodyMat, 0.03);
+  roundedBox(mover, 0.5, 0.5, 0.07, -1.05, 0.35, 0, accentMat, 0.04);
+  roundedBox(mover, 0.42, 0.07, 0.32, -1.1, 0.07, 0, accentMat, 0.025);
 
   for (let i = -3; i <= 3; i++) {
-    const win = new THREE.Mesh(new THREE.CircleGeometry(0.09, 10), windowMat);
+    const win = new THREE.Mesh(new THREE.CircleGeometry(0.09, 12), windowMat);
     win.position.set(i * 0.28, 0.08, 0.3);
     win.rotation.y = Math.PI / 2;
     mover.add(win);
@@ -35,9 +44,9 @@ export function buildFlightRig(): Rig {
   const propeller = new THREE.Group();
   propeller.position.set(1.58, 0, 0);
   mover.add(propeller);
-  box(propeller, 0.05, 0.42, 0.05, 0, 0, 0, propMat);
-  box(propeller, 0.05, 0.05, 0.42, 0, 0, 0, propMat);
-  ball(propeller, 0.07, 0, 0, 0, propMat, 10);
+  roundedBox(propeller, 0.07, 0.44, 0.03, 0, 0, 0, propMat, 0.03);
+  roundedBox(propeller, 0.07, 0.03, 0.44, 0, 0, 0, propMat, 0.03);
+  cyl(propeller, 0.08, 0.08, 0.08, 0, 0, 0, propHubMat, 12).rotation.x = Math.PI / 2;
 
   const environment = buildSky();
 
@@ -57,7 +66,7 @@ function buildSky(): THREE.Group {
   const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 });
   const puffs: Array<[number, number, number, number]> = [
     [-6, 1.2, -3, 0.9],
-    [-2, 3.6, -4, 1.2],
+    [-3.2, 4.6, -6, 1.2],
     [3, 0.6, -2.5, 0.7],
     [6.5, 3.2, -5, 1.1],
     [-9, 4.0, -6, 1.0],

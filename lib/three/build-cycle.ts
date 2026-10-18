@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { box, ball, cyl, tube } from "./helpers";
+import { box, roundedBox, tube, spokedWheel } from "./helpers";
+import { buildRider } from "./build-figure";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
 
@@ -8,21 +9,14 @@ export function buildCycleRig(): Rig {
   const mover = new THREE.Group();
   mover.position.x = REST_X;
 
-  const wheelMat = new THREE.MeshStandardMaterial({ color: 0x20242e, roughness: 0.6 });
-  const frameMat = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.45 });
-  const skinMat = new THREE.MeshStandardMaterial({ color: 0xe8b589, roughness: 0.75 });
-  const shirtMat = new THREE.MeshStandardMaterial({ color: 0x2f6fed, roughness: 0.6 });
-  const pantsMat = new THREE.MeshStandardMaterial({ color: 0x27314a, roughness: 0.6 });
+  const tireMat = new THREE.MeshStandardMaterial({ color: 0x1b1e26, roughness: 0.75 });
+  const hubMat = new THREE.MeshStandardMaterial({ color: 0xaab0b8, roughness: 0.4, metalness: 0.4 });
+  const frameMat = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.4, metalness: 0.15 });
+  const seatMat = new THREE.MeshStandardMaterial({ color: 0x2a2d33, roughness: 0.6 });
+  const gripMat = new THREE.MeshStandardMaterial({ color: 0x14161b, roughness: 0.55 });
 
-  const wheelGeo = new THREE.TorusGeometry(0.42, 0.065, 10, 20);
-  const rearWheel = new THREE.Mesh(wheelGeo, wheelMat);
-  rearWheel.position.set(-0.52, 0.42, 0);
-  rearWheel.castShadow = true;
-  mover.add(rearWheel);
-  const frontWheel = new THREE.Mesh(wheelGeo, wheelMat);
-  frontWheel.position.set(0.52, 0.42, 0);
-  frontWheel.castShadow = true;
-  mover.add(frontWheel);
+  const rearWheel = spokedWheel(mover, 0.42, 0.065, -0.52, 0.42, 0, tireMat, hubMat, 6);
+  const frontWheel = spokedWheel(mover, 0.42, 0.065, 0.52, 0.42, 0, tireMat, hubMat, 6);
 
   tube(
     mover,
@@ -44,7 +38,7 @@ export function buildCycleRig(): Rig {
     0.042,
     frameMat
   );
-  box(mover, 0.2, 0.055, 0.1, -0.15, 1.16, 0, frameMat);
+  roundedBox(mover, 0.22, 0.09, 0.13, -0.15, 1.17, 0, seatMat, 0.035);
   tube(
     mover,
     [
@@ -54,21 +48,29 @@ export function buildCycleRig(): Rig {
     0.038,
     frameMat
   );
-  box(mover, 0.28, 0.04, 0.04, 0.4, 1.01, 0, frameMat);
+  roundedBox(mover, 0.3, 0.045, 0.045, 0.4, 1.01, 0, gripMat, 0.02);
 
   const crank = new THREE.Group();
   crank.position.set(-0.1, 0.42, 0);
   mover.add(crank);
-  box(crank, 0.24, 0.045, 0.045, 0.1, 0, 0.12, frameMat);
-  box(crank, 0.24, 0.045, 0.045, -0.1, 0, -0.12, frameMat);
+  box(crank, 0.22, 0.04, 0.04, 0.1, 0, 0.12, frameMat);
+  box(crank, 0.22, 0.04, 0.04, -0.1, 0, -0.12, frameMat);
+  roundedBox(crank, 0.1, 0.02, 0.14, 0.19, 0, 0.12, gripMat, 0.008);
+  roundedBox(crank, 0.1, 0.02, 0.14, -0.19, 0, -0.12, gripMat, 0.008);
 
-  const rider = new THREE.Group();
-  mover.add(rider);
-  ball(rider, 0.165, -0.03, 1.5, 0, skinMat);
-  box(rider, 0.25, 0.38, 0.19, -0.03, 1.16, 0, shirtMat);
-  cyl(rider, 0.055, 0.055, 0.38, -0.16, 0.82, 0.1, pantsMat);
-  cyl(rider, 0.055, 0.055, 0.38, 0.1, 0.82, -0.05, pantsMat);
-  cyl(rider, 0.042, 0.042, 0.33, 0.24, 1.0, 0, shirtMat);
+  const rider = buildRider(mover, {
+    skin: 0xe8b589,
+    hair: 0x2b2017,
+    shirt: 0x2f6fed,
+    shirtTrim: 0x1d4fc4,
+    pants: 0x27314a,
+    shoes: 0xf4f1ea,
+  });
+  rider.group.position.set(-0.03, 0.97, 0);
+  rider.frontArm.rotation.z = 0.55;
+  rider.backArm.rotation.z = 0.4;
+  rider.frontLeg.rotation.z = 0.25;
+  rider.backLeg.rotation.z = -0.15;
 
   const environment = buildCampusGround();
 
@@ -115,10 +117,7 @@ function buildCampusGround(): THREE.Group {
   }
 
   const buildingMat = new THREE.MeshStandardMaterial({ color: 0xe7ded0, roughness: 0.85 });
-  const building = new THREE.Mesh(new THREE.BoxGeometry(5, 2.6, 2), buildingMat);
-  building.position.set(2, 1.3, -5.5);
-  building.castShadow = true;
-  group.add(building);
+  roundedBox(group, 5, 2.6, 2, 2, 1.3, -5.5, buildingMat, 0.1);
 
   return group;
 }

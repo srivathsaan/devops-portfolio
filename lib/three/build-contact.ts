@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { box, ball, cyl } from "./helpers";
+import { roundedBox, ball, cyl, spokedWheel } from "./helpers";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
 
@@ -8,24 +8,35 @@ export function buildContactRig(): Rig {
   const mover = new THREE.Group();
   mover.position.set(REST_X, 0, 0);
 
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf4f1ea, roughness: 0.4, metalness: 0.1 });
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf4f1ea, roughness: 0.35, metalness: 0.15 });
   const accentMat = new THREE.MeshStandardMaterial({ color: 0x1baf7a, roughness: 0.4 });
   const windowMat = new THREE.MeshStandardMaterial({
     color: 0x9fd7ff,
     emissive: 0x6fb8e8,
     emissiveIntensity: 0.4,
   });
-  const propMat = new THREE.MeshStandardMaterial({ color: 0x2a2f38, roughness: 0.5 });
-  const wheelMat = new THREE.MeshStandardMaterial({ color: 0x14161b, roughness: 0.6 });
+  const cockpitMat = new THREE.MeshStandardMaterial({
+    color: 0x5fa8d8,
+    roughness: 0.2,
+    metalness: 0.3,
+    emissive: 0x2a5e80,
+    emissiveIntensity: 0.3,
+  });
+  const propHubMat = new THREE.MeshStandardMaterial({ color: 0x3a4049, roughness: 0.4, metalness: 0.4 });
+  const propMat = new THREE.MeshStandardMaterial({ color: 0x1f232a, roughness: 0.35, metalness: 0.3 });
+  const tireMat = new THREE.MeshStandardMaterial({ color: 0x15171d, roughness: 0.7 });
+  const hubMat = new THREE.MeshStandardMaterial({ color: 0xb9bec4, roughness: 0.35, metalness: 0.5 });
 
   cyl(mover, 0.3, 0.3, 2.6, 0, 1.1, 0, bodyMat, 16).rotation.z = Math.PI / 2;
   ball(mover, 0.3, 1.3, 1.1, 0, bodyMat, 16);
-  box(mover, 0.1, 0.06, 1.9, -0.3, 1.12, 0, accentMat);
-  box(mover, 2.1, 0.07, 0.55, -0.1, 1.1, 0, bodyMat);
-  box(mover, 0.5, 0.5, 0.07, -1.05, 1.45, 0, bodyMat);
+  roundedBox(mover, 0.28, 0.2, 0.46, 1.08, 1.18, 0, cockpitMat, 0.06);
+  roundedBox(mover, 0.1, 0.06, 1.9, -0.3, 1.12, 0, accentMat, 0.025);
+  roundedBox(mover, 2.1, 0.07, 0.55, -0.1, 1.1, 0, bodyMat, 0.03);
+  roundedBox(mover, 0.5, 0.5, 0.07, -1.05, 1.45, 0, accentMat, 0.04);
+  roundedBox(mover, 0.42, 0.07, 0.32, -1.1, 1.17, 0, accentMat, 0.025);
 
   for (let i = -3; i <= 3; i++) {
-    const win = new THREE.Mesh(new THREE.CircleGeometry(0.09, 10), windowMat);
+    const win = new THREE.Mesh(new THREE.CircleGeometry(0.09, 12), windowMat);
     win.position.set(i * 0.28, 1.18, 0.3);
     win.rotation.y = Math.PI / 2;
     mover.add(win);
@@ -34,13 +45,12 @@ export function buildContactRig(): Rig {
   const propeller = new THREE.Group();
   propeller.position.set(1.58, 1.1, 0);
   mover.add(propeller);
-  box(propeller, 0.05, 0.42, 0.05, 0, 0, 0, propMat);
-  box(propeller, 0.05, 0.05, 0.42, 0, 0, 0, propMat);
+  roundedBox(propeller, 0.07, 0.44, 0.03, 0, 0, 0, propMat, 0.03);
+  roundedBox(propeller, 0.07, 0.03, 0.44, 0, 0, 0, propMat, 0.03);
+  cyl(propeller, 0.08, 0.08, 0.08, 0, 0, 0, propHubMat, 12).rotation.x = Math.PI / 2;
 
   for (const x of [-0.6, 0.9]) {
-    const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.05, 8, 16), wheelMat);
-    wheel.position.set(x, 0.78, 0);
-    mover.add(wheel);
+    spokedWheel(mover, 0.16, 0.05, x, 0.78, 0, tireMat, hubMat, 5);
   }
 
   const environment = buildRunway();
@@ -72,13 +82,8 @@ function buildRunway(): THREE.Group {
   }
 
   const towerMat = new THREE.MeshStandardMaterial({ color: 0xd7dde3, roughness: 0.6 });
-  const tower = new THREE.Mesh(new THREE.BoxGeometry(1.1, 3.2, 1.1), towerMat);
-  tower.position.set(8, 1.6, -5);
-  tower.castShadow = true;
-  group.add(tower);
-  const cab = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 1.6), towerMat);
-  cab.position.set(8, 3.4, -5);
-  group.add(cab);
+  roundedBox(group, 1.1, 3.2, 1.1, 8, 1.6, -5, towerMat, 0.06);
+  roundedBox(group, 1.6, 0.6, 1.6, 8, 3.4, -5, towerMat, 0.06);
 
   return group;
 }

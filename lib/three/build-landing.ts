@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { box, ball, cyl } from "./helpers";
+import { buildRider } from "./build-figure";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
 
@@ -8,21 +8,20 @@ export function buildLandingRig(): Rig {
   const mover = new THREE.Group();
   mover.position.x = REST_X;
 
-  const skinMat = new THREE.MeshStandardMaterial({ color: 0xe8b589, roughness: 0.75 });
-  const shirtMat = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.55 });
-  const pantsMat = new THREE.MeshStandardMaterial({ color: 0x27314a, roughness: 0.6 });
-
-  const figure = new THREE.Group();
-  mover.add(figure);
-  ball(figure, 0.19, 0, 1.55, 0, skinMat);
-  box(figure, 0.3, 0.46, 0.22, 0, 1.15, 0, shirtMat);
-  cyl(figure, 0.065, 0.065, 0.46, -0.1, 0.65, 0, pantsMat);
-  cyl(figure, 0.065, 0.065, 0.46, 0.1, 0.65, 0, pantsMat);
-
-  const armL = cyl(figure, 0.05, 0.05, 0.4, -0.22, 1.1, 0, shirtMat);
-  const armR = cyl(figure, 0.05, 0.05, 0.4, 0.22, 1.1, 0, shirtMat);
-  armL.position.set(-0.22, 1.1, 0);
-  armR.position.set(0.22, 1.1, 0);
+  const rider = buildRider(mover, {
+    skin: 0xe8b589,
+    hair: 0x2b2017,
+    shirt: 0xff7a1a,
+    shirtTrim: 0xe8650a,
+    pants: 0x27314a,
+    shoes: 0x1c222e,
+  });
+  rider.group.position.set(0, 0.73, 0);
+  rider.frontLeg.position.set(0.06, -0.01, 0);
+  rider.backLeg.position.set(-0.06, -0.01, 0);
+  rider.frontArm.position.set(0.15, 0.33, 0);
+  rider.backArm.position.set(-0.15, 0.33, 0);
+  rider.backArm.rotation.z = 0.15;
 
   const environment = buildPlainGround();
 
@@ -31,8 +30,8 @@ export function buildLandingRig(): Rig {
     environment,
     background: 0xbfe3f2,
     update() {
-      figure.rotation.y = Math.sin(performance.now() / 900) * 0.12;
-      armR.rotation.z = Math.sin(performance.now() / 350) * 0.4 - 0.3;
+      rider.group.rotation.y = Math.sin(performance.now() / 900) * 0.12;
+      rider.frontArm.rotation.z = Math.sin(performance.now() / 350) * 0.4 - 0.5;
     },
   };
 }

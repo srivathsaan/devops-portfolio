@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { box, ball, cyl } from "./helpers";
+import { roundedBox, ball, cyl, spokedWheel } from "./helpers";
+import { buildRider } from "./build-figure";
 import type { Rig } from "./types";
 import { REST_X } from "./animate-ride";
 
@@ -8,41 +9,44 @@ export function buildBikeRig(): Rig {
   const mover = new THREE.Group();
   mover.position.x = REST_X;
 
-  const wheelMat = new THREE.MeshStandardMaterial({ color: 0x14161b, roughness: 0.55 });
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1baf7a, roughness: 0.35, metalness: 0.2 });
-  const seatMat = new THREE.MeshStandardMaterial({ color: 0x20242e, roughness: 0.6 });
-  const skinMat = new THREE.MeshStandardMaterial({ color: 0xe8b589, roughness: 0.75 });
-  const jacketMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.5 });
-  const pantsMat = new THREE.MeshStandardMaterial({ color: 0x27314a, roughness: 0.6 });
+  const tireMat = new THREE.MeshStandardMaterial({ color: 0x15171d, roughness: 0.7 });
+  const hubMat = new THREE.MeshStandardMaterial({ color: 0xb9bec4, roughness: 0.35, metalness: 0.5 });
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1baf7a, roughness: 0.3, metalness: 0.25 });
+  const trimMat = new THREE.MeshStandardMaterial({ color: 0x0f1a16, roughness: 0.4, metalness: 0.3 });
+  const seatMat = new THREE.MeshStandardMaterial({ color: 0x20242e, roughness: 0.55 });
   const headlightMat = new THREE.MeshStandardMaterial({
     color: 0xfff3d0,
     emissive: 0xffdf8a,
     emissiveIntensity: 1.1,
   });
+  const exhaustMat = new THREE.MeshStandardMaterial({ color: 0xc7ccd1, roughness: 0.3, metalness: 0.7 });
 
-  const wheelGeo = new THREE.TorusGeometry(0.48, 0.1, 10, 20);
-  const rearWheel = new THREE.Mesh(wheelGeo, wheelMat);
-  rearWheel.position.set(-0.62, 0.48, 0);
-  rearWheel.castShadow = true;
-  mover.add(rearWheel);
-  const frontWheel = new THREE.Mesh(wheelGeo, wheelMat);
-  frontWheel.position.set(0.62, 0.48, 0);
-  frontWheel.castShadow = true;
-  mover.add(frontWheel);
+  const rearWheel = spokedWheel(mover, 0.48, 0.1, -0.62, 0.48, 0, tireMat, hubMat, 7);
+  const frontWheel = spokedWheel(mover, 0.48, 0.1, 0.62, 0.48, 0, tireMat, hubMat, 7);
 
-  box(mover, 1.15, 0.26, 0.3, -0.02, 0.78, 0, bodyMat);
-  box(mover, 0.44, 0.14, 0.26, -0.38, 0.98, 0, seatMat);
-  ball(mover, 0.11, 0.64, 0.8, 0, headlightMat, 12);
-  cyl(mover, 0.03, 0.03, 0.42, 0.56, 0.98, 0, bodyMat);
-  box(mover, 0.26, 0.04, 0.04, 0.56, 1.16, 0, bodyMat);
+  // Slim frame + tank (one slender body, not a thick stack) with the seat clearly on top.
+  roundedBox(mover, 1.0, 0.15, 0.17, -0.06, 0.66, 0, bodyMat, 0.06);
+  roundedBox(mover, 0.3, 0.13, 0.2, -0.3, 0.78, 0, bodyMat, 0.06);
+  roundedBox(mover, 0.42, 0.08, 0.22, -0.4, 0.88, 0, seatMat, 0.035);
+  ball(mover, 0.1, 0.58, 0.72, 0, headlightMat, 12);
+  roundedBox(mover, 0.045, 0.045, 0.38, 0.5, 0.86, 0, trimMat, 0.015);
+  roundedBox(mover, 0.24, 0.035, 0.035, 0.5, 1.04, 0, trimMat, 0.015);
+  ball(mover, 0.03, 0.46, 1.08, 0.17, trimMat, 10);
+  cyl(mover, 0.025, 0.025, 0.36, -0.68, 0.52, 0.17, exhaustMat, 10);
 
-  const rider = new THREE.Group();
-  mover.add(rider);
-  ball(rider, 0.18, -0.3, 1.62, 0, skinMat);
-  box(rider, 0.27, 0.42, 0.21, -0.3, 1.26, 0, jacketMat);
-  cyl(rider, 0.06, 0.06, 0.4, -0.12, 0.85, 0.1, pantsMat);
-  cyl(rider, 0.06, 0.06, 0.4, -0.12, 0.85, -0.1, pantsMat);
-  cyl(rider, 0.045, 0.045, 0.3, 0.2, 1.08, 0, jacketMat);
+  const rider = buildRider(mover, {
+    skin: 0xe8b589,
+    hair: 0x241a12,
+    shirt: 0x1f2937,
+    shirtTrim: 0x101722,
+    pants: 0x27314a,
+    shoes: 0x14161b,
+  });
+  rider.group.position.set(-0.32, 0.93, 0);
+  rider.frontLeg.rotation.z = 0.55;
+  rider.backLeg.rotation.z = 0.6;
+  rider.frontArm.rotation.z = 0.75;
+  rider.backArm.rotation.z = 0.6;
 
   const environment = buildCityGround();
 
@@ -83,10 +87,7 @@ function buildCityGround(): THREE.Group {
   const heights = [2.2, 3.4, 2.7, 4.1, 2.9];
   heights.forEach((h, i) => {
     const x = -8 + i * 4.2;
-    const b = new THREE.Mesh(new THREE.BoxGeometry(2.2, h, 2), buildingMat);
-    b.position.set(x, h / 2, -6);
-    b.castShadow = true;
-    group.add(b);
+    roundedBox(group, 2.2, h, 2, x, h / 2, -6, buildingMat, 0.08);
     for (let row = 0; row < Math.floor(h); row++) {
       const win = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.3), windowMat);
       win.position.set(x, 0.6 + row * 0.7, -4.99);
