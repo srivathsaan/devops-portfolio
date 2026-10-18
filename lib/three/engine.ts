@@ -5,6 +5,8 @@ export type Engine = {
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   rigRoot: THREE.Group;
+  sun: THREE.DirectionalLight;
+  sky: THREE.Object3D;
   setBackground: (color: THREE.ColorRepresentation) => void;
   resize: () => void;
   dispose: () => void;
@@ -52,9 +54,12 @@ export function createEngine(canvas: HTMLCanvasElement): Engine {
   const sky = new THREE.Mesh(new THREE.SphereGeometry(70, 20, 14), skyMaterial);
   scene.add(sky);
 
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(0, 2.4, 9);
-  camera.lookAt(0, 1, 0);
+  // Position/lookAt are driven every frame by the character controller's
+  // chase-cam logic (components/scene-canvas.tsx) — this is just a safe default
+  // before the first frame runs.
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 160);
+  camera.position.set(-6.5, 5.2, 7.5);
+  camera.lookAt(2.5, 1.1, 0);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.shadowMap.enabled = true;
@@ -64,6 +69,9 @@ export function createEngine(canvas: HTMLCanvasElement): Engine {
   const hemi = new THREE.HemisphereLight(0xffffff, 0x3a3a3a, 1.1);
   scene.add(hemi);
 
+  // Position is updated every frame (components/scene-canvas.tsx) to stay offset
+  // from the character, so the shadow camera's small, sharp frustum always covers
+  // wherever the player currently is in this ~100-unit-wide world.
   const sun = new THREE.DirectionalLight(0xfff4de, 2.2);
   sun.position.set(-4, 8, 6);
   sun.castShadow = true;
@@ -73,6 +81,7 @@ export function createEngine(canvas: HTMLCanvasElement): Engine {
   sun.shadow.camera.top = 8;
   sun.shadow.camera.bottom = -8;
   scene.add(sun);
+  scene.add(sun.target);
 
   const rigRoot = new THREE.Group();
   scene.add(rigRoot);
@@ -109,5 +118,5 @@ export function createEngine(canvas: HTMLCanvasElement): Engine {
     renderer.dispose();
   }
 
-  return { scene, camera, renderer, rigRoot, setBackground, resize, dispose };
+  return { scene, camera, renderer, rigRoot, sun, sky, setBackground, resize, dispose };
 }

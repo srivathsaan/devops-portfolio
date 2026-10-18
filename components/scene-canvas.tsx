@@ -1,49 +1,37 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import * as THREE from "three";
 import { createEngine } from "@/lib/three/engine";
 import { disposeGroup } from "@/lib/three/helpers";
-import { rideOffsetX, RIDE_DURATION, REST_X } from "@/lib/three/animate-ride";
-import { buildLandingRig } from "@/lib/three/build-landing";
-import { buildCycleRig } from "@/lib/three/build-cycle";
-import { buildBikeRig } from "@/lib/three/build-bike";
-import { buildFlightRig } from "@/lib/three/build-flight";
-import { buildContactRig } from "@/lib/three/build-contact";
-import type { Rig } from "@/lib/three/types";
+import { createCharacterController } from "@/lib/three/character-controller";
+import { buildWorld } from "@/lib/three/world";
+import { zones, type ZoneContent } from "@/lib/zones";
 
 export type SceneCanvasHandle = {
-  advance: () => void;
-  reverse: () => void;
+  /** Touch-joystick input, world-space x/z in [-1, 1]. Keyboard input is handled internally. */
+  setJoystick: (x: number, z: number) => void;
 };
 
 type Props = {
-  onSceneChange: (index: number) => void;
-  onTransitionChange: (isTransitioning: boolean) => void;
+  onZoneChange: (zone: ZoneContent | null) => void;
 };
 
-const builders: Array<() => Rig> = [
-  buildLandingRig,
-  buildCycleRig,
-  buildBikeRig,
-  buildFlightRig,
-  buildContactRig,
-];
-
-type Transition = { direction: 1 | -1; elapsed: number; toIndex: number };
+const CAMERA_OFFSET = new THREE.Vector3(-6.5, 5.2, 7.5);
+const LOOK_OFFSET = new THREE.Vector3(2.5, 1.1, 0);
+const SUN_OFFSET = new THREE.Vector3(-4, 8, 6);
+const CAMERA_LERP = 3.2;
 
 const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
-  { onSceneChange, onTransitionChange },
+  { onZoneChange },
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  // Imperative, synchronous state the rAF loop and keyboard handlers read directly —
-  // mirrors the reference component's cameraAnimating/dragging guard-ref pattern.
-  const apiRef = useRef<SceneCanvasHandle>({ advance: () => {}, reverse: () => {} });
+  const apiRef = useRef<SceneCanvasHandle>({ setJoystick: () => {} });
 
   useImperativeHandle(ref, () => ({
-    advance: () => apiRef.current.advance(),
-    reverse: () => apiRef.current.reverse(),
+    setJoystick: (x, z) => apiRef.current.setJoystick(x, z),
   }));
 
   useEffect(() => {
@@ -53,39 +41,50 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     let cancelled = false;
 
     const engine = createEngine(canvas);
-    const rigs = builders.map((build) => build());
-    rigs.forEach((rig) => {
-      rig.mover.visible = false;
-      rig.environment.visible = false;
-      engine.rigRoot.add(rig.mover, rig.environment);
-    });
+    const world = buildWorld();
+    engine.rigRoot.add(world);
 
-    let sceneIndex = 0;
-    let activeRig = rigs[0];
-    activeRig.mover.visible = true;
-    activeRig.environment.visible = true;
-    engine.setBackground(activeRig.background);
-    onSceneChange(0);
+    const character = createCharacterController();
+    engine.rigRoot.add(character.group);
 
-    let transition: Transition | null = null;
+    const keys = { up: false, down: false, left: false, right: false };
+    let joyX = 0;
+    let joyZ = 0;
 
-    function startTransition(direction: 1 | -1, toIndex: number) {
-      if (transition) return;
-      if (toIndex < 0 || toIndex >= rigs.length) return;
-      transition = { direction, elapsed: 0, toIndex };
-      onTransitionChange(true);
+    apiRef.current = { setJoystick: (x, z) => { joyX = x; joyZ = z; } };
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d", "W", "A", "S", "D"].includes(e.key)) {
+        e.preventDefault();
+      }
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") keys.up = true;
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") keys.down = true;
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
     }
-
-    apiRef.current = {
-      advance: () => startTransition(1, sceneIndex + 1),
-      reverse: () => startTransition(-1, sceneIndex - 1),
-    };
+    function onKeyUp(e: KeyboardEvent) {
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") keys.up = false;
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") keys.down = false;
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = false;
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = false;
+    }
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
 
     engine.resize();
     const resizeObserver = new ResizeObserver(() => engine.resize());
     resizeObserver.observe(container);
 
+    // Start the camera already in position behind the spawn point so the very
+    // first frame doesn't show a jarring fly-in from the default engine pose.
+    engine.camera.position.copy(character.group.position).add(CAMERA_OFFSET);
+    engine.camera.lookAt(character.group.position.clone().add(LOOK_OFFSET));
+    engine.sky.position.copy(engine.camera.position);
+
     let lastFrameTime = performance.now();
+    let activeZoneId: string | null = null;
+    const cameraTarget = new THREE.Vector3();
+    const lookTarget = new THREE.Vector3();
 
     function tick() {
       if (cancelled) return;
@@ -94,29 +93,41 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       const delta = Math.min((now - lastFrameTime) / 1000, 0.05);
       lastFrameTime = now;
 
-      if (transition) {
-        transition.elapsed += delta;
-        const progress = transition.elapsed / RIDE_DURATION;
-        activeRig.mover.position.x = rideOffsetX(progress, transition.direction);
-        activeRig.update(delta, true);
+      // World-space input: Right/D = +x (deeper into the timeline), Left/A = -x,
+      // Up/W = -z, Down/S = +z. Keyboard and joystick combine additively, then clamp.
+      let moveX = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joyX;
+      let moveZ = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joyZ;
+      const inputMag = Math.hypot(moveX, moveZ);
+      if (inputMag > 1) {
+        moveX /= inputMag;
+        moveZ /= inputMag;
+      }
 
-        if (progress >= 1) {
-          activeRig.mover.visible = false;
-          activeRig.environment.visible = false;
-          activeRig.mover.position.x = REST_X;
+      character.update(delta, moveX, moveZ);
 
-          sceneIndex = transition.toIndex;
-          activeRig = rigs[sceneIndex];
-          activeRig.mover.visible = true;
-          activeRig.environment.visible = true;
-          engine.setBackground(activeRig.background);
+      cameraTarget.copy(character.group.position).add(CAMERA_OFFSET);
+      engine.camera.position.lerp(cameraTarget, Math.min(1, CAMERA_LERP * delta));
+      lookTarget.copy(character.group.position).add(LOOK_OFFSET);
+      engine.camera.lookAt(lookTarget);
 
-          transition = null;
-          onSceneChange(sceneIndex);
-          onTransitionChange(false);
+      engine.sky.position.copy(engine.camera.position);
+      engine.sun.position.copy(character.group.position).add(SUN_OFFSET);
+      engine.sun.target.position.copy(character.group.position);
+      engine.sun.target.updateMatrixWorld();
+
+      let nearest: ZoneContent | null = null;
+      let nearestDist = Infinity;
+      for (const zone of zones) {
+        const dist = Math.hypot(character.group.position.x - zone.x, character.group.position.z - zone.z);
+        if (dist <= zone.radius && dist < nearestDist) {
+          nearest = zone;
+          nearestDist = dist;
         }
-      } else {
-        activeRig.update(delta, false);
+      }
+      const nextId = nearest?.id ?? null;
+      if (nextId !== activeZoneId) {
+        activeZoneId = nextId;
+        onZoneChange(nearest);
       }
 
       engine.renderer.render(engine.scene, engine.camera);
@@ -125,14 +136,14 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
 
     return () => {
       cancelled = true;
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
       resizeObserver.disconnect();
-      rigs.forEach((rig) => {
-        disposeGroup(rig.mover);
-        disposeGroup(rig.environment);
-      });
+      disposeGroup(world);
+      disposeGroup(character.group);
       engine.dispose();
     };
-  }, [onSceneChange, onTransitionChange]);
+  }, [onZoneChange]);
 
   return (
     <div ref={containerRef} className="absolute inset-0">
