@@ -36,18 +36,22 @@ html {
     animation: fadeInFromBottom 0.8s ease-out forwards;
 }
 
+.animate-fade-in-up.delay-100 {
+    animation-delay: 0.1s;
+}
+
 .animate-fade-in-up.delay-200 {
     animation-delay: 0.2s;
 }
 
 /* Layout adjustments */
-:root{
+:root {
   /* fallback header height used until JS measures actual header */
   --header-height: 72px;
 }
 
 /* Hero: ensure it respects header height when JS not yet run */
-#hero{
+#hero {
   min-height: auto;
   padding-bottom: 2rem;
 }
@@ -69,49 +73,142 @@ html {
     padding-top: 0;
     padding-bottom: 0;
   }
-
-  #about {
-    min-height: calc(100vh - var(--header-height));
-    display: flex;
-    align-items: center;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-}
-
-/* keep existing responsive spacing for internal elements */
-#hero .hero-inner > .w-full.md\:w-1\/2 {
-  /* no-op: left column spacing handled via utilities; override only if needed */
 }
 
 /* Three.js canvas background should fully cover hero */
-#threejs-canvas{
+#threejs-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: auto; /* Enable interaction */
+  z-index: 0;
+  pointer-events: auto; /* Enable drag interaction */
+}
+
+/* Stat tiles in the impact strip */
+.stat-tile {
+  padding: 0.5rem;
+}
+
+/* Project cards */
+.project-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: transform 300ms ease, border-color 300ms ease;
+}
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(79, 70, 229, 0.4);
+}
+
+/* Placeholder tile used when a project has no screenshot */
+.icon-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+}
+
+/* Technology tag pills on project cards */
+.tag-pill {
+  background: rgba(79, 70, 229, 0.1);
+  color: #4338ca;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.15rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(79, 70, 229, 0.25);
+}
+
+/* "View Detailed Description" trigger */
+.generate-desc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #9333ea;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.generate-desc-btn:hover {
+  color: #7e22ce;
+  text-decoration: underline;
+}
+
+/* Skills grid tiles */
+.skill-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  transition: transform 300ms ease, border-color 300ms ease;
+}
+.skill-tile:hover {
+  transform: translateY(-2px);
+  border-color: rgba(79, 70, 229, 0.4);
+}
+.skill-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-bottom: 0.75rem;
+  color: #4f46e5;
+}
+.skill-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Contact form inputs */
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.form-input::placeholder {
+  color: #64748b;
+}
+.form-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
 }
 
 /* Modal overlay and content */
-.modal-overlay{
+.modal-overlay {
   position: fixed;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(2,6,23,0.6);
+  background-color: rgba(2, 6, 23, 0.6);
   z-index: 70; /* above header & mobile menu */
   padding: 1.25rem;
   transition: opacity 180ms ease;
 }
 
-.modal-overlay.hidden{
+.modal-overlay.hidden {
   display: none;
   opacity: 0;
 }
 
-.modal-content{
+.modal-content {
   background: #ffffff;
   color: #1f2937;
   border-radius: 0.75rem;
@@ -120,13 +217,13 @@ html {
   max-height: 90vh;
   overflow: auto;
   padding: 1.25rem 1.5rem;
-  box-shadow: 0 10px 30px rgba(2,6,23,0.35);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.35);
   position: relative;
   outline: none;
 }
 
 /* Close button inside modal */
-.modal-close-button{
+.modal-close-button {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
@@ -138,35 +235,38 @@ html {
   padding: 0.25rem;
   cursor: pointer;
 }
+.modal-close-button:hover {
+  color: #111827;
+}
 
 /* Visible focus styles for keyboard users */
-:focus-visible{
+:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(99,102,241,0.18);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
   border-radius: 0.375rem;
 }
 
 /* Ensure interactive items keep some visible focus fallback */
-a:focus, button:focus, input:focus, textarea:focus, select:focus{
+a:focus, button:focus, input:focus, textarea:focus, select:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
   border-radius: 0.375rem;
 }
 
 /* Specific nav focus so anchors are clear in header */
-.nav-link:focus, .mobile-nav-link:focus{
-  background: rgba(99,102,241,0.06);
-  box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+.nav-link:focus, .mobile-nav-link:focus {
+  background: rgba(99, 102, 241, 0.06);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
 }
 
 /* Mobile menu ensure it's on top and full-screen */
-#mobile-menu{
+#mobile-menu {
   -webkit-tap-highlight-color: transparent;
   will-change: transform, opacity;
 }
 
 /* Simple skip-to-content link (hidden but visible on keyboard focus) */
-.skip-to-content{
+.skip-to-content {
   position: absolute;
   left: -9999px;
   top: auto;
@@ -174,51 +274,15 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus{
   height: 1px;
   overflow: hidden;
 }
-.skip-to-content:focus{
+.skip-to-content:focus {
   left: 1rem;
   top: 1rem;
   width: auto;
   height: auto;
   padding: 0.5rem 0.75rem;
-  background: white;
+  background: #ffffff;
   color: #111827;
   z-index: 80;
   border-radius: 0.375rem;
-  box-shadow: 0 6px 20px rgba(2,6,23,0.2);
-}
-
-/* Improve small-text contrast baseline (override if Tailwind utilities are used) */
-.small-contrast-fix{
-  color: #374151; /* darker gray for better readability */
-}
-
-/* Styles for the Three.js canvas */
-#threejs-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    z-index: 0; /* Ensure it's behind the content */
-}
-
-/* Add a subtle doodle pattern to the About Me section background 
-#about {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23e2e8f0' stroke-width='1.5'%3E%3Cpath d='M 10 10 C 20 20, 40 20, 50 10' /%3E%3Cpath d='M 40 30 C 50 40, 70 40, 80 30' /%3E%3Cpath d='M 20 50 C 30 60, 50 60, 60 50' /%3E%3Cpath d='M 50 70 C 60 80, 80 80, 90 70' /%3E%3Cpath d='M 10 90 C 20 100, 40 100, 50 90' /%3E%3C/g%3E%3C/svg%3E");
-}*/
-
-.loading-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.2);
 }

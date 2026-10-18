@@ -3,336 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Srivathsaan - DevOps Engineer Portfolio</title>
+    <title>Srivathsaan Nakkeeran | Data Science &amp; ML for Fintech</title>
+    <meta name="description" content="MSc Financial Technology student applying machine learning, data analysis, and 3 years of CloudOps experience to build data-driven solutions for financial platforms.">
     <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#1f2937',
+                        surface: {
+                            DEFAULT: '#ffffff',
+                            raised: '#f9fafb',
+                            card: '#ffffff'
+                        },
+                        accent: {
+                            DEFAULT: '#4f46e5',
+                            dark: '#4338ca',
+                            soft: '#eef2ff'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+                    }
+                }
+            }
+        };
+    </script>
+    <!-- Google Fonts: Inter (UI) + JetBrains Mono (data/metrics) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="antialiased">
+<body class="antialiased bg-surface text-ink font-sans">
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
 
     <!-- Header/Navigation Bar -->
-    <header id="site-header" class="bg-white shadow-sm py-4 px-6 md:px-10 lg:px-20 sticky top-0 z-50">
+    <header id="site-header" class="bg-surface/90 backdrop-blur border-b border-gray-200 py-4 px-6 md:px-10 lg:px-20 sticky top-0 z-50">
         <nav class="container mx-auto flex justify-between items-center">
-            <a href="#" class="flex items-center text-2xl font-bold text-indigo-600 rounded-md p-2 hover:bg-indigo-50 transition duration-300">
-                <img src="favicon.ico" alt="Srivathsaan Logo" class="h-8 w-8 mr-2">
-                <span>Srivathsaan</span>
+            <a href="#hero" class="flex items-center text-xl font-bold text-ink rounded-md p-2 hover:bg-accent-soft transition duration-300">
+                <img src="favicon.ico" alt="Srivathsaan logo" class="h-8 w-8 mr-2 rounded">
+                <span>Srivathsaan<span class="text-accent">.</span></span>
             </a>
-            <ul class="hidden md:flex space-x-6">
-                <li><a href="#hero" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Home</a></li>
-                <li><a href="#about" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">About</a></li>
-                <li><a href="#projects" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Projects</a></li>
-                <li><a href="#skills" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Skills</a></li>
-                <li><a href="#contact" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-indigo-50">Contact</a></li>
+            <ul class="hidden md:flex space-x-2">
+                <li><a href="#hero" class="nav-link text-gray-600 hover:text-ink font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-accent-soft">Home</a></li>
+                <li><a href="#about" class="nav-link text-gray-600 hover:text-ink font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-accent-soft">About</a></li>
+                <li><a href="#projects" class="nav-link text-gray-600 hover:text-ink font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-accent-soft">Projects</a></li>
+                <li><a href="#skills" class="nav-link text-gray-600 hover:text-ink font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-accent-soft">Skills</a></li>
+                <li><a href="#contact" class="nav-link text-gray-600 hover:text-ink font-medium transition duration-300 rounded-md px-3 py-2 hover:bg-accent-soft">Contact</a></li>
             </ul>
+            <a href="assets/docs/resume.pdf" download="srivathsaan-nakkeeran-resume.pdf" class="hidden md:inline-block bg-accent text-surface px-5 py-2 rounded-full text-sm font-semibold hover:bg-accent-dark transition duration-300">Resume</a>
             <!-- Mobile Menu Button (Hamburger) -->
-            <button id="mobile-menu-button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="md:hidden text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2">
+            <button id="mobile-menu-button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu" class="md:hidden text-gray-600 focus:outline-none focus:ring-2 focus:ring-accent rounded-md p-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                 </svg>
             </button>
         </nav>
         <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu" class="hidden md:hidden fixed top-0 left-0 w-full h-full bg-white bg-opacity-95 z-60 flex flex-col items-center justify-center space-y-8" role="dialog" aria-modal="true" aria-hidden="true">
-            <button id="close-mobile-menu" class="absolute top-6 right-6 text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2" aria-label="Close menu">
+        <div id="mobile-menu" class="hidden md:hidden fixed top-0 left-0 w-full h-full bg-surface bg-opacity-98 z-60 flex flex-col items-center justify-center space-y-8" role="dialog" aria-modal="true" aria-hidden="true">
+            <button id="close-mobile-menu" class="absolute top-6 right-6 text-gray-600 focus:outline-none focus:ring-2 focus:ring-accent rounded-md p-2" aria-label="Close menu">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
             <ul class="flex flex-col space-y-6 text-center">
-                <li><a href="#hero" class="mobile-nav-link text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block">Home</a></li>
-                <li><a href="#about" class="mobile-nav-link text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block">About</a></li>
-                <li><a href="#projects" class="mobile-nav-link text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block">Projects</a></li>
-                <li><a href="#skills" class="mobile-nav-link text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block">Skills</a></li>
-                <li><a href="#contact" class="mobile-nav-link text-gray-800 text-2xl hover:text-indigo-600 font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-indigo-50 block">Contact</a></li>
+                <li><a href="#hero" class="mobile-nav-link text-ink text-2xl hover:text-accent font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-accent-soft block">Home</a></li>
+                <li><a href="#about" class="mobile-nav-link text-ink text-2xl hover:text-accent font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-accent-soft block">About</a></li>
+                <li><a href="#projects" class="mobile-nav-link text-ink text-2xl hover:text-accent font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-accent-soft block">Projects</a></li>
+                <li><a href="#skills" class="mobile-nav-link text-ink text-2xl hover:text-accent font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-accent-soft block">Skills</a></li>
+                <li><a href="#contact" class="mobile-nav-link text-ink text-2xl hover:text-accent font-medium transition duration-300 rounded-md px-4 py-3 hover:bg-accent-soft block">Contact</a></li>
             </ul>
         </div>
     </header>
 
-    <main>
+    <main id="main-content">
         <!-- Hero Section -->
-        <section id="hero" class="relative bg-gradient-to-r from-indigo-700 to-blue-800 text-white flex items-center md:items-end justify-center overflow-hidden">
+        <section id="hero" class="relative bg-surface text-ink flex items-center md:items-end justify-center overflow-hidden">
             <!-- Three.js Canvas as a background -->
             <canvas id="threejs-canvas" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
+            <div class="absolute inset-0 bg-gradient-to-b from-surface/40 via-surface/70 to-surface z-[1] pointer-events-none"></div>
             <div class="container hero-inner mx-auto relative z-10 px-6 md:px-0 flex flex-col md:flex-row items-center md:items-end justify-center md:space-x-10 w-full">
                 <!-- Left Content Area -->
                 <div class="w-full md:w-1/2 text-center md:text-left md:pb-20">
-                    <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-up">I'm Srivathsaan</h1>
-                    <p class="text-xl md:text-2xl font-light mb-8 animate-fade-in-up delay-200">A dedicated DevOps Engineer</p>
+                    <span class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-accent bg-accent-soft border border-accent/30 rounded-full px-3 py-1 mb-6 animate-fade-in-up">
+                        <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+                        Open to Data Science &amp; ML roles in fintech
+                    </span>
+                    <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-up delay-100">Data-driven solutions for financial systems</h1>
+                    <p class="text-xl md:text-2xl font-light mb-8 text-gray-600 animate-fade-in-up delay-200">I'm Srivathsaan &mdash; an MSc Financial Technology student at NTU Singapore applying machine learning and data analysis to financial systems, backed by 3 years of hands-on experience turning operational data into decisions.</p>
                     <div class="flex justify-center md:justify-start space-x-4">
-                        <a  href="srivathsaan_nakkeeran.pdf" download="srivathsaan_nakkeeran.pdf" class="inline-block bg-white text-indigo-700 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-gray-100 transform hover:scale-105 transition duration-300 ease-in-out">Resume</a>
-                        <a href="#about" class="inline-block border-2 border-white text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-white hover:text-indigo-700 transform hover:scale-105 transition duration-300 ease-in-out">Connect With Me</a>
+                        <a href="assets/docs/resume.pdf" download="srivathsaan-nakkeeran-resume.pdf" class="inline-block bg-accent text-surface px-8 py-3 rounded-full text-lg font-semibold shadow-lg shadow-accent/20 hover:bg-accent-dark transform hover:scale-105 transition duration-300 ease-in-out">Resume</a>
+                        <a href="#contact" class="inline-block border-2 border-gray-300 text-ink px-8 py-3 rounded-full text-lg font-semibold hover:border-accent hover:text-accent transform hover:scale-105 transition duration-300 ease-in-out">Connect With Me</a>
                     </div>
                 </div>
                 <!-- Right Image Area -->
                 <div class="w-full md:w-1/2 relative flex justify-center items-end transform origin-bottom hover:scale-105 transition duration-300 ease-in-out group">
-                    <img src="images/your-caricature.png" alt="Caricature of Srivathsaan" class="relative z-10 max-h-[50vh] md:max-h-[75vh] w-auto drop-shadow-2xl transition-opacity duration-500 group-hover:opacity-0">
-                    <img src="images/suit_up.png" alt="" aria-hidden="true" class="absolute bottom-0 left-0 right-0 mx-auto z-10 max-h-[50vh] md:max-h-[75vh] w-auto drop-shadow-2xl transition-opacity duration-500 opacity-0 group-hover:opacity-100">
+                    <img src="assets/images/hero-caricature.png" alt="Caricature of Srivathsaan" class="relative z-10 max-h-[50vh] md:max-h-[75vh] w-auto drop-shadow-2xl transition-opacity duration-500 group-hover:opacity-0">
+                    <img src="assets/images/hero-suit.png" alt="" aria-hidden="true" class="absolute bottom-0 left-0 right-0 mx-auto z-10 max-h-[50vh] md:max-h-[75vh] w-auto drop-shadow-2xl transition-opacity duration-500 opacity-0 group-hover:opacity-100">
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact Strip -->
+        <section aria-label="Highlights" class="bg-surface-raised border-y border-gray-200 py-10 px-6 md:px-0">
+            <div class="container mx-auto max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="stat-tile">
+                    <p class="font-mono text-3xl md:text-4xl font-semibold text-accent">98.3%</p>
+                    <p class="text-sm text-gray-600 mt-1">ML model accuracy (ransomware detection)</p>
+                </div>
+                <div class="stat-tile">
+                    <p class="font-mono text-3xl md:text-4xl font-semibold text-accent">3 yrs</p>
+                    <p class="text-sm text-gray-600 mt-1">Experience analyzing production data</p>
+                </div>
+                <div class="stat-tile">
+                    <p class="font-mono text-3xl md:text-4xl font-semibold text-accent">20+</p>
+                    <p class="text-sm text-gray-600 mt-1">Environments analyzed for patterns &amp; risk</p>
+                </div>
+                <div class="stat-tile">
+                    <p class="font-mono text-3xl md:text-4xl font-semibold text-accent">200+</p>
+                    <p class="text-sm text-gray-600 mt-1">Incidents diagnosed through data correlation</p>
                 </div>
             </div>
         </section>
 
         <!-- About Section -->
-        <section id="about" class="py-16 md:py-24 bg-white">
+        <section id="about" class="py-16 md:py-24 bg-surface">
             <div class="container mx-auto px-6 md:px-0 max-w-4xl">
-                <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">About Me</h2>
+                <h2 class="text-4xl font-bold text-center text-ink mb-12">About Me</h2>
                 <div class="flex flex-col md:flex-row items-center md:space-x-12">
                     <div class="md:w-1/3 mb-8 md:mb-0">
-                        <img src="images/aboutme.png" alt="aboutme of Srivathsaan" class="rounded-lg shadow-xl w-full h-auto object-cover">
+                        <img src="assets/images/about.png" alt="Srivathsaan at work" class="rounded-lg shadow-xl shadow-black/40 w-full h-auto object-cover border border-gray-200">
                     </div>
-                    <div class="md:w-2/3 text-lg leading-relaxed text-gray-700 text-justify">
-                        <p class="mb-4">Hello! I'm Srivathsaan, a passionate DevOps Engineer with a focus on streamlining development workflows and building robust, scalable infrastructure. With 2+ years of experience, I specialize in creating CI/CD pipelines, managing cloud resources, and implementing infrastructure as code (IaC) solutions.</p>
-                        <p class="mb-4">My expertise lies in bridging the gap between development and operations, ensuring seamless collaboration and efficient software delivery. I thrive on optimizing system performance, enhancing security, and fostering a culture of continuous improvement.</p>
-                        <p>Beyond the command line, I enjoy exploring new open-source technologies, contributing to tech communities, and solving complex puzzles. I am always eager to take on new challenges and contribute to projects that push the boundaries of what's possible.</p>
+                    <div class="md:w-2/3 text-lg leading-relaxed text-gray-600 text-justify">
+                        <p class="mb-4">Hello! I'm Srivathsaan, an MSc Financial Technology (Intelligent Process Automation) student at Nanyang Technological University, Singapore. I'm focused on applying machine learning, statistical modelling, and data analysis to problems in financial technology, backed by 3 years of hands-on experience working with production data as a CloudOps Support Analyst at Bounteous.</p>
+                        <p class="mb-4">In that role, I used Python, SQL, and tools like Splunk, Sumo Logic, and CloudWatch to analyze infrastructure and security telemetry across 20+ client environments &mdash; correlating logs and metrics to identify abnormal patterns, investigating 200+ incidents, and turning behavioural traffic data into targeted Cloudflare WAF rules. I also built Python automation and dashboards to process operational data and surface insights faster.</p>
+                        <p>On the ML side, I built a deep learning-based Android ransomware detector combining hybrid static/dynamic analysis with ANOVA feature selection, reaching 98.3% binary classification accuracy. I hold a B.Tech in Computer and Communication Engineering (Silver Medal, CGPA 8.87/10.0) and I'm a certified Google Cybersecurity Professional and Cloudflare Accredited Configuration Engineer. I'm now looking to bring this blend of data analysis, machine learning, and real-world systems experience to a Data Science or ML role in fintech.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Projects Section 
-        <section id="projects" class="py-16 md:py-24 bg-gray-50 overflow-hidden">
+        <!-- Projects Section -->
+        <section id="projects" class="py-16 md:py-24 bg-surface-raised overflow-hidden">
             <div class="container mx-auto px-6 md:px-0 max-w-6xl">
-                <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">My DevOps Projects</h2>
+                <h2 class="text-4xl font-bold text-center text-ink mb-4">Data &amp; ML Projects</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-12">Machine learning and data analysis work, grounded in 3 years of hands-on experience with real production data.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    -->
-                    <!-- Project Card 1: Automated CI/CD Pipeline 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
-                        <img src="images/cicd.png" alt="CI/CD Pipeline Image" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-2" id="project-title-1">Automated CI/CD Pipeline</h3>
-                            <p class="text-gray-600 mb-4" id="project-desc-1">Designed and implemented a robust CI/CD pipeline for a microservices application, significantly reducing deployment time.</p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Jenkins</span>
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Docker</span>
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Kubernetes</span>
-                            </div>
-                            <button class="generate-desc-btn inline-flex items-center text-purple-600 hover:text-purple-800 font-semibold group-hover:underline transition duration-300 mt-2">
-                                ✨ View Detailed Description
-                            </button>
-                            <a href="#" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold group-hover:underline transition duration-300 mt-2 ml-4">
-                                View Case Study
-                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
-                            </a>
-                        </div>
-                    </div> -->
 
-                    <!-- Project Card 2: Cloud Infrastructure Automation 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
-                        <img src="images/Iac.png" alt="Cloud IaC Image" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-2" id="project-title-2">Cloud Infrastructure Automation</h3>
-                            <p class="text-gray-600 mb-4" id="project-desc-2">Automated provisioning and management of AWS infrastructure using Terraform and Ansible.</p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded-full">AWS</span>
-                                <span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Terraform</span>
-                                <span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Ansible</span>
-                            </div>
-                            <button class="generate-desc-btn inline-flex items-center text-purple-600 hover:text-purple-800 font-semibold group-hover:underline transition duration-300 mt-2">
-                                ✨ View Detailed Description
-                            </button>
-                            <a href="#" class="inline-flex items-center text-emerald-600 hover:text-emerald-800 font-semibold group-hover:underline transition duration-300 mt-2 ml-4">
-                                Explore Repo
-                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
-                            </a>
+                    <!-- Project Card 1: Android Ransomware Detection Engine -->
+                    <article class="project-card">
+                        <div class="w-full h-48 icon-tile">
+                            <svg class="w-16 h-16 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path></svg>
                         </div>
-                    </div>-->
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold text-ink mb-2">Android Ransomware Detection Engine</h3>
+                            <p class="text-gray-600 mb-4 project-desc">Built a deep learning-based Android ransomware detector in Python, applying hybrid static/dynamic analysis and ANOVA feature selection to train an MLP classifier that reached 98.3% binary and 88.3% multiclass accuracy across 10 ransomware families.</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="tag-pill">Python</span>
+                                <span class="tag-pill">Deep Learning</span>
+                                <span class="tag-pill">ANOVA</span>
+                            </div>
+                            <button class="generate-desc-btn" type="button">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                View Detailed Description
+                            </button>
+                        </div>
+                    </article>
 
-                    <!-- Project Card 3: Centralized Logging & Monitoring 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
-                        <img src="https://placehold.co/600x400/EF4444/FEE2E2?text=Monitoring+Dashboard" alt="Monitoring Dashboard Image" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-2" id="project-title-3">Centralized Logging & Monitoring</h3>
-                            <p class="text-gray-600 mb-4" id="project-desc-3">Set up ELK stack for centralized log collection and Grafana dashboards for system monitoring.</p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Elasticsearch</span>
-                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Logstash</span>
-                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Kibana</span>
-                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Grafana</span>
-                            </div>
-                            <button class="generate-desc-btn inline-flex items-center text-purple-600 hover:text-purple-800 font-semibold group-hover:underline transition duration-300 mt-2">
-                                ✨ View Detailed Description
-                            </button>
-                            <a href="#" class="inline-flex items-center text-red-600 hover:text-red-800 font-semibold group-hover:underline transition duration-300 mt-2 ml-4">
-                                View Dashboard
-                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
-                            </a>
+                    <!-- Project Card 2: Unified Monitoring & Incident Response -->
+                    <article class="project-card">
+                        <div class="w-full h-48 icon-tile">
+                            <svg class="w-16 h-16 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3v18h18M7 15l4-6 3 4 4-8"></path></svg>
                         </div>
-                    </div>-->
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold text-ink mb-2">Unified Monitoring &amp; Incident Response</h3>
+                            <p class="text-gray-600 mb-4 project-desc">Analyzed telemetry and incident data across 20+ client environments using Splunk, Sumo Logic, Site24x7, and CloudWatch &mdash; correlating 200+ infrastructure and 30+ security incidents, and building Python automation and dashboards for faster, data-driven diagnosis.</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="tag-pill">Python</span>
+                                <span class="tag-pill">Splunk</span>
+                                <span class="tag-pill">CloudWatch</span>
+                            </div>
+                            <button class="generate-desc-btn" type="button">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                View Detailed Description
+                            </button>
+                        </div>
+                    </article>
 
-                    <!-- Project Card 4: Container Orchestration with Kubernetes
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
-                        <img src="https://placehold.co/600x400/6366F1/E0E7FF?text=Kubernetes" alt="Kubernetes Image" class="w-full h-48 object-cover">
+                    <!-- Project Card 3: Cloudflare WAF Threat Mitigation -->
+                    <article class="project-card">
+                        <img src="assets/images/projects/cloud-infrastructure.png" alt="Cloud infrastructure automation diagram" class="w-full h-48 object-cover">
                         <div class="p-6">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-2" id="project-title-4">Container Orchestration with Kubernetes</h3>
-                            <p class="text-gray-600 mb-4" id="project-desc-4">Deployed and managed containerized applications using Kubernetes on a cloud provider.</p>
+                            <h3 class="text-2xl font-semibold text-ink mb-2">Cloudflare WAF Threat Mitigation</h3>
+                            <p class="text-gray-600 mb-4 project-desc">Analyzed traffic and behavioural patterns tied to credential-stuffing and probing activity, translating findings into targeted Cloudflare WAF rules that measurably cut malicious traffic and false positives.</p>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Kubernetes</span>
-                                <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Helm</span>
-                                <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">GCP/EKS</span>
+                                <span class="tag-pill">Cloudflare</span>
+                                <span class="tag-pill">WAF</span>
+                                <span class="tag-pill">Security Analytics</span>
                             </div>
-                            <button class="generate-desc-btn inline-flex items-center text-purple-600 hover:text-purple-800 font-semibold group-hover:underline transition duration-300 mt-2">
-                                ✨ View Detailed Description
+                            <button class="generate-desc-btn" type="button">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                View Detailed Description
                             </button>
-                            <a href="#" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-semibold group-hover:underline transition duration-300 mt-2 ml-4">
-                                View Deployment
-                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
-                            </a>
                         </div>
-                    </div>-->
+                    </article>
 
-                    <!-- Project Card 5: Configuration Management with Puppet
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
-                        <img src="https://placehold.co/600x400/FACC15/78350F?text=Puppet" alt="Puppet Image" class="w-full h-48 object-cover">
+                    <!-- Project Card 4: Legacy NGINX to AWS ECS Fargate Migration -->
+                    <article class="project-card">
+                        <img src="assets/images/projects/cicd-pipeline.png" alt="CI/CD pipeline diagram" class="w-full h-48 object-cover">
                         <div class="p-6">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-2" id="project-title-5">Configuration Management with Puppet</h3>
-                            <p class="text-gray-600 mb-4" id="project-desc-5">Developed Puppet modules for consistent server configuration across multiple environments.</p>
+                            <h3 class="text-2xl font-semibold text-ink mb-2">NGINX to ECS Fargate Migration</h3>
+                            <p class="text-gray-600 mb-4 project-desc">Led the migration of a legacy EC2-based NGINX service to AWS ECS Fargate, writing Python scripts to validate configurations, redirects, and SSL certificates at scale, and automating the rollout with Docker, Terraform, and CI/CD.</p>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Puppet</span>
-                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Linux</span>
-                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Bash Scripting</span>
+                                <span class="tag-pill">Python</span>
+                                <span class="tag-pill">Docker</span>
+                                <span class="tag-pill">Terraform</span>
                             </div>
-                            <button class="generate-desc-btn inline-flex items-center text-purple-600 hover:text-purple-800 font-semibold group-hover:underline transition duration-300 mt-2">
-                                ✨ View Detailed Description
+                            <button class="generate-desc-btn" type="button">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                View Detailed Description
                             </button>
-                            <a href="#" class="inline-flex items-center text-yellow-600 hover:text-yellow-800 font-semibold group-hover:underline transition duration-300 mt-2 ml-4">
-                                See Modules
-                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
-                            </a>
                         </div>
-                    </div>-->
+                    </article>
 
-                    <!-- Project Card 6: Disaster Recovery Planning 
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out group">
-                        <img src="https://placehold.co/600x400/9CA3AF/F3F4F6?text=DRP" alt="Disaster Recovery Image" class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-2" id="project-title-6">Disaster Recovery Planning & Implementation</h3>
-                            <p class="text-gray-600 mb-4" id="project-desc-6">Developed and tested disaster recovery strategies for critical applications and data.</p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Backup & Restore</span>
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Replication</span>
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Security</span>
-                            </div>
-                            <button class="generate-desc-btn inline-flex items-center text-purple-600 hover:text-purple-800 font-semibold group-hover:underline transition duration-300 mt-2">
-                                ✨ View Detailed Description
-                            </button>
-                            <a href="#" class="inline-flex items-center text-gray-600 hover:text-gray-800 font-semibold group-hover:underline transition duration-300 mt-2 ml-4">
-                                Learn More
-                                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path></svg>
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
-        </section> 
-    -->
+        </section>
 
-        <!-- Skills Section 
-        <section id="skills" class="py-16 md:py-24 bg-white">
+        <!-- Skills Section -->
+        <section id="skills" class="py-16 md:py-24 bg-surface">
             <div class="container mx-auto px-6 md:px-0 max-w-4xl">
-                <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">My DevOps Skills</h2>
+                <h2 class="text-4xl font-bold text-center text-ink mb-12">Core Skills</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 text-center">
-                    
-                    <div class="flex flex-col items-center p-4 sm:p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="https://placehold.co/80x80?text=Cloud" alt="Cloud Icon" class="w-16 h-16 mb-4">
-                        <span class="text-base sm:text-lg font-semibold text-gray-700">Cloud (AWS, Azure, GCP)</span>
+
+                    <div class="skill-tile">
+                        <svg class="skill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 17.25V6.75A2.25 2.25 0 0018.75 4.5H5.25A2.25 2.25 0 003 6.75v10.5A2.25 2.25 0 005.25 19.5z"></path></svg>
+                        <span class="skill-label">Programming (Python, SQL, R, C++)</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center p-4 sm:p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="https://placehold.co/80x80?text=Docker" alt="Docker Icon" class="w-16 h-16 mb-4">
-                        <span class="text-base sm:text-lg font-semibold text-gray-700">Docker</span>
+
+                    <div class="skill-tile">
+                        <svg class="skill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25z"></path></svg>
+                        <span class="skill-label">Machine Learning &amp; Deep Learning</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center p-4 sm:p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="https://placehold.co/80x80?text=K8s" alt="Kubernetes Icon" class="w-16 h-16 mb-4">
-                        <span class="text-base sm:text-lg font-semibold text-gray-700">Kubernetes</span>
+
+                    <div class="skill-tile">
+                        <svg class="skill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3v18h18M7 15l4-6 3 4 4-8"></path></svg>
+                        <span class="skill-label">Data Analysis &amp; Statistical Modelling</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="https://placehold.co/80x80?text=CI%2FCD" alt="CI/CD Icon" class="w-16 h-16 mb-4">
-                        <span class="text-xl font-semibold text-gray-700">CI/CD (Jenkins, AWS Codepipeline )</span>
+
+                    <div class="skill-tile">
+                        <svg class="skill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0C20.25 4.097 16.556 2.25 12 2.25S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375"></path></svg>
+                        <span class="skill-label">Databases (RDS, DynamoDB, Redis)</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="https://placehold.co/80x80?text=IaC" alt="Terraform Icon" class="w-16 h-16 mb-4">
-                        <span class="text-xl font-semibold text-gray-700">IaC (Terraform, CloudFormation)</span>
+
+                    <div class="skill-tile">
+                        <svg class="skill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h10a4 4 0 000-8 5 5 0 00-9.6-2A4 4 0 003 15z"></path></svg>
+                        <span class="skill-label">Cloud (AWS, Cloudflare)</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="https://placehold.co/80x80?text=Python" alt="Python Icon" class="w-16 h-16 mb-4">
-                        <span class="text-xl font-semibold text-gray-700">Scripting (Python, Bash)</span>
+
+                    <div class="skill-tile">
+                        <svg class="skill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path></svg>
+                        <span class="skill-label">Monitoring (Splunk, CloudWatch, Grafana)</span>
                     </div>
-                   
-                    <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="https://placehold.co/80x80?text=Monitor" alt="Monitoring Icon" class="w-16 h-16 mb-4">
-                        <span class="text-xl font-semibold text-gray-700">Monitoring (Sumo Logic, Site24x7)</span>
+
+                    <div class="skill-tile">
+                        <svg class="skill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg>
+                        <span class="skill-label">CI/CD, IaC &amp; Containers (Docker, Kubernetes, Terraform)</span>
                     </div>
-                   
-                    <div class="flex flex-col items-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="https://placehold.co/80x80?text=Git" alt="Git Icon" class="w-16 h-16 mb-4">
-                        <span class="text-xl font-semibold text-gray-700">Git & GitHub/GitLab</span>
+
+                    <div class="skill-tile">
+                        <svg class="skill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 21a9 9 0 100-18 9 9 0 000 18z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 12l2.25 2.25 5.25-5.25"></path></svg>
+                        <span class="skill-label">Git, GitHub &amp; Bitbucket</span>
                     </div>
                 </div>
             </div>
-        </section>-->
+        </section>
 
-        <!-- Contact Section
-        <section id="contact" class="py-16 md:py-24 bg-gray-50">
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 md:py-24 bg-surface-raised">
             <div class="container mx-auto px-6 md:px-0 max-w-3xl">
-                <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Let's Connect!</h2>
-                <div class="bg-white rounded-xl shadow-lg p-8 md:p-12">
-                    <p class="text-center text-lg text-gray-700 mb-8">I'm always open to discussing new projects, collaborations, or opportunities. Feel free to reach out!</p> 
-                    <form action="https://formspree.io/f/your_form_id" method="POST" class="space-y-6">
+                <h2 class="text-4xl font-bold text-center text-ink mb-12">Let's Connect!</h2>
+                <div class="bg-surface-card border border-gray-200 rounded-xl shadow-xl shadow-black/30 p-8 md:p-12">
+                    <p class="text-center text-lg text-gray-600 mb-8">I'm always open to discussing data science, machine learning, or fintech analytics roles, and collaborations. Send a message and it'll open directly in your email client.</p>
+                    <form id="contact-form" class="space-y-6">
                         <div>
-                            <label for="name" class="block text-gray-700 text-sm font-medium mb-2">Name</label>
-                            <input type="text" id="name" name="name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200" placeholder="Your Name" required>
+                            <label for="name" class="block text-gray-600 text-sm font-medium mb-2">Name</label>
+                            <input type="text" id="name" name="name" class="form-input" placeholder="Your Name" required>
                         </div>
                         <div>
-                            <label for="email" class="block text-gray-700 text-sm font-medium mb-2">Email</label>
-                            <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200" placeholder="your.email@example.com" required>
+                            <label for="email" class="block text-gray-600 text-sm font-medium mb-2">Email</label>
+                            <input type="email" id="email" name="email" class="form-input" placeholder="your.email@example.com" required>
                         </div>
                         <div>
-                            <label for="message" class="block text-gray-700 text-sm font-medium mb-2">Message</label>
-                            <textarea id="message" name="message" rows="6" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200" placeholder="Your message..." required></textarea>
+                            <label for="message" class="block text-gray-600 text-sm font-medium mb-2">Message</label>
+                            <textarea id="message" name="message" rows="6" class="form-input" placeholder="Your message..." required></textarea>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-indigo-700 transform hover:scale-105 transition duration-300 ease-in-out">Send Message</button>
+                            <button type="submit" class="bg-accent text-surface px-8 py-3 rounded-full text-lg font-semibold shadow-lg shadow-accent/20 hover:bg-accent-dark transform hover:scale-105 transition duration-300 ease-in-out">Send Message</button>
                         </div>
                     </form>
                 </div>
                 <div class="mt-12 text-center text-gray-600">
                     <p class="mb-2">Find me on:</p>
                     <div class="flex justify-center space-x-6 text-2xl">
-                        <a href="#" class="hover:text-indigo-600 transition duration-300" aria-label="LinkedIn">
+                        <a href="https://linkedin.com/in/srivathsaan" target="_blank" rel="noopener" class="hover:text-accent transition duration-300" aria-label="LinkedIn">
                             <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16.35 16.35h-2.1v-5.5c0-1.32-.47-2.22-1.65-2.22-1.23 0-1.96.83-1.96 2.24v5.48H8.5V9.43h2.09v.9c.28-.53.97-.9 2.01-.9 2.18 0 3.8 1.42 3.8 4.4v5.52zM5.96 7.42c-1.24 0-2.05-.83-2.05-1.85 0-1.04.81-1.85 2.05-1.85 1.24 0 2.05.81 2.05 1.85 0 1.02-.81 1.85-2.05 1.85zm1.05 8.93H4.91V9.43h2.1zM19.5 3H4.5A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3z"></path></svg>
                         </a>
-                        <a href="#" class="hover:text-indigo-600 transition duration-300" aria-label="GitHub">
+                        <a href="https://github.com/srivathsaan" target="_blank" rel="noopener" class="hover:text-accent transition duration-300" aria-label="GitHub">
                             <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.419 2.865 8.165 6.839 9.489.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.704-2.782.604-3.369-1.341-3.369-1.341-.454-1.152-1.107-1.46-1.107-1.46-.908-.618.069-.606.069-.606 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.089 2.91.832.092-.647.35-1.089.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.682-.103-.253-.446-1.27.098-2.65 0 0 .84-.268 2.75 1.025A9.28 9.28 0 0112 6.8c.85.004 1.7.11 2.49.324 1.909-1.293 2.747-1.025 2.747-1.025.546 1.38.202 2.398.099 2.65.64.698 1.028 1.591 1.028 2.682 0 3.841-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .267.18.579.688.481C20.137 20.162 23 16.419 23 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"></path></svg>
                         </a>
-                        <a href="#" class="hover:text-indigo-600 transition duration-300" aria-label="Twitter">
-                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.953 4.573a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.564-2.005.974-3.127 1.195a4.916 4.916 0 00-8.384 4.482c-4.09-.205-7.73-2.17-10.193-5.172a4.92 4.92 0 00-.663 2.477c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827a4.913 4.913 0 01-2.228.084 4.924 4.924 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.164-.068a13.953 13.953 0 007.546 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.21-.005-.42-.014-.63a9.935 9.935 0 002.46-2.547z"></path></svg>
+                        <a href="mailto:srivathsaan11@gmail.com" class="hover:text-accent transition duration-300" aria-label="Email">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
                         </a>
                     </div>
                 </div>
             </div>
-        </section> -->
+        </section>
     </main>
 
     <!-- Modal for Detailed Description -->
     <div id="description-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-hidden="true">
         <div class="modal-content" tabindex="-1">
             <button class="modal-close-button" id="close-modal-btn" aria-label="Close description">&times;</button>
-            <h3 class="text-2xl font-bold text-gray-800 mb-4" id="modal-project-title"></h3>
-            <div id="modal-description-content" class="text-gray-700 leading-relaxed"></div>
+            <h3 class="text-2xl font-bold text-ink mb-4" id="modal-project-title"></h3>
+            <div id="modal-description-content" class="text-gray-600 leading-relaxed"></div>
         </div>
     </div>
 
+    <footer class="py-6 text-center text-sm text-gray-500 bg-surface border-t border-gray-200">
+        <p>&copy; <span id="current-year"></span> Srivathsaan Nakkeeran. Built with Tailwind CSS &amp; Three.js.</p>
+    </footer>
+
     <!-- Link to external JavaScript file -->
-    <script src="main.js"></script>
+    <script src="assets/js/main.js"></script>
 </body>
 </html>

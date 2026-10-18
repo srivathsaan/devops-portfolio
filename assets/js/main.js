@@ -4,6 +4,8 @@
   - mobile menu open/close with aria toggles, focus trap, escape to close, scroll lock
   - modal for detailed description with focus trap and escape to close
   - wire up "View Detailed Description" buttons
+  - contact form -> mailto handoff
+  - footer year
 */
 
 (function () {
@@ -135,16 +137,34 @@
 
   // Wire up "View Detailed Description" buttons
   document.querySelectorAll('.generate-desc-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-          const card = btn.closest('.p-6');
+      btn.addEventListener('click', () => {
+          const card = btn.closest('.project-card');
           if (!card) return;
-          const titleEl = card.querySelector('h3') || card.querySelector('[id^="project-title"]');
-          const descEl = card.querySelector('p') || card.querySelector('[id^="project-desc"]');
+          const titleEl = card.querySelector('h3');
+          const descEl = card.querySelector('.project-desc');
           const title = titleEl ? titleEl.textContent.trim() : 'Project';
           const desc = descEl ? descEl.outerHTML : '<p>No description available.</p>';
           openModal(title, desc);
       });
   });
+
+  // Contact form: hand the message off to the visitor's email client
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+      contactForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = contactForm.elements.name.value.trim();
+          const email = contactForm.elements.email.value.trim();
+          const message = contactForm.elements.message.value.trim();
+          const subject = encodeURIComponent(`Portfolio contact from ${name}`);
+          const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
+          window.location.href = `mailto:srivathsaan11@gmail.com?subject=${subject}&body=${body}`;
+      });
+  }
+
+  // Footer year
+  const yearEl = document.getElementById('current-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   // Ensure anchor links don't get hidden by header (for keyboard + programmatic navigation)
   document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(a => {
@@ -190,14 +210,14 @@
       });
 
       // Visible edges material (no diagonals)
-      const edgesMaterial = new THREE.LineBasicMaterial({ 
-          color: 0xffffff, 
-          transparent: true, 
-          opacity: 0.5 
+      const edgesMaterial = new THREE.LineBasicMaterial({
+          color: 0x4f46e5,
+          transparent: true,
+          opacity: 0.45
       });
 
       // Material for connections
-      const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0x4f46e5, transparent: true, opacity: 0.3 });
       const lineGeometry = new THREE.BufferGeometry();
       const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
       scene.add(lines);
