@@ -8,19 +8,29 @@ import { createCharacterController } from "@/lib/three/character-controller";
 import { buildWorld } from "@/lib/three/world";
 import { zones, type ZoneContent } from "@/lib/zones";
 
+// Bicycle ride functionality — disabled, kept commented out for easy re-enabling.
+// See matching commented-out blocks in lib/three/character-controller.ts and
+// components/portfolio-experience.tsx.
+// export type RideState = { riding: boolean; canRide: boolean };
+
 export type SceneCanvasHandle = {
   /** Touch-joystick input, world-space x/z in [-1, 1]. Keyboard input is handled internally. */
   setJoystick: (x: number, z: number) => void;
+  // /** Mounts the bicycle if close enough, or dismounts if currently riding. Mirrors the F key. */
+  // toggleRide: () => void;
 };
 
 type Props = {
   onZoneChange: (zone: ZoneContent | null) => void;
+  // /** Fires whenever riding state or bicycle-mount availability changes, so UI (e.g. the mobile ride button) can reflect it. */
+  // onRideStateChange?: (state: RideState) => void;
 };
 
 const CAMERA_OFFSET = new THREE.Vector3(-6.5, 5.2, 7.5);
 const LOOK_OFFSET = new THREE.Vector3(2.5, 1.1, 0);
 const SUN_OFFSET = new THREE.Vector3(-4, 8, 6);
 const CAMERA_LERP = 3.2;
+// const MOUNT_RANGE = 1.8; // bicycle ride: disabled — how close the character had to be to the bicycle to mount it
 
 const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
   { onZoneChange },
@@ -32,6 +42,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
 
   useImperativeHandle(ref, () => ({
     setJoystick: (x, z) => apiRef.current.setJoystick(x, z),
+    // toggleRide: () => apiRef.current.toggleRide(),
   }));
 
   useEffect(() => {
@@ -41,15 +52,35 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     let cancelled = false;
 
     const engine = createEngine(canvas);
-    const world = buildWorld();
+    // Bicycle ride: disabled. The bicycle itself (destructured here as `bicycle` when
+    // riding was enabled) stays in the world as a static decorative prop via `world`/
+    // `colliders` below; only the mount/follow/animation behavior is commented out.
+    const { group: world, colliders } = buildWorld();
     engine.rigRoot.add(world);
 
-    const character = createCharacterController();
+    const character = createCharacterController(colliders);
     engine.rigRoot.add(character.group);
 
     const keys = { up: false, down: false, left: false, right: false };
     let joyX = 0;
     let joyZ = 0;
+    // let riding = false; // bicycle ride: disabled
+    // let canRide = false; // true when close enough to the parked/dropped bicycle to mount
+
+    // function setRideState(nextRiding: boolean, nextCanRide: boolean) {
+    //   if (nextRiding === riding && nextCanRide === canRide) return;
+    //   riding = nextRiding;
+    //   canRide = nextCanRide;
+    //   onRideStateChange?.({ riding, canRide });
+    // }
+
+    // function toggleRide() {
+    //   if (riding) {
+    //     setRideState(false, false);
+    //   } else if (canRide) {
+    //     setRideState(true, false);
+    //   }
+    // }
 
     apiRef.current = { setJoystick: (x, z) => { joyX = x; joyZ = z; } };
 
@@ -61,6 +92,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") keys.down = true;
       if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
       if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
+      // if (e.key === "f" || e.key === "F") toggleRide(); // bicycle ride: disabled
     }
     function onKeyUp(e: KeyboardEvent) {
       if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") keys.up = false;
@@ -104,6 +136,22 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       }
 
       character.update(delta, moveX, moveZ);
+      // Bicycle ride: disabled. Re-enable by restoring:
+      // character.update(delta, moveX, moveZ, riding);
+      //
+      // if (riding) {
+      //   // Bicycle has no ride animation to attach to, so it's just driven to follow the
+      //   // character's position/facing each frame; dismounting simply stops moving it,
+      //   // dropping it wherever the character currently is.
+      //   bicycle.position.copy(character.group.position);
+      //   bicycle.rotation.y = character.group.rotation.y;
+      // } else {
+      //   const bikeDist = Math.hypot(
+      //     character.group.position.x - bicycle.position.x,
+      //     character.group.position.z - bicycle.position.z
+      //   );
+      //   setRideState(false, bikeDist <= MOUNT_RANGE);
+      // }
 
       cameraTarget.copy(character.group.position).add(CAMERA_OFFSET);
       engine.camera.position.lerp(cameraTarget, Math.min(1, CAMERA_LERP * delta));
