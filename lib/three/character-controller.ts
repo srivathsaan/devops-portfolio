@@ -12,11 +12,15 @@ const WALK_SPEED = 5.5; // world units / second
 const TURN_RATE = 9; // higher = snaps to facing direction faster
 const CHARACTER_RADIUS = 0.35; // footprint used to keep clear of colliders
 // const RIDE_SEAT_HEIGHT = 0.5; // lifts the character onto the bike seat while riding, instead of sitting buried in the frame at ground height
+const JUMP_HEIGHT = 1.2; // peak height of the jump arc
+const JUMP_DURATION = 0.5; // seconds — matches the "jump" clip's own length
 
 export type CharacterController = {
   group: THREE.Group;
   /** moveX/moveZ are world-space direction components, each in [-1, 1] (not necessarily normalized). `riding` is accepted but currently ignored — bicycle riding is disabled. */
   update: (delta: number, moveX: number, moveZ: number, riding?: boolean) => void;
+  /** Starts a jump arc if not already mid-jump. */
+  jump: () => void;
 };
 
 export function createCharacterController(colliders: Collider[] = []): CharacterController {
@@ -26,9 +30,12 @@ export function createCharacterController(colliders: Collider[] = []): Character
   let mixer: AnimationMixer | null = null;
   let idleAction: AnimationAction | null = null;
   let walkAction: AnimationAction | null = null;
+  let jumpAction: AnimationAction | null = null;
   // let driveAction: AnimationAction | null = null; // bicycle ride: disabled
   let currentAction: AnimationAction | null = null;
   // let characterMesh: THREE.Object3D | null = null; // bicycle ride: disabled (seat-height lift)
+  let jumping = false;
+  let jumpElapsed = 0;
 
   loadModelWithAnimations("/models/character/character.glb").then(({ scene, animations }) => {
     enableShadows(scene);
@@ -38,12 +45,18 @@ export function createCharacterController(colliders: Collider[] = []): Character
     mixer = new AnimationMixer(scene);
     const idleClip = animations.find((c) => c.name === "idle");
     const walkClip = animations.find((c) => c.name === "walk");
+    const jumpClip = animations.find((c) => c.name === "jump");
     // Seated, hands-forward pose baked into the character rig — used in place of the
     // walk cycle while riding the bicycle, so the character doesn't look like it's
     // walking through the bike. Bicycle ride: disabled.
     // const driveClip = animations.find((c) => c.name === "drive");
     if (idleClip) idleAction = mixer.clipAction(idleClip);
     if (walkClip) walkAction = mixer.clipAction(walkClip);
+    if (jumpClip) {
+      jumpAction = mixer.clipAction(jumpClip);
+      jumpAction.setLoop(THREE.LoopOnce, 1);
+      jumpAction.clampWhenFinished = true;
+    }
     // if (driveClip) driveAction = mixer.clipAction(driveClip);
     if (idleAction) {
       idleAction.play();
@@ -77,13 +90,32 @@ export function createCharacterController(colliders: Collider[] = []): Character
     return { x: rx, z: rz };
   }
 
+  function jump() {
+    if (jumping) return;
+    jumping = true;
+    jumpElapsed = 0;
+  }
+
   function update(delta: number, moveX: number, moveZ: number, riding = false) {
     mixer?.update(delta);
     void riding; // bicycle ride: disabled — see commented-out branches below
 
     const magnitude = Math.hypot(moveX, moveZ);
     const moving = magnitude > 0.01;
-    setAction(moving ? walkAction : idleAction);
+
+    if (jumping) {
+      jumpElapsed += delta;
+      const p = Math.min(1, jumpElapsed / JUMP_DURATION);
+      // Simple parabola, zeroed at both ends of the arc regardless of frame rate.
+      group.position.y = JUMP_HEIGHT * 4 * p * (1 - p);
+      setAction(jumpAction ?? (moving ? walkAction : idleAction));
+      if (p >= 1) {
+        jumping = false;
+        group.position.y = 0;
+      }
+    } else {
+      setAction(moving ? walkAction : idleAction);
+    }
     // Bicycle ride: disabled. Re-enable by restoring:
     // setAction(riding ? driveAction ?? (moving ? walkAction : idleAction) : moving ? walkAction : idleAction);
 
@@ -117,5 +149,5 @@ export function createCharacterController(colliders: Collider[] = []): Character
     }
   }
 
-  return { group, update };
+  return { group, update, jump };
 }

@@ -85,13 +85,18 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     apiRef.current = { setJoystick: (x, z) => { joyX = x; joyZ = z; } };
 
     function onKeyDown(e: KeyboardEvent) {
-      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d", "W", "A", "S", "D"].includes(e.key)) {
+      if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d", "W", "A", "S", "D", " "].includes(
+          e.key
+        )
+      ) {
         e.preventDefault();
       }
       if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") keys.up = true;
       if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") keys.down = true;
       if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
       if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
+      if (e.key === " ") character.jump();
       // if (e.key === "f" || e.key === "F") toggleRide(); // bicycle ride: disabled
     }
     function onKeyUp(e: KeyboardEvent) {
