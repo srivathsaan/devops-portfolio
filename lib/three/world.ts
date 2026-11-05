@@ -97,14 +97,45 @@ function campusSign(group: THREE.Group, x: number, z: number) {
   group.add(sign);
 }
 
-function building(group: THREE.Group, colliders: Collider[], x: number, z: number, scale: number, variant: string) {
-  colliders.push({ x, z, radius: 1.1 * scale });
-  cloneModel(`/models/city/building-skyscraper-${variant}.glb`).then((model) => {
-    enableShadows(model);
-    model.scale.setScalar(scale);
-    model.position.set(x, 0, z);
-    group.add(model);
-  });
+/**
+ * Modern glass-and-steel office block for the Bounteous tech-park campus — flat roof,
+ * blue-tinted curtain-wall glass with dark spandrel bands marking each floor, plus a
+ * couple of rooftop mechanical units. Stands in for the generic city skyscraper models,
+ * which read as dense downtown high-rises rather than a business-park campus.
+ */
+function techParkBuilding(
+  group: THREE.Group,
+  colliders: Collider[],
+  x: number,
+  z: number,
+  width: number,
+  height: number,
+  depth: number
+) {
+  const glassMat = new THREE.MeshStandardMaterial({ color: 0x6fa8c9, roughness: 0.2, metalness: 0.4 });
+  const mullionMat = new THREE.MeshStandardMaterial({ color: 0x2f333a, roughness: 0.6 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0xb7bec7, roughness: 0.75 });
+
+  roundedBox(group, width, height, depth, x, height / 2, z, glassMat, 0.04);
+  colliders.push({ x, z, radius: Math.max(width, depth) / 2 + 0.3 });
+
+  const FLOOR_HEIGHT = 0.5;
+  for (let fy = FLOOR_HEIGHT; fy < height; fy += FLOOR_HEIGHT) {
+    const band = new THREE.Mesh(new THREE.BoxGeometry(width + 0.04, 0.06, depth + 0.04), mullionMat);
+    band.position.set(x, fy, z);
+    group.add(band);
+  }
+
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(width * 1.05, 0.1, depth * 1.05), roofMat);
+  roof.position.set(x, height + 0.05, z);
+  roof.castShadow = true;
+  group.add(roof);
+
+  for (const dx of [-width * 0.25, width * 0.2]) {
+    const unit = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.28, 0.4), roofMat);
+    unit.position.set(x + dx, height + 0.24, z);
+    group.add(unit);
+  }
 }
 
 /** Builds the whole walkable world once: ground, zone scenery, and the parked vehicles. */
@@ -215,15 +246,32 @@ function buildBounteousZone(world: THREE.Group, cx: number, colliders: Collider[
   groundSegment(world, cx, 0x4a4f58);
   stripes(world, cx - 9, cx + 9, 0xf4d35e, [1.2, 0.18]);
 
-  const variants = ["a", "b", "c", "d", "e"];
-  const spots: Array<[number, number, number]> = [
-    [-8.5, 1.1, -7],
-    [-4, 0.95, -6],
-    [1, 1.35, -7.2],
-    [6, 1.05, -6.3],
-    [10.5, 0.9, -7.5],
-  ];
-  spots.forEach(([dx, scale, z], i) => building(world, colliders, cx + dx, z, scale, variants[i]));
+  // Three glass office blocks of varying scale, like a real tech park's campus — a main
+  // building plus two smaller satellite blocks — rather than a row of identical towers.
+  const mainX = cx - 5;
+  const mainZ = -7.5;
+  techParkBuilding(world, colliders, mainX, mainZ, 6, 4.2, 3);
+  techParkBuilding(world, colliders, cx + 2, -6.5, 4.5, 3, 2.6);
+  techParkBuilding(world, colliders, cx + 8, -7, 3.5, 2.4, 2.4);
+
+  // Flat entrance canopy on the main block, facing the walking path.
+  const canopyMat = new THREE.MeshStandardMaterial({ color: 0xe9edf0, roughness: 0.5, metalness: 0.2 });
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.08, 1.1), canopyMat);
+  canopy.position.set(mainX, 1.1, mainZ + 1.5 + 0.55);
+  canopy.castShadow = true;
+  world.add(canopy);
+  for (const dx of [-1.3, 1.3]) {
+    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.1, 8), canopyMat);
+    pillar.position.set(mainX + dx, 0.55, mainZ + 1.5 + 1.0);
+    pillar.castShadow = true;
+    world.add(pillar);
+  }
+
+  // Landscaping along the path, so the lot reads as a campus rather than a bare parking lot.
+  tree(world, colliders, cx - 8.5, -1.8, 0.9, 0.4, "tree");
+  tree(world, colliders, cx + 9, -1.6, 0.95, -0.5, "tree-high");
+  plant(world, cx - 2, 1.6, 1.3);
+  plant(world, cx + 4, 1.5, 1.2);
 
   colliders.push({ x: cx - 0.5, z: 2.8, radius: 0.6 });
   cloneModel("/models/motorcycle.glb").then((bike) => {
