@@ -71,14 +71,27 @@ export function createCharacterController(colliders: Collider[] = []): Character
     currentAction = next;
   }
 
-  /** Pushes a candidate position back out of any collider it penetrates. */
+  /** Pushes a candidate position back out of any collider (circle or box) it penetrates. */
   function resolveCollisions(x: number, z: number): { x: number; z: number } {
     let rx = x;
     let rz = z;
     for (const c of colliders) {
-      const dx = rx - c.x;
-      const dz = rz - c.z;
-      const minDist = c.radius + CHARACTER_RADIUS;
+      let dx: number;
+      let dz: number;
+      let minDist: number;
+      if ("radius" in c) {
+        dx = rx - c.x;
+        dz = rz - c.z;
+        minDist = c.radius + CHARACTER_RADIUS;
+      } else {
+        // Closest point on the axis-aligned box to the character, so a box collider
+        // hugs the building's actual walls instead of an oversized bounding circle.
+        const closestX = THREE.MathUtils.clamp(rx, c.x - c.width / 2, c.x + c.width / 2);
+        const closestZ = THREE.MathUtils.clamp(rz, c.z - c.depth / 2, c.z + c.depth / 2);
+        dx = rx - closestX;
+        dz = rz - closestZ;
+        minDist = CHARACTER_RADIUS;
+      }
       const distSq = dx * dx + dz * dz;
       if (distSq < minDist * minDist) {
         const dist = Math.sqrt(distSq) || 0.0001;

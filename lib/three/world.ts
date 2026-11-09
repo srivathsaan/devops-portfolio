@@ -2,8 +2,23 @@ import * as THREE from "three";
 import { cloneModel, enableShadows } from "./load-gltf";
 import { roundedBox } from "./helpers";
 
-/** A circular ground footprint the character can't walk through. */
-export type Collider = { x: number; z: number; radius: number };
+/**
+ * A ground footprint the character can't walk through — a circle (props: trees, rocks,
+ * cylindrical towers) or an axis-aligned rectangle (box-shaped buildings, fitted to their
+ * actual walls rather than an oversized bounding circle, so the character can walk right
+ * up to a door instead of being blocked well short of it).
+ */
+export type Collider =
+  | { x: number; z: number; radius: number }
+  | { x: number; z: number; width: number; depth: number };
+
+/**
+ * A building entrance, tagged with the zone whose content it opens into. Most buildings
+ * have a literal door, so `radius` is left at the default (tight) trigger distance; a
+ * building with no door (e.g. a monumental cluster you can approach from any side) can
+ * set a wider `radius` centered on the structure itself instead.
+ */
+export type Entrance = { x: number; z: number; zoneId: string; radius?: number };
 
 const ZONE_WIDTH = 20;
 const GROUND_DEPTH = 22; // z -11..11
@@ -106,6 +121,8 @@ function campusSign(group: THREE.Group, x: number, z: number) {
 function techParkBuilding(
   group: THREE.Group,
   colliders: Collider[],
+  entrances: Entrance[],
+  zoneId: string,
   x: number,
   z: number,
   width: number,
@@ -115,9 +132,19 @@ function techParkBuilding(
   const glassMat = new THREE.MeshStandardMaterial({ color: 0x6fa8c9, roughness: 0.2, metalness: 0.4 });
   const mullionMat = new THREE.MeshStandardMaterial({ color: 0x2f333a, roughness: 0.6 });
   const roofMat = new THREE.MeshStandardMaterial({ color: 0xb7bec7, roughness: 0.75 });
+  const doorMat = new THREE.MeshStandardMaterial({ color: 0x24313b, roughness: 0.45, metalness: 0.2 });
 
   roundedBox(group, width, height, depth, x, height / 2, z, glassMat, 0.04);
-  colliders.push({ x, z, radius: Math.max(width, depth) / 2 + 0.3 });
+  colliders.push({ x, z, width, depth });
+
+  // Entrance door, flush on the front face (the +z side, facing the walking path).
+  const doorWidth = width * 0.15;
+  const doorHeight = height * 0.4;
+  const doorZ = z + depth / 2 + 0.03;
+  const door = new THREE.Mesh(new THREE.BoxGeometry(doorWidth, doorHeight, 0.06), doorMat);
+  door.position.set(x, doorHeight / 2, doorZ);
+  group.add(door);
+  entrances.push({ x, z: doorZ, zoneId });
 
   const FLOOR_HEIGHT = 0.5;
   for (let fy = FLOOR_HEIGHT; fy < height; fy += FLOOR_HEIGHT) {
@@ -139,17 +166,23 @@ function techParkBuilding(
 }
 
 /** Builds the whole walkable world once: ground, zone scenery, and the parked vehicles. */
-export function buildWorld(): { group: THREE.Group; colliders: Collider[]; bicycle: THREE.Group } {
+export function buildWorld(): {
+  group: THREE.Group;
+  colliders: Collider[];
+  bicycle: THREE.Group;
+  entrances: Entrance[];
+} {
   const world = new THREE.Group();
   const colliders: Collider[] = [];
+  const entrances: Entrance[] = [];
 
   buildHomeZone(world, 0, colliders);
-  const bicycle = buildBtechZone(world, 20, colliders);
-  buildBounteousZone(world, 40, colliders);
-  buildNtuZone(world, 60, colliders);
-  buildContactZone(world, 80, colliders);
+  const bicycle = buildBtechZone(world, 20, colliders, entrances);
+  buildBounteousZone(world, 40, colliders, entrances);
+  buildNtuZone(world, 60, colliders, entrances);
+  buildContactZone(world, 80, colliders, entrances);
 
-  return { group: world, colliders, bicycle };
+  return { group: world, colliders, bicycle, entrances };
 }
 
 function buildHomeZone(world: THREE.Group, cx: number, colliders: Collider[]) {
@@ -165,15 +198,31 @@ function buildHomeZone(world: THREE.Group, cx: number, colliders: Collider[]) {
  * central building topped with a red hip roof, flanked by two symmetric orange-trimmed
  * wings, after the real campus's main building.
  */
-function amritaBuilding(group: THREE.Group, colliders: Collider[], bx: number, bz: number) {
+function amritaBuilding(
+  group: THREE.Group,
+  colliders: Collider[],
+  entrances: Entrance[],
+  bx: number,
+  bz: number
+) {
   const wallMat = new THREE.MeshStandardMaterial({ color: 0xf3ead9, roughness: 0.85 });
   const trimMat = new THREE.MeshStandardMaterial({ color: 0xd98a3d, roughness: 0.7 });
   const roofMat = new THREE.MeshStandardMaterial({ color: 0xaa4a2a, roughness: 0.8 });
-  const columnMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 });
+  const doorMat = new THREE.MeshStandardMaterial({ color: 0x5b3a24, roughness: 0.7 });
 
   // Central entrance block, topped with a hip roof (a 4-sided cone stretched over its footprint).
+  // Collider matches the actual 5x2 footprint (not an oversized bounding circle), so the
+  // character can walk right up to the door instead of being blocked well short of it.
   roundedBox(group, 5, 2.6, 2, bx, 1.3, bz, wallMat, 0.1);
-  colliders.push({ x: bx, z: bz, radius: 2.6 });
+  colliders.push({ x: bx, z: bz, width: 5, depth: 2 });
+
+  // Entrance door, flush on the front wall. Kept short enough to clear the campus
+  // sign mounted above it.
+  const doorZ = bz + 1.03;
+  const door = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.3, 0.06), doorMat);
+  door.position.set(bx, 0.65, doorZ);
+  group.add(door);
+  entrances.push({ x: bx, z: doorZ, zoneId: "btech" });
 
   const roof = new THREE.Mesh(new THREE.ConeGeometry(1, 1.1, 4), roofMat);
   roof.rotation.y = Math.PI / 4;
@@ -182,18 +231,11 @@ function amritaBuilding(group: THREE.Group, colliders: Collider[], bx: number, b
   roof.castShadow = true;
   group.add(roof);
 
-  for (const dx of [-0.9, 0.9]) {
-    const column = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 1.8, 8), columnMat);
-    column.position.set(bx + dx, 0.9, bz + 1.05);
-    column.castShadow = true;
-    group.add(column);
-  }
-
   // Symmetric wings, overlapping the central block's edges so they read as one structure.
   for (const side of [-1, 1]) {
     const wx = bx + side * 4.0;
     roundedBox(group, 3.6, 2.2, 2, wx, 1.1, bz, wallMat, 0.08);
-    colliders.push({ x: wx, z: bz, radius: 2.1 });
+    colliders.push({ x: wx, z: bz, width: 3.6, depth: 2 });
 
     for (const by of [0.55, 1.35]) {
       const band = new THREE.Mesh(new THREE.BoxGeometry(3.7, 0.12, 2.05), trimMat);
@@ -203,7 +245,12 @@ function amritaBuilding(group: THREE.Group, colliders: Collider[], bx: number, b
   }
 }
 
-function buildBtechZone(world: THREE.Group, cx: number, colliders: Collider[]): THREE.Group {
+function buildBtechZone(
+  world: THREE.Group,
+  cx: number,
+  colliders: Collider[],
+  entrances: Entrance[]
+): THREE.Group {
   groundSegment(world, cx, 0x8fd17a);
 
   const pathMat = new THREE.MeshStandardMaterial({ color: 0xd8cdb0, roughness: 0.95 });
@@ -213,7 +260,7 @@ function buildBtechZone(world: THREE.Group, cx: number, colliders: Collider[]): 
   path.receiveShadow = true;
   world.add(path);
 
-  amritaBuilding(world, colliders, cx + 2, -5.5);
+  amritaBuilding(world, colliders, entrances, cx + 2, -5.5);
   campusSign(world, cx + 2, -4.47);
 
   tree(world, colliders, cx - 7, -2.6, 1.1, 0.3, "tree");
@@ -242,17 +289,18 @@ function buildBtechZone(world: THREE.Group, cx: number, colliders: Collider[]): 
   return bicycle;
 }
 
-function buildBounteousZone(world: THREE.Group, cx: number, colliders: Collider[]) {
+function buildBounteousZone(world: THREE.Group, cx: number, colliders: Collider[], entrances: Entrance[]) {
   groundSegment(world, cx, 0x4a4f58);
   stripes(world, cx - 9, cx + 9, 0xf4d35e, [1.2, 0.18]);
 
   // Three glass office blocks of varying scale, like a real tech park's campus — a main
   // building plus two smaller satellite blocks — rather than a row of identical towers.
+  // All three open into the same "bounteous" zone content: one campus, one employer.
   const mainX = cx - 5;
   const mainZ = -7.5;
-  techParkBuilding(world, colliders, mainX, mainZ, 6, 4.2, 3);
-  techParkBuilding(world, colliders, cx + 2, -6.5, 4.5, 3, 2.6);
-  techParkBuilding(world, colliders, cx + 8, -7, 3.5, 2.4, 2.4);
+  techParkBuilding(world, colliders, entrances, "bounteous", mainX, mainZ, 6, 4.2, 3);
+  techParkBuilding(world, colliders, entrances, "bounteous", cx + 2, -6.5, 4.5, 3, 2.6);
+  techParkBuilding(world, colliders, entrances, "bounteous", cx + 8, -7, 3.5, 2.4, 2.4);
 
   // Flat entrance canopy on the main block, facing the walking path.
   const canopyMat = new THREE.MeshStandardMaterial({ color: 0xe9edf0, roughness: 0.5, metalness: 0.2 });
@@ -261,10 +309,13 @@ function buildBounteousZone(world: THREE.Group, cx: number, colliders: Collider[
   canopy.castShadow = true;
   world.add(canopy);
   for (const dx of [-1.3, 1.3]) {
+    const pillarX = mainX + dx;
+    const pillarZ = mainZ + 1.5 + 1.0;
     const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.1, 8), canopyMat);
-    pillar.position.set(mainX + dx, 0.55, mainZ + 1.5 + 1.0);
+    pillar.position.set(pillarX, 0.55, pillarZ);
     pillar.castShadow = true;
     world.add(pillar);
+    colliders.push({ x: pillarX, z: pillarZ, radius: 0.12 });
   }
 
   // Landscaping along the path, so the lot reads as a campus rather than a bare parking lot.
@@ -287,10 +338,19 @@ function buildBounteousZone(world: THREE.Group, cx: number, colliders: Collider[
  * NTU's "The Hive" (UOB Innovation Hub) — a cluster of ribbed cylindrical towers of varied
  * height on a low podium, with rooftop greenery, after the real building's bunched-silo look.
  */
-function theHive(group: THREE.Group, colliders: Collider[], x: number, z: number) {
+function theHive(group: THREE.Group, colliders: Collider[], entrances: Entrance[], x: number, z: number) {
   const podiumMat = new THREE.MeshStandardMaterial({ color: 0x8a8378, roughness: 0.85 });
   roundedBox(group, 6.4, 0.6, 4.6, x, 0.3, z - 0.5, podiumMat, 0.08);
+  // The podium itself is 0.6 units tall with no step-up logic in the collision system, so
+  // without a collider the character walks onto it and renders as if buried up to the neck.
+  // Blocking the whole footprint also closes the small gaps the individual tower colliders
+  // used to leave short of the podium edge.
+  colliders.push({ x, z: z - 0.5, width: 6.4, depth: 4.6 });
   const BASE_Y = 0.6; // towers rise from the podium top
+
+  // No literal door — it's a monumental cluster of towers, not a single-entrance
+  // building, so it can be entered by approaching from any side.
+  entrances.push({ x, z, zoneId: "ntu", radius: 4.3 });
 
   const bodyMat = new THREE.MeshStandardMaterial({ color: 0xcdb08a, roughness: 0.85 });
   const bandMat = new THREE.MeshStandardMaterial({ color: 0x4a3728, roughness: 0.75 });
@@ -382,11 +442,11 @@ function theHive(group: THREE.Group, colliders: Collider[], x: number, z: number
   });
 }
 
-function buildNtuZone(world: THREE.Group, cx: number, colliders: Collider[]) {
+function buildNtuZone(world: THREE.Group, cx: number, colliders: Collider[], entrances: Entrance[]) {
   groundSegment(world, cx, 0x7a98a8);
   stripes(world, cx - 9, cx + 9, 0xffffff, [1.4, 0.2]);
 
-  theHive(world, colliders, cx - 3, -6);
+  theHive(world, colliders, entrances, cx - 3, -6);
 
   cloneModel("/models/airplane.glb").then((plane) => {
     enableShadows(plane);
@@ -417,9 +477,65 @@ function buildNtuZone(world: THREE.Group, cx: number, colliders: Collider[]) {
   }
 }
 
-function buildContactZone(world: THREE.Group, cx: number, colliders: Collider[]) {
+/**
+ * A small cozy house, closing out the journey on a literal "home" — warm walls, a pitched
+ * roof, a lit doorway and windows, a chimney, and a couple of bushes by the door.
+ */
+function homeBuilding(group: THREE.Group, colliders: Collider[], entrances: Entrance[], x: number, z: number) {
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0xf3e3c8, roughness: 0.85 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x9c4a3c, roughness: 0.75 });
+  const doorMat = new THREE.MeshStandardMaterial({ color: 0x5b3a24, roughness: 0.7 });
+  const windowMat = new THREE.MeshStandardMaterial({
+    color: 0xffd37a,
+    roughness: 0.4,
+    emissive: 0xffb347,
+    emissiveIntensity: 0.5,
+  });
+  const chimneyMat = new THREE.MeshStandardMaterial({ color: 0x8a7968, roughness: 0.9 });
+
+  const WIDTH = 2.6;
+  const HEIGHT = 1.5;
+  const DEPTH = 2.2;
+  const frontZ = z + DEPTH / 2;
+
+  roundedBox(group, WIDTH, HEIGHT, DEPTH, x, HEIGHT / 2, z, wallMat, 0.05);
+  colliders.push({ x, z, width: WIDTH, depth: DEPTH });
+
+  // Hip roof (a 4-sided cone stretched over the footprint), same technique as the
+  // B.Tech building's roof.
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(1, 0.9, 4), roofMat);
+  roof.rotation.y = Math.PI / 4;
+  roof.scale.set(WIDTH * 0.75, 1, DEPTH * 0.75);
+  roof.position.set(x, HEIGHT + 0.45, z);
+  roof.castShadow = true;
+  group.add(roof);
+
+  const chimney = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.55, 0.26), chimneyMat);
+  chimney.position.set(x + 0.6, HEIGHT + 0.6, z - 0.25);
+  chimney.castShadow = true;
+  group.add(chimney);
+
+  const doorZ = frontZ + 0.03;
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.95, 0.06), doorMat);
+  door.position.set(x, 0.48, doorZ);
+  group.add(door);
+  entrances.push({ x, z: doorZ, zoneId: "contact" });
+
+  for (const dx of [-0.85, 0.85]) {
+    const windowPane = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.06), windowMat);
+    windowPane.position.set(x + dx, 0.85, frontZ + 0.03);
+    group.add(windowPane);
+  }
+
+  plant(group, x - 1.2, frontZ + 0.3, 0.9);
+  plant(group, x + 1.2, frontZ + 0.3, 0.9);
+}
+
+function buildContactZone(world: THREE.Group, cx: number, colliders: Collider[], entrances: Entrance[]) {
   groundSegment(world, cx, 0x6b7280);
   stripes(world, cx - 9, cx + 9, 0xffffff, [1.4, 0.2]);
+
+  homeBuilding(world, colliders, entrances, cx - 6, -6);
 
   const towerMat = new THREE.MeshStandardMaterial({ color: 0xd7dde3, roughness: 0.6 });
   roundedBox(world, 1.1, 3.2, 1.1, cx + 8, 1.6, -5, towerMat, 0.06);

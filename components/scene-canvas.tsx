@@ -16,12 +16,20 @@ import { zones, type ZoneContent } from "@/lib/zones";
 export type SceneCanvasHandle = {
   /** Touch-joystick input, world-space x/z in [-1, 1]. Keyboard input is handled internally. */
   setJoystick: (x: number, z: number) => void;
+  /** Enters the nearby building's interior view, if the character is close enough to a door. Mirrors the E key. */
+  enterNearbyBuilding: () => void;
   // /** Mounts the bicycle if close enough, or dismounts if currently riding. Mirrors the F key. */
   // toggleRide: () => void;
 };
 
 type Props = {
   onZoneChange: (zone: ZoneContent | null) => void;
+  /** Fires whenever the character moves into/out of range of a building's door, so UI (e.g. the mobile enter button and hint) can reflect it. */
+  onNearDoorChange?: (zoneId: string | null) => void;
+  /** Called with the door's zoneId when the character enters a building. */
+  onEnterBuilding?: (zoneId: string) => void;
+  /** While true, movement/jump input is ignored (used while a building's interior view is open). */
+  paused?: boolean;
   // /** Fires whenever riding state or bicycle-mount availability changes, so UI (e.g. the mobile ride button) can reflect it. */
   // onRideStateChange?: (state: RideState) => void;
 };
@@ -30,20 +38,27 @@ const CAMERA_OFFSET = new THREE.Vector3(-6.5, 5.2, 7.5);
 const LOOK_OFFSET = new THREE.Vector3(2.5, 1.1, 0);
 const SUN_OFFSET = new THREE.Vector3(-4, 8, 6);
 const CAMERA_LERP = 3.2;
+const ENTER_RANGE = 1.3; // default how close the character must be to an entrance to enter (an entrance can override this with its own `radius`)
 // const MOUNT_RANGE = 1.8; // bicycle ride: disabled — how close the character had to be to the bicycle to mount it
 
 const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
-  { onZoneChange },
+  { onZoneChange, onNearDoorChange, onEnterBuilding, paused = false },
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const apiRef = useRef<SceneCanvasHandle>({ setJoystick: () => {} });
+  const apiRef = useRef<SceneCanvasHandle>({ setJoystick: () => {}, enterNearbyBuilding: () => {} });
+  const pausedRef = useRef(paused);
 
   useImperativeHandle(ref, () => ({
     setJoystick: (x, z) => apiRef.current.setJoystick(x, z),
+    enterNearbyBuilding: () => apiRef.current.enterNearbyBuilding(),
     // toggleRide: () => apiRef.current.toggleRide(),
   }));
+
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -55,7 +70,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     // Bicycle ride: disabled. The bicycle itself (destructured here as `bicycle` when
     // riding was enabled) stays in the world as a static decorative prop via `world`/
     // `colliders` below; only the mount/follow/animation behavior is commented out.
-    const { group: world, colliders } = buildWorld();
+    const { group: world, colliders, entrances } = buildWorld();
     engine.rigRoot.add(world);
 
     const character = createCharacterController(colliders);
@@ -64,8 +79,14 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     const keys = { up: false, down: false, left: false, right: false };
     let joyX = 0;
     let joyZ = 0;
+    let nearDoorZoneId: string | null = null;
     // let riding = false; // bicycle ride: disabled
     // let canRide = false; // true when close enough to the parked/dropped bicycle to mount
+
+    function enterNearbyBuilding() {
+      if (pausedRef.current || !nearDoorZoneId) return;
+      onEnterBuilding?.(nearDoorZoneId);
+    }
 
     // function setRideState(nextRiding: boolean, nextCanRide: boolean) {
     //   if (nextRiding === riding && nextCanRide === canRide) return;
@@ -82,7 +103,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     //   }
     // }
 
-    apiRef.current = { setJoystick: (x, z) => { joyX = x; joyZ = z; } };
+    apiRef.current = { setJoystick: (x, z) => { joyX = x; joyZ = z; }, enterNearbyBuilding };
 
     function onKeyDown(e: KeyboardEvent) {
       if (
@@ -92,11 +113,13 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       ) {
         e.preventDefault();
       }
+      if (pausedRef.current) return;
       if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") keys.up = true;
       if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") keys.down = true;
       if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
       if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
       if (e.key === " ") character.jump();
+      if (e.key === "e" || e.key === "E") enterNearbyBuilding();
       // if (e.key === "f" || e.key === "F") toggleRide(); // bicycle ride: disabled
     }
     function onKeyUp(e: KeyboardEvent) {
@@ -132,12 +155,17 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
 
       // World-space input: Right/D = +x (deeper into the timeline), Left/A = -x,
       // Up/W = -z, Down/S = +z. Keyboard and joystick combine additively, then clamp.
-      let moveX = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joyX;
-      let moveZ = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joyZ;
-      const inputMag = Math.hypot(moveX, moveZ);
-      if (inputMag > 1) {
-        moveX /= inputMag;
-        moveZ /= inputMag;
+      // Ignored entirely while paused (a building's interior view is open).
+      let moveX = 0;
+      let moveZ = 0;
+      if (!pausedRef.current) {
+        moveX = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joyX;
+        moveZ = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joyZ;
+        const inputMag = Math.hypot(moveX, moveZ);
+        if (inputMag > 1) {
+          moveX /= inputMag;
+          moveZ /= inputMag;
+        }
       }
 
       character.update(delta, moveX, moveZ);
@@ -183,6 +211,23 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
         onZoneChange(nearest);
       }
 
+      let nearestDoor: string | null = null;
+      let nearestDoorDist = Infinity;
+      for (const entrance of entrances) {
+        const dist = Math.hypot(
+          character.group.position.x - entrance.x,
+          character.group.position.z - entrance.z
+        );
+        if (dist <= (entrance.radius ?? ENTER_RANGE) && dist < nearestDoorDist) {
+          nearestDoor = entrance.zoneId;
+          nearestDoorDist = dist;
+        }
+      }
+      if (nearestDoor !== nearDoorZoneId) {
+        nearDoorZoneId = nearestDoor;
+        onNearDoorChange?.(nearDoorZoneId);
+      }
+
       engine.renderer.render(engine.scene, engine.camera);
     }
     requestAnimationFrame(tick);
@@ -196,7 +241,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       disposeGroup(character.group);
       engine.dispose();
     };
-  }, [onZoneChange]);
+  }, [onZoneChange, onNearDoorChange, onEnterBuilding]);
 
   return (
     <div ref={containerRef} className="absolute inset-0">
