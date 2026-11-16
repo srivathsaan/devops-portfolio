@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated/local-tooling output that isn't source:
+    ".vercel/**",
+    ".claude/**",
   ]),
 ]);
 

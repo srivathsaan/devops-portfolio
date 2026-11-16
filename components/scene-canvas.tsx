@@ -6,6 +6,7 @@ import { createEngine } from "@/lib/three/engine";
 import { disposeGroup } from "@/lib/three/helpers";
 import { createCharacterController } from "@/lib/three/character-controller";
 import { buildWorld } from "@/lib/three/world";
+import { createOcclusionFader } from "@/lib/three/occlusion-fade";
 import { zones, type ZoneContent } from "@/lib/zones";
 
 // Bicycle ride functionality — disabled, kept commented out for easy re-enabling.
@@ -38,6 +39,7 @@ const CAMERA_OFFSET = new THREE.Vector3(-6.5, 5.2, 7.5);
 const LOOK_OFFSET = new THREE.Vector3(2.5, 1.1, 0);
 const SUN_OFFSET = new THREE.Vector3(-4, 8, 6);
 const CAMERA_LERP = 3.2;
+const CHARACTER_CHEST_HEIGHT = 0.5; // the point on the character that must stay visible to the camera
 const ENTER_RANGE = 1.3; // default how close the character must be to an entrance to enter (an entrance can override this with its own `radius`)
 // const MOUNT_RANGE = 1.8; // bicycle ride: disabled — how close the character had to be to the bicycle to mount it
 
@@ -75,6 +77,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
 
     const character = createCharacterController(colliders);
     engine.rigRoot.add(character.group);
+    const occlusionFader = createOcclusionFader(world, engine.renderer);
 
     const keys = { up: false, down: false, left: false, right: false };
     let joyX = 0;
@@ -145,6 +148,8 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     let activeZoneId: string | null = null;
     const cameraTarget = new THREE.Vector3();
     const lookTarget = new THREE.Vector3();
+    const groundPosition = new THREE.Vector3();
+    const visibleTarget = new THREE.Vector3();
 
     function tick() {
       if (cancelled) return;
@@ -186,10 +191,17 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       //   setRideState(false, bikeDist <= MOUNT_RANGE);
       // }
 
-      cameraTarget.copy(character.group.position).add(CAMERA_OFFSET);
+      // The camera tracks the character's ground position, not its height, so a jump
+      // lifts the character within the frame instead of bobbing the whole view.
+      groundPosition.copy(character.group.position).setY(0);
+      cameraTarget.copy(groundPosition).add(CAMERA_OFFSET);
       engine.camera.position.lerp(cameraTarget, Math.min(1, CAMERA_LERP * delta));
-      lookTarget.copy(character.group.position).add(LOOK_OFFSET);
+      lookTarget.copy(groundPosition).add(LOOK_OFFSET);
       engine.camera.lookAt(lookTarget);
+
+      visibleTarget.copy(character.group.position);
+      visibleTarget.y += CHARACTER_CHEST_HEIGHT;
+      occlusionFader.update(delta, engine.camera.position, visibleTarget);
 
       engine.sky.position.copy(engine.camera.position);
       engine.sun.position.copy(character.group.position).add(SUN_OFFSET);
@@ -237,6 +249,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
       resizeObserver.disconnect();
+      occlusionFader.dispose();
       disposeGroup(world);
       disposeGroup(character.group);
       engine.dispose();
