@@ -75,9 +75,10 @@ export const zones: ZoneContent[] = [
     eyebrow: "Get in touch",
     title: "Let's talk fintech, ML, and infra.",
     bullets: [
-      "Projects: credit card fraud classifier (flags 72.6% of fraud at 88.5% precision) and an Android ransomware detector (deep learning, 98.3% binary accuracy)",
+      "PolicyPulse: an insurance policy decision-support platform for Singapore and India, with an 11-rule decision engine spanning 51 licensed insurers and 8 products",
+      "Bank Failure Early-Warning Model: ranks US banks by FDIC failure risk; Gradient Boosting reached 565× no-skill PR-AUC and flagged all 7 capital-weak 2020–2026 failures a median 3 quarters early",
       "Certifications: Bloomberg Market Concepts, Bloomberg Finance Fundamentals, Google Cybersecurity Professional, Cloudflare ACE",
-      "Also: Bloomberg Global Trading Challenge 2026, TEDxNTU volunteer (Logistics & Ops)",
+      "Also: GFTN ASEAN Financial Health Challenge (Finalist), Bloomberg Global Trading Challenge 2026, freelance web development (Singapore), TEDxNTU volunteer (Logistics & Ops)",
     ],
     links: {
       email: "srivathsaan11@gmail.com",
