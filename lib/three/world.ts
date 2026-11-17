@@ -22,6 +22,7 @@ export type Entrance = { x: number; z: number; zoneId: string; radius?: number }
 
 const ZONE_WIDTH = 20;
 const GROUND_DEPTH = 22; // z -11..11
+const MEADOW_COLOR = 0x9fd6a0;
 
 function groundSegment(
   group: THREE.Group,
@@ -112,6 +113,112 @@ function campusSign(group: THREE.Group, x: number, z: number) {
   group.add(sign);
 }
 
+/** A wooden post carrying a painted board with one short line of text, facing the path. */
+function signpost(
+  parent: THREE.Group,
+  colliders: Collider[],
+  x: number,
+  z: number,
+  text: string,
+  boardColor: number,
+  textColor: string
+) {
+  const group = new THREE.Group();
+  parent.add(group);
+  const BOARD_WIDTH = 1.5;
+  const BOARD_HEIGHT = 0.5;
+  const BOARD_Y = 1.5;
+
+  const post = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.06, 0.07, 1.6, 8),
+    new THREE.MeshStandardMaterial({ color: 0x6b4a33, roughness: 0.8 })
+  );
+  post.position.set(x, 0.8, z);
+  post.castShadow = true;
+  group.add(post);
+  roundedBox(
+    group,
+    BOARD_WIDTH,
+    BOARD_HEIGHT,
+    0.06,
+    x,
+    BOARD_Y,
+    z + 0.03,
+    new THREE.MeshStandardMaterial({ color: boardColor, roughness: 0.5 }),
+    0.04
+  );
+
+  // The lettering is drawn to a canvas and laid over the board's front face.
+  const canvas = document.createElement("canvas");
+  canvas.width = 600;
+  canvas.height = 200;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.fillStyle = textColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    let fontSize = 110;
+    do {
+      ctx.font = `700 ${fontSize}px system-ui, -apple-system, "Segoe UI", sans-serif`;
+      fontSize -= 4;
+    } while (ctx.measureText(text).width > canvas.width * 0.88 && fontSize > 20);
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 4);
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  const label = new THREE.Mesh(
+    new THREE.PlaneGeometry(BOARD_WIDTH, BOARD_HEIGHT),
+    new THREE.MeshStandardMaterial({ map: texture, transparent: true, roughness: 0.6 })
+  );
+  label.position.set(x, BOARD_Y, z + 0.065);
+  group.add(label);
+
+  colliders.push({ x, z, radius: 0.15 });
+}
+
+/** A slim radio mast with a red beacon — the "get in touch" landmark of the contact zone. */
+function radioMast(parent: THREE.Group, colliders: Collider[], x: number, z: number) {
+  const group = new THREE.Group();
+  parent.add(group);
+  const steelMat = new THREE.MeshStandardMaterial({ color: 0xc9d1d9, roughness: 0.5, metalness: 0.5 });
+  const HEIGHT = 4.4;
+
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.42, 0.22, 8), steelMat);
+  base.position.set(x, 0.11, z);
+  base.castShadow = true;
+  group.add(base);
+
+  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.13, HEIGHT, 6), steelMat);
+  mast.position.set(x, HEIGHT / 2, z);
+  mast.castShadow = true;
+  group.add(mast);
+
+  // Antenna crossbars, narrowing toward the top.
+  [2.6, 3.2, 3.8].forEach((y, i) => {
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(1.0 - i * 0.25, 0.05, 0.05), steelMat);
+    bar.position.set(x, y, z);
+    bar.castShadow = true;
+    group.add(bar);
+  });
+
+  // A dish facing the path.
+  const dish = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.2, 0.08, 14), steelMat);
+  dish.rotation.x = Math.PI / 2;
+  dish.position.set(x, 2.1, z + 0.16);
+  dish.castShadow = true;
+  group.add(dish);
+
+  const beacon = new THREE.Mesh(
+    new THREE.SphereGeometry(0.09, 10, 8),
+    new THREE.MeshStandardMaterial({ color: 0xff4d3d, emissive: 0xff2a1a, emissiveIntensity: 1.2 })
+  );
+  beacon.position.set(x, HEIGHT + 0.07, z);
+  group.add(beacon);
+
+  colliders.push({ x, z, radius: 0.42 });
+}
+
 /**
  * Modern glass-and-steel office block for the Bounteous tech-park campus — flat roof,
  * blue-tinted curtain-wall glass with dark spandrel bands marking each floor, plus a
@@ -180,6 +287,17 @@ export function buildWorld(): {
   const colliders: Collider[] = [];
   const entrances: Entrance[] = [];
 
+  // Open meadow under and far beyond the zone slabs, so the world has a horizon (fading
+  // into the fog) instead of ending at the edge of the last zone.
+  const meadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(700, 700),
+    new THREE.MeshStandardMaterial({ color: MEADOW_COLOR, roughness: 0.9 })
+  );
+  meadow.rotation.x = -Math.PI / 2;
+  meadow.position.set(40, -0.02, 0);
+  meadow.receiveShadow = true;
+  world.add(meadow);
+
   buildHomeZone(world, 0, colliders);
   const bicycle = buildBtechZone(world, 20, colliders, entrances);
   buildBounteousZone(world, 40, colliders, entrances);
@@ -190,11 +308,12 @@ export function buildWorld(): {
 }
 
 function buildHomeZone(world: THREE.Group, cx: number, colliders: Collider[]) {
-  groundSegment(world, cx, 0x9fd6a0);
+  groundSegment(world, cx, MEADOW_COLOR);
   tree(world, colliders, cx - 6.5, -2.4, 1.0, 0.6, "tree");
   tree(world, colliders, cx + 6.5, -2.6, 1.1, -0.8, "tree-high");
   tree(world, colliders, cx - 9.5, -1.6, 0.8, 2.0, "tree-high");
   tree(world, colliders, cx + 9, -1.8, 0.9, -1.4, "tree");
+  signpost(world, colliders, cx + 3.4, -1.4, "EXPLORE \u2192", 0xf2e6cf, "#5b3a24");
 }
 
 /**
@@ -281,7 +400,7 @@ function buildBtechZone(
   plant(world, cx + 2.5, 1.5, 1.2);
   plant(world, cx - 5.5, 1.3, 1.6);
 
-  colliders.push({ x: cx - 0.5, z: 2.4, radius: 0.5 });
+  colliders.push({ x: cx - 0.5, z: 2.4, radius: 0.4 });
   // Wrapped in a stable mount group (rather than adding the loaded model straight to
   // `world`) so the character controller can reposition/rotate it to ride, regardless of
   // whether the async GLB load has resolved yet.
@@ -290,7 +409,7 @@ function buildBtechZone(
   world.add(bicycle);
   cloneModel("/models/bicycle.glb").then((bike) => {
     enableShadows(bike);
-    bike.scale.setScalar(0.45);
+    bike.scale.setScalar(0.32);
     bike.rotation.y = Math.PI * 0.12;
     bicycle.add(bike);
   });
@@ -310,20 +429,22 @@ function buildBounteousZone(world: THREE.Group, cx: number, colliders: Collider[
   techParkBuilding(world, colliders, entrances, "bounteous", cx + 2, -6.5, 4.5, 3, 2.6);
   techParkBuilding(world, colliders, entrances, "bounteous", cx + 8, -7, 3.5, 2.4, 2.4);
 
-  // Flat entrance canopy on the main block, facing the walking path.
+  // Flat entrance canopy on the main block, facing the walking path. It sits above the
+  // door (which is 40% of the block's 4.2 height), so it reads as a porch, not a table.
+  const CANOPY_HEIGHT = 1.95;
   const canopyMat = new THREE.MeshStandardMaterial({ color: 0xe9edf0, roughness: 0.5, metalness: 0.2 });
-  const canopy = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.08, 1.1), canopyMat);
-  canopy.position.set(mainX, 1.1, mainZ + 1.5 + 0.55);
+  const canopy = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.1, 1.1), canopyMat);
+  canopy.position.set(mainX, CANOPY_HEIGHT, mainZ + 1.5 + 0.55);
   canopy.castShadow = true;
   mainBlock.add(canopy);
   for (const dx of [-1.3, 1.3]) {
     const pillarX = mainX + dx;
     const pillarZ = mainZ + 1.5 + 1.0;
-    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.1, 8), canopyMat);
-    pillar.position.set(pillarX, 0.55, pillarZ);
+    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, CANOPY_HEIGHT, 8), canopyMat);
+    pillar.position.set(pillarX, CANOPY_HEIGHT / 2, pillarZ);
     pillar.castShadow = true;
     mainBlock.add(pillar);
-    colliders.push({ x: pillarX, z: pillarZ, radius: 0.12 });
+    colliders.push({ x: pillarX, z: pillarZ, radius: 0.13 });
   }
 
   // Landscaping along the path, so the lot reads as a campus rather than a bare parking lot.
@@ -332,10 +453,10 @@ function buildBounteousZone(world: THREE.Group, cx: number, colliders: Collider[
   plant(world, cx - 2, 1.6, 1.3);
   plant(world, cx + 4, 1.5, 1.2);
 
-  colliders.push({ x: cx - 0.5, z: 2.8, radius: 0.6 });
+  colliders.push({ x: cx - 0.5, z: 2.8, radius: 0.45 });
   cloneModel("/models/motorcycle.glb").then((bike) => {
     enableShadows(bike);
-    bike.scale.setScalar(0.015);
+    bike.scale.setScalar(0.0105);
     bike.rotation.y = Math.PI * 0.12;
     bike.position.set(cx - 0.5, 0, 2.8);
     world.add(bike);
@@ -551,17 +672,6 @@ function buildContactZone(world: THREE.Group, cx: number, colliders: Collider[],
 
   homeBuilding(world, colliders, entrances, cx - 6, -6);
 
-  const towerMat = new THREE.MeshStandardMaterial({ color: 0xd7dde3, roughness: 0.6 });
-  roundedBox(world, 1.1, 3.2, 1.1, cx + 8, 1.6, -5, towerMat, 0.06);
-  roundedBox(world, 1.6, 0.6, 1.6, cx + 8, 3.4, -5, towerMat, 0.06);
-  colliders.push({ x: cx + 8, z: -5, radius: 0.9 });
-
-  const postMat = new THREE.MeshStandardMaterial({ color: 0x6b4a33, roughness: 0.8 });
-  const signMat = new THREE.MeshStandardMaterial({ color: 0xff7a1a, roughness: 0.4 });
-  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 1.6, 8), postMat);
-  post.position.set(cx - 2, 0.8, 2.5);
-  post.castShadow = true;
-  world.add(post);
-  roundedBox(world, 0.9, 0.5, 0.06, cx - 2, 1.5, 2.53, signMat, 0.04);
-  colliders.push({ x: cx - 2, z: 2.5, radius: 0.15 });
+  radioMast(world, colliders, cx + 8, -5);
+  signpost(world, colliders, cx - 1.5, -1.8, "SAY HELLO", 0xff7a1a, "#ffffff");
 }

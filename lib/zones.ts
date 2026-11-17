@@ -12,6 +12,8 @@ export type ZoneContent = {
   org?: string;
   bullets: string[];
   cta?: string;
+  /** Replaces `cta` on touch-sized screens, where there is no keyboard. */
+  ctaTouch?: string;
   links?: ZoneLinks;
   /** World-space center this zone's card appears around. */
   x: number;
@@ -27,7 +29,8 @@ export const zones: ZoneContent[] = [
     title: "Srivathsaan Nakkeeran",
     org: "Data / ML, fintech-focused",
     bullets: [],
-    cta: "Walk right to explore — WASD or arrow keys",
+    cta: "Walk right to explore — WASD or arrows to move, Space to jump, E to enter buildings",
+    ctaTouch: "Drag the joystick to walk right and explore — tap the door button to enter buildings",
     x: 0,
     z: 0,
     radius: 7,

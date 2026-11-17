@@ -26,8 +26,14 @@ const SKY_FRAGMENT_SHADER = `
   uniform vec3 bottomColor;
   varying vec3 vWorldPosition;
   void main() {
-    float h = normalize(vWorldPosition).y;
+    // Elevation above the horizon as seen from the camera, so the horizon itself is
+    // exactly bottomColor (the fog colour) wherever the camera is.
+    float h = normalize(vWorldPosition - cameraPosition).y;
     gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), 0.7), 0.0)), 1.0);
+    // Same display-colour conversion every built-in material applies. Without it the
+    // horizon renders darker than the fog colour it is meant to match, so distant
+    // objects fade to pale cut-outs instead of into the sky.
+    #include <colorspace_fragment>
   }
 `;
 
@@ -38,7 +44,7 @@ const SKY_FRAGMENT_SHADER = `
  */
 export function createEngine(canvas: HTMLCanvasElement): Engine {
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xbfe3f2, 14, 34);
+  scene.fog = new THREE.Fog(0xbfe3f2, 18, 52);
 
   const skyMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -99,7 +105,7 @@ export function createEngine(canvas: HTMLCanvasElement): Engine {
 
   function setBackground(color: THREE.ColorRepresentation) {
     const bottom = new THREE.Color(color);
-    const top = bottom.clone().multiplyScalar(0.72).lerp(new THREE.Color(0x1a3a63), 0.18);
+    const top = bottom.clone().lerp(new THREE.Color(0x3f8fd6), 0.8);
     skyMaterial.uniforms.bottomColor.value.copy(bottom);
     skyMaterial.uniforms.topColor.value.copy(top);
     (scene.fog as THREE.Fog).color.copy(bottom);

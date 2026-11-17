@@ -15,6 +15,11 @@ function loadGLTF(url: string): Promise<GLTF> {
   return promise;
 }
 
+/** Resolves once every model requested so far has finished loading (or failed to). */
+export function whenModelsLoaded(): Promise<void> {
+  return Promise.allSettled([...cache.values()]).then(() => undefined);
+}
+
 /**
  * Loads (or reuses the cached load of) a model and returns an independent
  * clone of its scene graph — SkeletonUtils.clone so skinned meshes keep a

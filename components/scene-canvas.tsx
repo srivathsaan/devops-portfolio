@@ -6,6 +6,7 @@ import { createEngine } from "@/lib/three/engine";
 import { disposeGroup } from "@/lib/three/helpers";
 import { createCharacterController } from "@/lib/three/character-controller";
 import { buildWorld } from "@/lib/three/world";
+import { whenModelsLoaded } from "@/lib/three/load-gltf";
 import { createOcclusionFader } from "@/lib/three/occlusion-fade";
 import { zones, type ZoneContent } from "@/lib/zones";
 
@@ -31,6 +32,8 @@ type Props = {
   onEnterBuilding?: (zoneId: string) => void;
   /** While true, movement/jump input is ignored (used while a building's interior view is open). */
   paused?: boolean;
+  /** Called once the world's models have loaded and been drawn, so a loading screen can lift. */
+  onReady?: () => void;
   // /** Fires whenever riding state or bicycle-mount availability changes, so UI (e.g. the mobile ride button) can reflect it. */
   // onRideStateChange?: (state: RideState) => void;
 };
@@ -44,7 +47,7 @@ const ENTER_RANGE = 1.3; // default how close the character must be to an entran
 // const MOUNT_RANGE = 1.8; // bicycle ride: disabled — how close the character had to be to the bicycle to mount it
 
 const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
-  { onZoneChange, onNearDoorChange, onEnterBuilding, paused = false },
+  { onZoneChange, onNearDoorChange, onEnterBuilding, onReady, paused = false },
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -78,6 +81,17 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     const character = createCharacterController(colliders);
     engine.rigRoot.add(character.group);
     const occlusionFader = createOcclusionFader(world, engine.renderer);
+
+    // Every model has been requested by this point (building the world and the character
+    // starts their loads), so wait for them, then two frames: one for the loaded models
+    // to be added to the scene and one for them to be drawn.
+    whenModelsLoaded().then(() => {
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          if (!cancelled) onReady?.();
+        })
+      );
+    });
 
     const keys = { up: false, down: false, left: false, right: false };
     let joyX = 0;
@@ -254,7 +268,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       disposeGroup(character.group);
       engine.dispose();
     };
-  }, [onZoneChange, onNearDoorChange, onEnterBuilding]);
+  }, [onZoneChange, onNearDoorChange, onEnterBuilding, onReady]);
 
   return (
     <div ref={containerRef} className="absolute inset-0">

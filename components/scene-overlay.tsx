@@ -13,8 +13,10 @@ export default function SceneOverlay({ zone }: Props) {
   if (!zone) return null;
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-20 z-10 flex justify-center px-4 sm:bottom-10 sm:justify-start sm:px-10">
-      <Card className="pointer-events-auto w-full max-w-md bg-background/85 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+    // On phones the card sits at the top with a height cap, leaving the bottom of the
+    // screen to the character and the touch controls; from `sm` up it is bottom-left.
+    <div className="pointer-events-none absolute inset-x-0 top-14 z-10 flex justify-center px-4 sm:bottom-10 sm:top-auto sm:justify-start sm:px-10">
+      <Card className="pointer-events-auto max-h-[42dvh] w-full max-w-md overflow-y-auto bg-background/85 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-2 duration-300 sm:max-h-none sm:overflow-visible">
         <CardHeader>
           <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
             {zone.eyebrow}
@@ -32,7 +34,12 @@ export default function SceneOverlay({ zone }: Props) {
               </ul>
             )}
             {zone.cta && (
-              <p className="font-mono text-sm font-medium text-primary">{zone.cta}</p>
+              <p className={cn("font-mono text-sm font-medium text-primary", zone.ctaTouch && "hidden sm:block")}>
+                {zone.cta}
+              </p>
+            )}
+            {zone.ctaTouch && (
+              <p className="font-mono text-sm font-medium text-primary sm:hidden">{zone.ctaTouch}</p>
             )}
             {zone.links && (
               <div className="flex flex-wrap gap-2 pt-1">
