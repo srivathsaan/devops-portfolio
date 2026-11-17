@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +14,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Srivathsaan Nakkeeran | Data Science & ML for Fintech",
-  description:
-    "MSc Financial Technology student applying machine learning, data analysis, and 3 years of CloudOps experience to build data-driven solutions for financial platforms.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  // Both srivathsaan.com and www.srivathsaan.com serve this page; point search engines at one.
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "profile",
+    firstName: "Srivathsaan",
+    lastName: "Nakkeeran",
+    url: "/",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    locale: "en_US",
+  },
+  twitter: { card: "summary_large_image", title: SITE_TITLE, description: SITE_DESCRIPTION },
   icons: { icon: "/favicon.ico" },
 };
 
