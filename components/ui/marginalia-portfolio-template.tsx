@@ -999,6 +999,13 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger, ScrollToPl
 
 const useIso = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect
 
+// Local fix: upstream used `once: true`, which kills each trigger as it fires. When the page
+// mounts already scrolled past them (a client-side navigation from further down the previous
+// page), they fire while ScrollTrigger is still walking its trigger list during setup, and the
+// list shrinks under it ("Cannot read properties of undefined (reading 'end')"). Playing once
+// without killing the trigger looks the same and keeps the list intact.
+const PLAY_ONCE = "play none none none"
+
 function reducedMotion(): boolean {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
 }
@@ -2291,7 +2298,7 @@ export default function MarginaliaPortfolioTemplate(props: MarginaliaPortfolioTe
       // headings: characters rise, the underline goes from nervous to sure
       q(".mgn-hd").forEach((hd) => {
         play(
-          gsap.timeline({ scrollTrigger: { trigger: hd, start: "top 88%", once: true } }),
+          gsap.timeline({ scrollTrigger: { trigger: hd, start: "top 88%", toggleActions: PLAY_ONCE } }),
           hd.querySelectorAll(".mgn-ci"),
           { yPercent: 118, rotate: 6 },
           { yPercent: 0, rotate: 0, duration: 1.05, ease: "expo.out", stagger: 0.035 },
@@ -2312,7 +2319,7 @@ export default function MarginaliaPortfolioTemplate(props: MarginaliaPortfolioTe
         const writes = own(".mgn-write")
         const lines = own(".mgn-write-v")
         const strokes = own(".mgn-draw")
-        const tl = gsap.timeline({ scrollTrigger: { trigger: g, start: "top 84%", once: true } })
+        const tl = gsap.timeline({ scrollTrigger: { trigger: g, start: "top 84%", toggleActions: PLAY_ONCE } })
         play(tl, lines, { clipPath: "inset(-10% -6% 100% -6%)" }, { clipPath: "inset(-10% -6% -10% -6%)", duration: 1.5, ease: "power1.inOut", stagger: 0.55 }, 0)
         play(tl, writes, { clipPath: W0 }, { clipPath: W1, duration: 0.95, ease: "power1.inOut", stagger: 0.16 }, lines.length ? ">-0.3" : 0)
         play(tl, strokes, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut", stagger: 0.1 }, lines.length ? ">-0.4" : 0.2)
@@ -2328,7 +2335,7 @@ export default function MarginaliaPortfolioTemplate(props: MarginaliaPortfolioTe
           v,
           duration: 1.8,
           ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 90%", once: true },
+          scrollTrigger: { trigger: el, start: "top 90%", toggleActions: PLAY_ONCE },
           onUpdate: () => {
             el.textContent = formatCount(o.v, d)
           },
@@ -2341,7 +2348,6 @@ export default function MarginaliaPortfolioTemplate(props: MarginaliaPortfolioTe
         gsap.set(rise, { autoAlpha: 0, y: 36 })
         ScrollTrigger.batch(rise, {
           start: "top 92%",
-          once: true,
           onEnter: (b) => gsap.to(b, { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.08, overwrite: true }),
         })
       }
