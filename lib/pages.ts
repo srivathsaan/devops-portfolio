@@ -149,7 +149,7 @@ export const sitePages: SitePage[] = [
         },
         { title: "GFTN ASEAN Financial Health Challenge — Finalist", period: "Oct 2026", circled: true },
         { title: "Bloomberg Global Trading Challenge 2026", period: "Oct 2026" },
-        { title: "Web development freelance", place: "Singapore", period: "Sep 2026" },
+        { title: "Web development freelance", place: "Singapore · thenkondar.com", period: "Sep 2026" },
         { title: "TEDxNTU volunteer", place: "Logistics and Operations", period: "Sep 2026" },
       ],
       cvUrl: RESUME_URL,
