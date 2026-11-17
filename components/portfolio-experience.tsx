@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Download } from "lucide-react";
 // Bicycle ride functionality — disabled, kept commented out for easy re-enabling.
 // See matching commented-out blocks in components/scene-canvas.tsx and
 // lib/three/character-controller.ts.
@@ -10,7 +11,7 @@ import SceneCanvas, { type SceneCanvasHandle } from "@/components/scene-canvas";
 import SceneOverlay from "@/components/scene-overlay";
 import VirtualJoystick from "@/components/virtual-joystick";
 import type { ZoneContent } from "@/lib/zones";
-import { pageForZone } from "@/lib/pages";
+import { contactLinks, pageForZone } from "@/lib/pages";
 import { rememberReturnZone } from "@/lib/return-zone";
 import { cn } from "@/lib/utils";
 
@@ -70,6 +71,17 @@ export default function PortfolioExperience() {
       >
         Srivathsaan Nakkeeran
       </div>
+      <a
+        href={contactLinks.resume}
+        download
+        // Movement keys pause while something has focus; after a mouse click, hand focus back
+        // to the world so WASD keeps working. Keyboard activation (detail 0) keeps focus.
+        onClick={(e) => e.detail > 0 && e.currentTarget.blur()}
+        className="absolute right-4 top-4 z-10 flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-white backdrop-blur-sm transition-colors hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-6 sm:top-5"
+      >
+        <Download aria-hidden="true" className="size-3.5" />
+        Resume
+      </a>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-black/55 px-2 py-1 text-center font-mono text-[9px] leading-tight text-white backdrop-blur-sm sm:inset-x-auto sm:bottom-2 sm:right-4 sm:max-w-[230px] sm:rounded-md sm:text-right">
         3D: Bicycle, Motorcycle, Airplane by Poly by Google (CC-BY) via Poly Pizza · Character, trees &amp; buildings by Kenney (CC0)
       </div>
