@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { cloneModel, enableShadows } from "./load-gltf";
-import { roundedBox } from "./helpers";
+import { mergeStaticMeshes, roundedBox } from "./helpers";
 
 /**
  * A ground footprint the character can't walk through — a circle (props: trees, rocks,
@@ -50,11 +50,13 @@ function stripes(
   size: [number, number]
 ) {
   const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.8 });
+  const lane = new THREE.Group(); // merged into one mesh at the end of buildWorld
+  group.add(lane);
   for (let x = xStart; x <= xEnd; x += 3) {
     const stripe = new THREE.Mesh(new THREE.PlaneGeometry(size[0], size[1]), mat);
     stripe.rotation.x = -Math.PI / 2;
     stripe.position.set(x, 0.012, 0);
-    group.add(stripe);
+    lane.add(stripe);
   }
 }
 
@@ -303,6 +305,12 @@ export function buildWorld(): {
   buildBounteousZone(world, 40, colliders, entrances);
   buildNtuZone(world, 60, colliders, entrances);
   buildContactZone(world, 80, colliders, entrances);
+
+  // Each building, lane and cloud is its own group; collapse each one's primitives into
+  // one mesh per material. Models still loading attach afterwards and are untouched.
+  for (const child of world.children) {
+    if (child instanceof THREE.Group) mergeStaticMeshes(child);
+  }
 
   return { group: world, colliders, bicycle, entrances };
 }

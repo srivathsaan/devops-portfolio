@@ -12,6 +12,11 @@ export type Engine = {
   dispose: () => void;
 };
 
+const FOG_FAR = 52;
+// Anything beyond the fog's far distance is drawn entirely in the fog colour, i.e.
+// invisible against the horizon, so the camera stops just past it and skips drawing it.
+const CAMERA_FAR = FOG_FAR + 8;
+
 const SKY_VERTEX_SHADER = `
   varying vec3 vWorldPosition;
   void main() {
@@ -44,7 +49,7 @@ const SKY_FRAGMENT_SHADER = `
  */
 export function createEngine(canvas: HTMLCanvasElement): Engine {
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xbfe3f2, 18, 52);
+  scene.fog = new THREE.Fog(0xbfe3f2, 18, FOG_FAR);
 
   const skyMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -57,13 +62,14 @@ export function createEngine(canvas: HTMLCanvasElement): Engine {
     depthWrite: false,
     fog: false,
   });
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(70, 20, 14), skyMaterial);
+  // Must stay inside the camera's far plane (CAMERA_FAR) or it gets clipped.
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(CAMERA_FAR - 4, 20, 14), skyMaterial);
   scene.add(sky);
 
   // Position/lookAt are driven every frame by the character controller's
   // chase-cam logic (components/scene-canvas.tsx) — this is just a safe default
   // before the first frame runs.
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 160);
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, CAMERA_FAR);
   camera.position.set(6.5, 4.6, 3.2);
   camera.lookAt(0, 1.15, 0);
 
