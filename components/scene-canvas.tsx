@@ -123,6 +123,16 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     apiRef.current = { setJoystick: (x, z) => { joyX = x; joyZ = z; }, enterNearbyBuilding };
 
     function onKeyDown(e: KeyboardEvent) {
+      // The game only takes keys nothing else wants: not browser shortcuts (Cmd/Ctrl/Alt),
+      // not while a building's page is open, and not while focus is on a link, button or
+      // the text version — so Space/Enter still press buttons and arrows still scroll.
+      if (e.metaKey || e.ctrlKey || e.altKey || pausedRef.current) return;
+      const focused = document.activeElement;
+      if (focused && focused !== document.body) {
+        // Escape hands the keyboard back to the game.
+        if (e.key === "Escape" && focused instanceof HTMLElement) focused.blur();
+        return;
+      }
       if (
         ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d", "W", "A", "S", "D", " "].includes(
           e.key
@@ -130,7 +140,6 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
       ) {
         e.preventDefault();
       }
-      if (pausedRef.current) return;
       if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") keys.up = true;
       if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") keys.down = true;
       if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
@@ -271,7 +280,8 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
   }, [onZoneChange, onNearDoorChange, onEnterBuilding, onReady]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0">
+    // The canvas exposes nothing to assistive tech; the text version (ProfileSummary) carries the content.
+    <div ref={containerRef} className="absolute inset-0" aria-hidden="true">
       <canvas ref={canvasRef} className="block h-full w-full" />
     </div>
   );

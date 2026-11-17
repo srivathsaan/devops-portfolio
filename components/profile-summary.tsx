@@ -21,14 +21,31 @@ const structuredData = {
  * The portfolio's content as plain, server-rendered HTML. The 3D world draws everything on a
  * canvas, which search engines and screen readers can't read, so this carries the same text
  * (from lib/zones.ts) in a visually hidden but readable form, plus structured data.
+ * Keyboard users reach it via the "Skip to text version" link; while focus is inside, it is
+ * shown as a readable panel instead of leaving invisible focus stops.
  */
 export default function ProfileSummary() {
   return (
-    <main className="sr-only">
+    <main
+      id="text-version"
+      tabIndex={-1}
+      className={[
+        "group/text sr-only outline-none",
+        "focus-within:not-sr-only focus-within:fixed focus-within:inset-4 focus-within:z-50 focus-within:mx-auto",
+        "focus-within:max-w-2xl focus-within:overflow-y-auto focus-within:rounded-xl focus-within:bg-background",
+        "focus-within:p-6 focus-within:text-sm focus-within:leading-relaxed focus-within:shadow-2xl sm:focus-within:p-8",
+        "[&_a]:underline [&_a]:underline-offset-2 [&_h1]:text-2xl [&_h1]:font-semibold [&_h2]:mt-6",
+        "[&_h2]:text-lg [&_h2]:font-semibold [&_ul]:mt-2 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5",
+      ].join(" ")}
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
       />
+      {/* Only for sighted keyboard users while the panel is open — not crawled or read out. */}
+      <p className="mb-4 hidden font-mono text-xs uppercase tracking-widest text-muted-foreground group-focus-within/text:block">
+        Text version · press Esc to go back to the 3D world
+      </p>
       <h1>{SITE_NAME}</h1>
       <p>{SITE_DESCRIPTION}</p>
 

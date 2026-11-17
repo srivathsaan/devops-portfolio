@@ -46,10 +46,14 @@ export default function PortfolioExperience() {
         onReady={handleReady}
         paused={enteredZoneId !== null}
       />
-      <div className="pointer-events-none absolute left-4 top-4 z-10 rounded-full bg-black/35 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-white backdrop-blur-sm sm:left-6 sm:top-5">
+      {/* Visual label only; the text version carries the name as the page's h1. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-4 top-4 z-10 rounded-full bg-black/55 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-white backdrop-blur-sm sm:left-6 sm:top-5"
+      >
         Srivathsaan Nakkeeran
       </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-black/30 px-2 py-1 text-center font-mono text-[9px] leading-tight text-white/85 backdrop-blur-sm sm:inset-x-auto sm:bottom-2 sm:right-4 sm:max-w-[230px] sm:rounded-md sm:text-right">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-black/55 px-2 py-1 text-center font-mono text-[9px] leading-tight text-white backdrop-blur-sm sm:inset-x-auto sm:bottom-2 sm:right-4 sm:max-w-[230px] sm:rounded-md sm:text-right">
         3D: Bicycle, Motorcycle, Airplane by Poly by Google (CC-BY) via Poly Pizza · Character, trees &amp; buildings by Kenney (CC0)
       </div>
       {/* Bicycle ride: disabled. Re-enable by restoring:
@@ -58,8 +62,12 @@ export default function PortfolioExperience() {
           Press F to {rideState.riding ? "dismount" : "ride the bicycle"}
         </div>
       )} */}
+      {/* Always present so screen readers announce changes; the pill below is the visual twin. */}
+      <p role="status" className="sr-only">
+        {nearDoorZoneId && !enteredZoneId ? "At a building entrance. Press E to enter." : ""}
+      </p>
       {nearDoorZoneId && !enteredZoneId && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-44 z-10 flex justify-center sm:bottom-auto sm:top-16 lg:bottom-10 lg:top-auto">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-44 z-10 flex justify-center sm:bottom-auto sm:top-16 lg:bottom-10 lg:top-auto">
           <div className="flex items-center gap-2 rounded-full border border-white/25 bg-black/55 px-4 py-2 font-mono text-xs uppercase tracking-widest text-white shadow-lg backdrop-blur-sm animate-in fade-in duration-200">
             <kbd className="hidden rounded border border-white/40 bg-white/15 px-1.5 py-0.5 font-mono text-[11px] leading-none sm:inline-block">
               E
