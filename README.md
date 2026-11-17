@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# srivathsaan.com
 
-## Getting Started
+Personal portfolio for Srivathsaan Nakkeeran, built as a small 3D world you walk through. Each stretch of the path is a stage of the timeline — home, B.Tech at Amrita, CloudOps at Bounteous, the MSc at NTU, and a contact zone — and each building can be entered for the details.
 
-First, run the development server:
+Built with Next.js (App Router) and three.js, deployed on Vercel.
+
+## Controls
+
+| Action | Keyboard | Touch |
+| --- | --- | --- |
+| Walk | WASD or arrow keys | Joystick (bottom left) |
+| Jump | Space | — |
+| Enter a building | E, near a door | Door button (bottom right) |
+| Leave a building | Esc | "Back outside" button |
+
+## Running locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
+npm run build   # production build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | What it is |
+| --- | --- |
+| `lib/zones.ts` | Text for every zone — edit this to update the site's content |
+| `public/resume.pdf` | The downloadable resume |
+| `lib/three/world.ts` | Builds the world: ground, buildings, props, colliders and entrances |
+| `lib/three/character-controller.ts` | Character movement, collision, animation and jumping |
+| `lib/three/engine.ts` | Renderer, camera, lights, sky and fog |
+| `lib/three/occlusion-fade.ts` | Fades anything standing between the camera and the character |
+| `components/scene-canvas.tsx` | Render loop, input, zone and door detection |
+| `components/portfolio-experience.tsx` | Page layout and on-screen UI |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Credits
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Character, trees and buildings by [Kenney](https://kenney.nl) (CC0). Bicycle, motorcycle and airplane by Poly by Google (CC-BY) via [Poly Pizza](https://poly.pizza).
