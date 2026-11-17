@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 860" width="600" height="860">
+  <!-- Placeholder for the portrait on the building pages; swap in a real photo of the same name. -->
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#d9d6ce"/>
+      <stop offset="1" stop-color="#a9a59b"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="860" fill="url(#paper)"/>
+  <circle cx="300" cy="400" r="190" fill="none" stroke="#242426" stroke-opacity=".18" stroke-width="2"/>
+  <text x="300" y="455" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="170" fill="#242426" fill-opacity=".72">SN</text>
+</svg>
