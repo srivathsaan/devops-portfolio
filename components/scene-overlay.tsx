@@ -1,8 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import type { ZoneContent } from "@/lib/zones";
+import { pageForZone } from "@/lib/pages";
+import { rememberReturnZone } from "@/lib/return-zone";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -11,6 +14,7 @@ type Props = {
 
 export default function SceneOverlay({ zone }: Props) {
   if (!zone) return null;
+  const page = pageForZone(zone.id);
 
   return (
     // On phones the card sits at the top with a height cap, leaving the bottom of the
@@ -24,7 +28,7 @@ export default function SceneOverlay({ zone }: Props) {
           <CardTitle className="text-xl leading-snug sm:text-2xl">{zone.title}</CardTitle>
           {zone.org && <p className="text-sm text-muted-foreground">{zone.org}</p>}
         </CardHeader>
-        {(zone.bullets.length > 0 || zone.cta || zone.links) && (
+        {(zone.bullets.length > 0 || zone.cta || zone.links || page) && (
           <CardContent className="flex flex-col gap-3">
             {zone.bullets.length > 0 && (
               <ul className="list-disc space-y-1.5 pl-4 text-sm text-foreground/90">
@@ -40,6 +44,15 @@ export default function SceneOverlay({ zone }: Props) {
             )}
             {zone.ctaTouch && (
               <p className="font-mono text-sm font-medium text-primary sm:hidden">{zone.ctaTouch}</p>
+            )}
+            {page && (
+              <Link
+                href={page.href}
+                onClick={() => rememberReturnZone(zone.id)}
+                className="w-fit text-sm font-medium underline underline-offset-4 hover:text-foreground/70"
+              >
+                Open the full page <span aria-hidden="true">→</span>
+              </Link>
             )}
             {zone.links && (
               <div className="flex flex-wrap gap-2 pt-1">

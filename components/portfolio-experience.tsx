@@ -1,30 +1,50 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 // Bicycle ride functionality — disabled, kept commented out for easy re-enabling.
 // See matching commented-out blocks in components/scene-canvas.tsx and
 // lib/three/character-controller.ts.
 // import SceneCanvas, { type RideState, type SceneCanvasHandle } from "@/components/scene-canvas";
 import SceneCanvas, { type SceneCanvasHandle } from "@/components/scene-canvas";
 import SceneOverlay from "@/components/scene-overlay";
-import BuildingInterior from "@/components/building-interior";
 import VirtualJoystick from "@/components/virtual-joystick";
-import { zones, type ZoneContent } from "@/lib/zones";
+import type { ZoneContent } from "@/lib/zones";
+import { pageForZone } from "@/lib/pages";
+import { rememberReturnZone } from "@/lib/return-zone";
 import { cn } from "@/lib/utils";
 
 export default function PortfolioExperience() {
   const [zone, setZone] = useState<ZoneContent | null>(null);
   // const [rideState, setRideState] = useState<RideState>({ riding: false, canRide: false });
   const [nearDoorZoneId, setNearDoorZoneId] = useState<string | null>(null);
-  const [enteredZoneId, setEnteredZoneId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const canvasHandleRef = useRef<SceneCanvasHandle>(null);
+  const router = useRouter();
 
   const handleJoystick = useCallback((x: number, z: number) => {
     canvasHandleRef.current?.setJoystick(x, z);
   }, []);
 
   const handleReady = useCallback(() => setReady(true), []);
+
+  // Entering a building opens its page; remember the building so "back to the world"
+  // returns the character to its door.
+  const handleEnterBuilding = useCallback(
+    (zoneId: string) => {
+      const page = pageForZone(zoneId);
+      if (!page) return;
+      rememberReturnZone(zoneId);
+      router.push(page.href);
+    },
+    [router]
+  );
+
+  // Load the page as soon as the character is at its door, so entering feels instant.
+  useEffect(() => {
+    const page = nearDoorZoneId ? pageForZone(nearDoorZoneId) : undefined;
+    if (page) router.prefetch(page.href);
+  }, [nearDoorZoneId, router]);
 
   const handleEnterTap = useCallback(() => {
     canvasHandleRef.current?.enterNearbyBuilding();
@@ -34,17 +54,14 @@ export default function PortfolioExperience() {
   //   canvasHandleRef.current?.toggleRide();
   // }, []);
 
-  const enteredZone = enteredZoneId ? zones.find((z) => z.id === enteredZoneId) ?? null : null;
-
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-[#bfe3f2]">
       <SceneCanvas
         ref={canvasHandleRef}
         onZoneChange={setZone}
         onNearDoorChange={setNearDoorZoneId}
-        onEnterBuilding={setEnteredZoneId}
+        onEnterBuilding={handleEnterBuilding}
         onReady={handleReady}
-        paused={enteredZoneId !== null}
       />
       {/* Visual label only; the text version carries the name as the page's h1. */}
       <div
@@ -64,9 +81,9 @@ export default function PortfolioExperience() {
       )} */}
       {/* Always present so screen readers announce changes; the pill below is the visual twin. */}
       <p role="status" className="sr-only">
-        {nearDoorZoneId && !enteredZoneId ? "At a building entrance. Press E to enter." : ""}
+        {nearDoorZoneId ? "At a building entrance. Press E to enter." : ""}
       </p>
-      {nearDoorZoneId && !enteredZoneId && (
+      {nearDoorZoneId && (
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-44 z-10 flex justify-center sm:bottom-auto sm:top-16 lg:bottom-10 lg:top-auto">
           <div className="flex items-center gap-2 rounded-full border border-white/25 bg-black/55 px-4 py-2 font-mono text-xs uppercase tracking-widest text-white shadow-lg backdrop-blur-sm animate-in fade-in duration-200">
             <kbd className="hidden rounded border border-white/40 bg-white/15 px-1.5 py-0.5 font-mono text-[11px] leading-none sm:inline-block">
@@ -116,7 +133,6 @@ export default function PortfolioExperience() {
           Loading the world…
         </p>
       </div>
-      {enteredZone && <BuildingInterior zone={enteredZone} onExit={() => setEnteredZoneId(null)} />}
     </div>
   );
 }

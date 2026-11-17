@@ -1,4 +1,5 @@
 import { zones } from "@/lib/zones";
+import { pageForZone } from "@/lib/pages";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const contact = zones.find((zone) => zone.id === "contact");
@@ -63,6 +64,7 @@ export default function ProfileSummary() {
               ))}
             </ul>
           )}
+          {pageForZone(zone.id) && <a href={pageForZone(zone.id)!.href}>Full page: {zone.title}</a>}
         </section>
       ))}
 

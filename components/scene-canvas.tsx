@@ -7,6 +7,7 @@ import { disposeGroup } from "@/lib/three/helpers";
 import { createCharacterController } from "@/lib/three/character-controller";
 import { buildWorld } from "@/lib/three/world";
 import { whenModelsLoaded } from "@/lib/three/load-gltf";
+import { readReturnZone } from "@/lib/return-zone";
 import { createOcclusionFader } from "@/lib/three/occlusion-fade";
 import { zones, type ZoneContent } from "@/lib/zones";
 
@@ -30,8 +31,6 @@ type Props = {
   onNearDoorChange?: (zoneId: string | null) => void;
   /** Called with the door's zoneId when the character enters a building. */
   onEnterBuilding?: (zoneId: string) => void;
-  /** While true, movement/jump input is ignored (used while a building's interior view is open). */
-  paused?: boolean;
   /** Called once the world's models have loaded and been drawn, so a loading screen can lift. */
   onReady?: () => void;
   // /** Fires whenever riding state or bicycle-mount availability changes, so UI (e.g. the mobile ride button) can reflect it. */
@@ -47,23 +46,18 @@ const ENTER_RANGE = 1.3; // default how close the character must be to an entran
 // const MOUNT_RANGE = 1.8; // bicycle ride: disabled — how close the character had to be to the bicycle to mount it
 
 const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
-  { onZoneChange, onNearDoorChange, onEnterBuilding, onReady, paused = false },
+  { onZoneChange, onNearDoorChange, onEnterBuilding, onReady },
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<SceneCanvasHandle>({ setJoystick: () => {}, enterNearbyBuilding: () => {} });
-  const pausedRef = useRef(paused);
 
   useImperativeHandle(ref, () => ({
     setJoystick: (x, z) => apiRef.current.setJoystick(x, z),
     enterNearbyBuilding: () => apiRef.current.enterNearbyBuilding(),
     // toggleRide: () => apiRef.current.toggleRide(),
   }));
-
-  useEffect(() => {
-    pausedRef.current = paused;
-  }, [paused]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -79,6 +73,14 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     engine.rigRoot.add(world);
 
     const character = createCharacterController(colliders);
+    // Coming back from a building's page: step back out of that building (just in front of
+    // its door, or of the Hive's cluster), facing the path, instead of starting over.
+    const returnZone = readReturnZone();
+    const returnEntrance = returnZone ? entrances.find((entrance) => entrance.zoneId === returnZone) : undefined;
+    if (returnEntrance) {
+      const stepOut = returnEntrance.radius ? returnEntrance.radius * 0.9 : 1;
+      character.group.position.set(returnEntrance.x, 0, returnEntrance.z + stepOut);
+    }
     engine.rigRoot.add(character.group);
     const occlusionFader = createOcclusionFader(world, engine.renderer);
 
@@ -101,7 +103,7 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
     // let canRide = false; // true when close enough to the parked/dropped bicycle to mount
 
     function enterNearbyBuilding() {
-      if (pausedRef.current || !nearDoorZoneId) return;
+      if (!nearDoorZoneId) return;
       onEnterBuilding?.(nearDoorZoneId);
     }
 
@@ -124,9 +126,9 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
 
     function onKeyDown(e: KeyboardEvent) {
       // The game only takes keys nothing else wants: not browser shortcuts (Cmd/Ctrl/Alt),
-      // not while a building's page is open, and not while focus is on a link, button or
-      // the text version — so Space/Enter still press buttons and arrows still scroll.
-      if (e.metaKey || e.ctrlKey || e.altKey || pausedRef.current) return;
+      // and not while focus is on a link, button or the text version — so Space/Enter
+      // still press buttons and arrows still scroll.
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
       const focused = document.activeElement;
       if (focused && focused !== document.body) {
         // Escape hands the keyboard back to the game.
@@ -183,17 +185,12 @@ const SceneCanvas = forwardRef<SceneCanvasHandle, Props>(function SceneCanvas(
 
       // World-space input: Right/D = +x (deeper into the timeline), Left/A = -x,
       // Up/W = -z, Down/S = +z. Keyboard and joystick combine additively, then clamp.
-      // Ignored entirely while paused (a building's interior view is open).
-      let moveX = 0;
-      let moveZ = 0;
-      if (!pausedRef.current) {
-        moveX = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joyX;
-        moveZ = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joyZ;
-        const inputMag = Math.hypot(moveX, moveZ);
-        if (inputMag > 1) {
-          moveX /= inputMag;
-          moveZ /= inputMag;
-        }
+      let moveX = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joyX;
+      let moveZ = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joyZ;
+      const inputMag = Math.hypot(moveX, moveZ);
+      if (inputMag > 1) {
+        moveX /= inputMag;
+        moveZ /= inputMag;
       }
 
       character.update(delta, moveX, moveZ);

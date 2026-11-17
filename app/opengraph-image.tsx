@@ -2,9 +2,9 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { cacheLife } from "next/cache";
 import { ImageResponse } from "next/og";
+import { SITE_OG_IMAGE_ALT } from "@/lib/site";
 
-export const alt =
-  "Srivathsaan Nakkeeran's walkable 3D portfolio: the Amrita campus building and a glass tech park along a path";
+export const alt = SITE_OG_IMAGE_ALT;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
