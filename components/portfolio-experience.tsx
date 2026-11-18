@@ -82,9 +82,6 @@ export default function PortfolioExperience() {
         <Download aria-hidden="true" className="size-3.5" />
         Resume
       </a>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-black/55 px-2 py-1 text-center font-mono text-[9px] leading-tight text-white backdrop-blur-sm sm:inset-x-auto sm:bottom-2 sm:right-4 sm:max-w-[230px] sm:rounded-md sm:text-right">
-        3D: Bicycle, Motorcycle, Airplane by Poly by Google (CC-BY) via Poly Pizza · Character, trees &amp; buildings by Kenney (CC0)
-      </div>
       {/* Bicycle ride: disabled. Re-enable by restoring:
       {(rideState.riding || rideState.canRide) && (
         <div className="pointer-events-none absolute inset-x-0 bottom-32 z-10 flex justify-center font-mono text-xs uppercase tracking-widest text-white/80 drop-shadow sm:bottom-10">
