@@ -2,7 +2,7 @@ import Link from "next/link";
 import MarginaliaPortfolioTemplate from "@/components/ui/marginalia-portfolio-template";
 import { sitePages, type SitePage } from "@/lib/pages";
 
-// Placeholder until a real photo is added (same path, any image format the browser reads).
+// Placeholder for pages without their own photo (SitePage.portrait).
 const PORTRAIT = "/images/portrait-placeholder.svg";
 
 /** The static page a building opens into: the Marginalia sheets for that stop, then prev/next. */
@@ -16,8 +16,8 @@ export default function ZonePage({ page }: { page: SitePage }) {
       <MarginaliaPortfolioTemplate
         {...page.sheets}
         name="Srivathsaan"
-        portrait={PORTRAIT}
-        portraitAlt="Placeholder portrait: the initials SN"
+        portrait={page.portrait?.src ?? PORTRAIT}
+        portraitAlt={page.portrait?.alt ?? "Placeholder portrait: the initials SN"}
         // The site nav replaces the template's own top bar and contents page.
         chrome={false}
         colors={{ paper: "#ecebe7", night: "#2b2b2e", ink: "#242426", pen: page.accent }}

@@ -25,6 +25,8 @@ export type SitePage = {
   /** The template's pen colour, echoing the building in the 3D world. Each is at least 3:1
    *  against the paper sheets (and the night sheets where a page has them). */
   accent: string;
+  /** A page-specific photo for the portrait slot; pages without one show the placeholder. */
+  portrait?: { src: string; alt: string };
   sheets: PageSheets;
 };
 
@@ -129,6 +131,10 @@ export const sitePages: SitePage[] = [
     description:
       "Srivathsaan Nakkeeran's MSc in Financial Technology (Intelligent Process Automation) at Nanyang Technological University, Singapore, and activities alongside it.",
     accent: "#9c7a4e",
+    portrait: {
+      src: "/images/msc-ntu.jpg",
+      alt: "Srivathsaan in a white shirt, seated in a lecture theatre at NTU's FinTech Industry Day 2026",
+    },
     sheets: {
       sections: ["cover", "hello", "education"],
       title: "MSc",
