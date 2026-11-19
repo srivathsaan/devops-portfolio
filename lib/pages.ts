@@ -53,19 +53,19 @@ export const sitePages: SitePage[] = [
       title: "B.Tech",
       role: "Computer & Communication Engineering",
       location: "Coimbatore",
-      year: "2019 — 23",
+      year: "2019-23",
       educationIntro:
-        "Four years of computer and communication engineering at Amrita Vishwa Vidyapeetham — finishing with a CGPA of 8.87 and the Silver Medal.",
+        "Four years of computer and communication engineering at Amrita Vishwa Vidyapeetham, finishing with a CGPA of 8.87 and the Silver Medal.",
       education: [
         {
           title: "B.Tech, Computer and Communication Engineering",
           place: "Amrita Vishwa Vidyapeetham, Coimbatore",
-          period: "Jul 2019 — Jun 2023",
+          period: "Jul 2019 - Jun 2023",
           circled: true,
         },
         { title: "CGPA 8.87 / 10", place: "Amrita Vishwa Vidyapeetham" },
         { title: "Silver Medal for academic excellence", place: "Undergraduate studies", period: "Aug 2023", circled: true },
-        { title: "Software Engineer Intern at Bounteous", place: "Alongside the final semester", period: "Jan — May 2023" },
+        { title: "Software Engineer Intern at Bounteous", place: "Alongside the final semester", period: "Jan - May 2023" },
       ],
       cvUrl: RESUME_URL,
       cvNote: "my resume",
@@ -86,12 +86,12 @@ export const sitePages: SitePage[] = [
       title: "Work",
       role: "Bounteous · CloudOps & software engineering",
       location: "Chennai",
-      year: "2023 — 25",
+      year: "2023-25",
       projects: [
         {
           name: "CloudOps",
           kind: "Support Analyst",
-          year: "Jun 2023 – Dec 2025",
+          year: "Jun 2023 - Dec 2025",
           tagline: "Monitoring 20+ client environments.",
           summary:
             "Kept *20+ client environments* healthy and secure: analysed telemetry in Splunk, Sumo Logic, Site24x7 and CloudWatch, investigated [200+ infrastructure and 30+ security incidents] to root cause, and built Cloudflare WAF rules from credential-stuffing and probing traffic.",
@@ -111,11 +111,11 @@ export const sitePages: SitePage[] = [
         {
           name: "Internship",
           kind: "Software Engineer Intern",
-          year: "Jan – May 2023",
+          year: "Jan - May 2023",
           tagline: "Full-stack features for production.",
           summary:
-            "Built *full-stack web applications* with React.js, Node.js, MongoDB and AWS, delivering data-driven features for production use — and [earned an upgraded full-time offer] at the end of it.",
-          note: "full-time offer, upgraded — May 2023",
+            "Built *full-stack web applications* with React.js, Node.js, MongoDB and AWS, delivering data-driven features for production use, and [earned an upgraded full-time offer] at the end of it.",
+          note: "full-time offer, upgraded in May 2023",
           images: [],
           screens: ["feed", "cover", "stats"],
           accent: "#3d7fb0",
@@ -140,20 +140,20 @@ export const sitePages: SitePage[] = [
       title: "MSc",
       role: "Financial Technology",
       location: "Singapore",
-      year: "2026 — 27",
+      year: "2026-27",
       greeting: "Hello.",
       bio: "I'm an MSc Financial Technology student at NTU Singapore with *3 years of CloudOps experience*. I bring analytical, problem-solving and technical skills in Python, SQL and financial modelling to [identify patterns in complex systems] and deliver practical, data-driven solutions.",
       traits: ["problem solving", "analytical", "collaborative", "communicator", "Python & SQL", "fintech"],
       headings: { education: "At NTU" },
-      educationIntro: "Intelligent Process Automation specialisation, Aug 2026 – May 2027 — and what I've joined alongside it.",
+      educationIntro: "Intelligent Process Automation specialisation, Aug 2026 - May 2027, and what I've joined alongside it.",
       education: [
         {
-          title: "MSc Financial Technology — Intelligent Process Automation",
+          title: "MSc Financial Technology, Intelligent Process Automation",
           place: "Nanyang Technological University, Singapore",
-          period: "Aug 2026 — May 2027",
+          period: "Aug 2026 - May 2027",
           circled: true,
         },
-        { title: "GFTN ASEAN Financial Health Challenge — Finalist", period: "Oct 2026", circled: true },
+        { title: "GFTN ASEAN Financial Health Challenge finalist", period: "Oct 2026", circled: true },
         { title: "Bloomberg Global Trading Challenge 2026", period: "Oct 2026" },
         { title: "Web development freelance", place: "Singapore · thenkondar.com", period: "Sep 2026" },
         { title: "TEDxNTU volunteer", place: "Logistics and Operations", period: "Sep 2026" },
@@ -184,7 +184,7 @@ export const sitePages: SitePage[] = [
           year: "2026",
           tagline: "The real cost of a policy decision.",
           summary:
-            "A decision-support platform that helps people in Singapore and India see the cost of *surrendering, switching or borrowing* against a life insurance policy — and surfaces [ranked, cited alternatives].",
+            "A decision-support platform that helps people in Singapore and India see the cost of *surrendering, switching or borrowing* against a life insurance policy, and surfaces [ranked, cited alternatives].",
           challengeLabel: "under the hood:",
           challenge:
             "An 11-rule decision engine covering 51 licensed insurers and 8 real products across Singapore (LIA/MAS) and India (IRDAI), every rule sourced to its regulator or insurer document.",
@@ -207,10 +207,10 @@ export const sitePages: SitePage[] = [
           kind: "FDIC bank-failure model",
           tagline: "Which banks fail next?",
           summary:
-            "Ranks US banks by *risk of FDIC failure within four quarters*, trained on 751K bank-quarters (2000–2026, 590 failures), benchmarking tree ensembles and a PyTorch GRU under [purged walk-forward cross-validation].",
+            "Ranks US banks by *risk of FDIC failure within four quarters*, trained on 751K bank-quarters (2000-2026, 590 failures), benchmarking tree ensembles and a PyTorch GRU under [purged walk-forward cross-validation].",
           challengeLabel: "the result:",
           challenge:
-            "Gradient Boosting reached test PR-AUC 0.226 — 565× no-skill — and flagged all 7 capital-weak 2020–2026 failures a median 3 quarters early.",
+            "Gradient Boosting reached test PR-AUC 0.226 (565× no-skill) and flagged all 7 capital-weak 2020-2026 failures a median 3 quarters early.",
           note: "the misses traced back to SVB-style deposit runs",
           stats: [
             { value: 751, suffix: "K", label: "bank-quarters of FDIC data" },
@@ -230,11 +230,11 @@ export const sitePages: SitePage[] = [
         { name: "AWS", mark: "aws", bg: "#232f3e", fg: "#ff9900", note: "ECS Fargate, CloudWatch, scaling policies" },
         { name: "Docker", mark: "Dk", bg: "#1d63ed", fg: "#ffffff", note: "containers for the Fargate migration" },
         { name: "Terraform", mark: "Tf", bg: "#7b42bc", fg: "#ffffff", note: "infrastructure as code" },
-        { name: "Cloudflare", mark: "Cf", bg: "#f38020", fg: "#ffffff", note: "WAF rules — and an ACE accreditation" },
+        { name: "Cloudflare", mark: "Cf", bg: "#f38020", fg: "#ffffff", note: "WAF rules, plus an ACE accreditation" },
       ],
       toolNote: "hover a tool",
       skillsIntro:
-        "Problem solving, analytical thinking, cross-functional collaboration and technical communication — backed by coursework in machine learning, statistics and finance.",
+        "Problem solving, analytical thinking, cross-functional collaboration and technical communication, backed by coursework in machine learning, statistics and finance.",
       skills: [
         "scikit-learn",
         "pandas",

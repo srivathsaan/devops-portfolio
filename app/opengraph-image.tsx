@@ -48,7 +48,7 @@ export default async function OpengraphImage() {
             Data Science &amp; ML for Fintech · MSc FinTech, NTU Singapore
           </div>
           <div style={{ fontSize: 22, color: "#64748b", marginTop: 14 }}>
-            srivathsaan.com — walk through my portfolio
+            srivathsaan.com · walk through my portfolio
           </div>
         </div>
       </div>

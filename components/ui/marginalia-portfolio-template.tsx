@@ -1448,7 +1448,7 @@ function Screen({ kind, p, shift }: { kind: MgnScreen; p: MgnProject; shift: num
 
 function Phone({ p, kind, shift = 0 }: { p: MgnProject; kind: MgnScreen; shift?: number }) {
   return (
-    <div className="mgn-phone" role="img" aria-label={p.name + " — " + kind + " screen"}>
+    <div className="mgn-phone" role="img" aria-label={p.name + ", " + kind + " screen"}>
       <div className="mgn-phone-body">
         <Screen kind={kind} p={p} shift={shift} />
         <span className="mgn-island" />
@@ -1577,7 +1577,7 @@ function Cover({ info, title, name, role, year, location, docLabel, inkTrail }: 
     <Sheet info={info} className="mgn-cover">
       <canvas ref={canvasRef} className="mgn-canvas" aria-hidden="true" />
       <div className="mgn-cover-in">
-        <h1 className="mgn-display mgn-title" aria-label={title + " — " + name + ", " + role}>
+        <h1 className="mgn-display mgn-title" aria-label={title + ": " + name + ", " + role}>
           {chars.map((c, i) => (
             <span key={i} className="mgn-l" aria-hidden="true">
               <span className="mgn-lc">
@@ -1621,7 +1621,7 @@ function Cover({ info, title, name, role, year, location, docLabel, inkTrail }: 
       </div>
       <div className="mgn-cover-meta">
         <span>
-          {location} — {year}
+          {location} · {year}
         </span>
         <span className="mgn-hint" aria-hidden="true">
           scroll
@@ -1768,7 +1768,7 @@ function Skills({ info, heading, tools, toolNote, intro, skills, books, booksNot
   info: SheetInfo; heading: string; tools: MgnTool[]; toolNote: string; intro: string; skills: string[]; books: { title: string; color: string }[]; booksNote: string
 }) {
   const [on, setOn] = React.useState(-1)
-  const note = on >= 0 && tools[on] ? tools[on].name + (tools[on].note ? " — " + tools[on].note : "") : toolNote
+  const note = on >= 0 && tools[on] ? tools[on].name + (tools[on].note ? ": " + tools[on].note : "") : toolNote
   return (
     <Sheet info={info}>
       <div className="mgn-skills">
@@ -1885,7 +1885,7 @@ function Case({ info, p, i, flip }: { info: SheetInfo; p: MgnProject; i: number;
           <div className="mgn-eyebrow mgn-hand" data-ink>
             <span className="mgn-write">
               {pad2(i + 1)}
-              {meta ? " — " + meta : ""}
+              {meta ? " · " + meta : ""}
             </span>
           </div>
           <Heading text={p.name} seed={40 + i} className="mgn-case-title" />
@@ -2124,7 +2124,7 @@ function Chrome({ year, docLabel, name, items, secRef, onJump }: {
             ))}
           </ol>
           <div className="mgn-index-foot">
-            {docLabel} — {name}
+            {docLabel} · {name}
           </div>
         </nav>
       </div>
