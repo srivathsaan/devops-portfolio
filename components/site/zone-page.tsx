@@ -18,6 +18,7 @@ export default function ZonePage({ page }: { page: SitePage }) {
         name="Srivathsaan"
         portrait={page.portrait?.src ?? PORTRAIT}
         portraitAlt={page.portrait?.alt ?? "Placeholder portrait: the initials SN"}
+        portraitShape={page.portrait?.shape}
         // The site nav replaces the template's own top bar and contents page.
         chrome={false}
         colors={{ paper: "#ecebe7", night: "#2b2b2e", ink: "#242426", pen: page.accent }}

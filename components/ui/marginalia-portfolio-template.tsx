@@ -4,7 +4,7 @@
 /* eslint-disable @next/next/no-img-element, prefer-const, react/no-unescaped-entities */
 
 // Local additions (all optional; defaults match upstream): `chrome`, `headings`,
-// `portraitAlt`, and per-project `challengeLabel` / `linkLabel`.
+// `portraitAlt`, `portraitShape`, and per-project `challengeLabel` / `linkLabel`.
 //
 // Marginalia Portfolio Template — a designer's CV laid out like a printed
 // portfolio somebody went over with a periwinkle pen. Pale paper sheets and
@@ -97,6 +97,8 @@ export type MarginaliaPortfolioTemplateProps = {
   portrait?: string
   /** Alt text for the portrait; defaults to `name`. */
   portraitAlt?: string
+  /** "wide" frames a 3:2 landscape photo on the Hello sheet, with the traits above and below. */
+  portraitShape?: "tall" | "wide"
   /** Handwritten words around the portrait, each with an arrow pointing in. */
   traits?: string[]
   greeting?: string
@@ -809,6 +811,7 @@ const CSS = `
 .mgn-traits{position:relative;width:100%;max-width:560px;aspect-ratio:500/520;margin:0 auto}
 .mgn-traits>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .mgn-portrait{position:absolute;left:27%;top:17%;width:46%;height:66%}
+.mgn-portrait.mgn-wide{left:5%;top:21.15%;width:90%;height:57.7%}
 .mgn-portrait-img{position:absolute;inset:0;overflow:hidden;border-radius:4px;background:color-mix(in oklab,var(--mgn-ink) 10%,var(--mgn-paper))}
 .mgn-portrait-img img{width:100%;height:100%;max-width:none;object-fit:cover;filter:grayscale(1) contrast(1.05);transform:scale(1.04);transition:filter .7s ease,transform 1.2s cubic-bezier(.2,.7,.2,1)}
 .mgn-portrait:hover .mgn-portrait-img img{filter:grayscale(0) contrast(1);transform:scale(1.09)}
@@ -1636,7 +1639,7 @@ function Cover({ info, title, name, role, year, location, docLabel, inkTrail }: 
   )
 }
 
-const TRAIT_SPOTS: { at: Pt; a: Pt; b: Pt; bend: number }[] = [
+const TRAIT_SPOTS_TALL: { at: Pt; a: Pt; b: Pt; bend: number }[] = [
   { at: [104, 40], a: [122, 60], b: [150, 94], bend: 0.22 },
   { at: [398, 38], a: [380, 58], b: [352, 94], bend: -0.22 },
   { at: [64, 226], a: [84, 248], b: [126, 262], bend: -0.3 },
@@ -1644,10 +1647,20 @@ const TRAIT_SPOTS: { at: Pt; a: Pt; b: Pt; bend: number }[] = [
   { at: [112, 488], a: [130, 468], b: [158, 438], bend: 0.25 },
   { at: [392, 490], a: [372, 470], b: [342, 440], bend: -0.25 },
 ]
+// The wide frame spans x 25-475, y 110-410 of the same 500x520 box: three words above, three below.
+const TRAIT_SPOTS_WIDE: { at: Pt; a: Pt; b: Pt; bend: number }[] = [
+  { at: [90, 44], a: [100, 64], b: [124, 102], bend: 0.22 },
+  { at: [410, 44], a: [400, 64], b: [376, 102], bend: -0.22 },
+  { at: [250, 30], a: [250, 50], b: [262, 100], bend: 0.25 },
+  { at: [250, 492], a: [250, 472], b: [238, 420], bend: 0.25 },
+  { at: [90, 478], a: [100, 458], b: [124, 418], bend: -0.22 },
+  { at: [410, 478], a: [400, 458], b: [376, 418], bend: 0.22 },
+]
 
-function Hello({ info, portrait, portraitAlt, traits, greeting, bio }: {
-  info: SheetInfo; portrait: string; portraitAlt: string; traits: string[]; greeting: string; bio: string
+function Hello({ info, portrait, portraitAlt, wide, traits, greeting, bio }: {
+  info: SheetInfo; portrait: string; portraitAlt: string; wide: boolean; traits: string[]; greeting: string; bio: string
 }) {
+  const TRAIT_SPOTS = wide ? TRAIT_SPOTS_WIDE : TRAIT_SPOTS_TALL
   const layer = React.useRef(null as HTMLDivElement | null)
   const pic = React.useRef(null as HTMLDivElement | null)
   const move = (e: React.PointerEvent) => {
@@ -1664,7 +1677,7 @@ function Hello({ info, portrait, portraitAlt, traits, greeting, bio }: {
     <Sheet info={info}>
       <div className="mgn-two">
         <div className="mgn-traits" data-ink onPointerMove={move} onPointerLeave={leave}>
-          <div className="mgn-portrait" ref={pic}>
+          <div className={wide ? "mgn-portrait mgn-wide" : "mgn-portrait"} ref={pic}>
             <div className="mgn-portrait-img">{portrait && <img src={photo(portrait, 720)} alt={portraitAlt} loading="lazy" decoding="async" />}</div>
             <PenMark kind="box" seed={21} padX={10} padY={10} />
             <PenMark kind="box" seed={22} padX={16} padY={16} />
@@ -2443,7 +2456,7 @@ export default function MarginaliaPortfolioTemplate(props: MarginaliaPortfolioTe
           case "cover":
             return <Cover key={info.id} info={info} title={title} name={name} role={role} year={year} location={location} docLabel={docLabel} inkTrail={inkTrail} />
           case "hello":
-            return <Hello key={info.id} info={info} portrait={portrait} portraitAlt={portraitAlt} traits={traits} greeting={greeting} bio={bio} />
+            return <Hello key={info.id} info={info} portrait={portrait} portraitAlt={portraitAlt} wide={props.portraitShape === "wide"} traits={traits} greeting={greeting} bio={bio} />
           case "education":
             return <Education key={info.id} info={info} heading={headings.education || "Education"} intro={educationIntro} education={education} cvUrl={cvUrl} cvNote={cvNote} languages={languages} />
           case "skills":

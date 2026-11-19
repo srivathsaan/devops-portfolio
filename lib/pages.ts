@@ -10,7 +10,7 @@ import type { MarginaliaPortfolioTemplateProps } from "@/components/ui/marginali
 /** The template props a page supplies; look-and-feel props are shared in components/site/zone-page.tsx. */
 export type PageSheets = Omit<
   MarginaliaPortfolioTemplateProps,
-  "name" | "colors" | "fonts" | "chrome" | "height" | "className" | "inkTrail" | "portrait" | "portraitAlt"
+  "name" | "colors" | "fonts" | "chrome" | "height" | "className" | "inkTrail" | "portrait" | "portraitAlt" | "portraitShape"
 >;
 
 export type SitePage = {
@@ -26,7 +26,7 @@ export type SitePage = {
    *  against the paper sheets (and the night sheets where a page has them). */
   accent: string;
   /** A page-specific photo for the portrait slot; pages without one show the placeholder. */
-  portrait?: { src: string; alt: string };
+  portrait?: { src: string; alt: string; /** "wide" for a 3:2 landscape photo. */ shape?: "tall" | "wide" };
   sheets: PageSheets;
 };
 
@@ -50,7 +50,8 @@ export const sitePages: SitePage[] = [
     accent: "#aa4a2a",
     portrait: {
       src: "/images/btech-amrita.jpg",
-      alt: "Srivathsaan in convocation robes, receiving a medal and certificate at Amrita Vishwa Vidyapeetham",
+      alt: "Srivathsaan in convocation robes on stage with three others, receiving a medal and certificate at Amrita Vishwa Vidyapeetham",
+      shape: "wide",
     },
     sheets: {
       sections: ["cover", "hello", "education"],
