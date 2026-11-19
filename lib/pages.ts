@@ -175,7 +175,7 @@ export const sitePages: SitePage[] = [
     navLabel: "Projects & Contact",
     metaTitle: "Projects & Contact",
     description:
-      "Srivathsaan Nakkeeran's projects (PolicyPulse, an FDIC bank-failure early-warning model), certifications, skills, and contact details.",
+      "Srivathsaan Nakkeeran's projects (PolicyPulse, an FDIC bank-failure early-warning model, freelance web development for Thenkondar), certifications, skills, and contact details.",
     accent: "#9c4a3c",
     sheets: {
       sections: ["cover", "cases", "skills", "education", "thanks"],
@@ -225,6 +225,25 @@ export const sitePages: SitePage[] = [
           ],
           images: [],
           screens: ["stats", "cover", "feed"],
+          accent: "#9c4a3c",
+          tone: "paper",
+        },
+        {
+          name: "Thenkondar",
+          kind: "Freelance web development",
+          year: "2026",
+          tagline: "A Singapore rum brand, online.",
+          summary:
+            "Built the website for *Thenkondar*, a Singapore rum brand made from Kaveri Delta sugarcane: the brand story, the products, an online store and [where to find it in Singapore].",
+          challengeLabel: "on the site:",
+          challenge:
+            "An age gate, custom bottle calligraphy in English or Tamil, customer reviews and a stockist map, built with Astro behind Cloudflare.",
+          note: "freelance, Singapore",
+          href: "https://thenkondar.com",
+          linkLabel: "visit thenkondar.com",
+          images: [],
+          // No stats for this one, so no stats screen.
+          screens: ["cover", "feed", "detail"],
           accent: "#9c4a3c",
           tone: "paper",
         },
