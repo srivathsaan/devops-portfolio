@@ -48,14 +48,20 @@ export const sitePages: SitePage[] = [
     description:
       "Srivathsaan Nakkeeran's B.Tech in Computer and Communication Engineering at Amrita Vishwa Vidyapeetham: CGPA 8.87/10 and the Silver Medal for academic excellence.",
     accent: "#aa4a2a",
+    portrait: {
+      src: "/images/btech-amrita.jpg",
+      alt: "Srivathsaan in convocation robes, receiving a medal and certificate at Amrita Vishwa Vidyapeetham",
+    },
     sheets: {
-      sections: ["cover", "education"],
+      sections: ["cover", "hello", "education"],
       title: "B.Tech",
       role: "Computer & Communication Engineering",
       location: "Coimbatore",
       year: "2019-23",
-      educationIntro:
-        "Four years of computer and communication engineering at Amrita Vishwa Vidyapeetham, finishing with a CGPA of 8.87 and the Silver Medal.",
+      greeting: "Class of 2023.",
+      bio: "Four years of computer and communication engineering at Amrita Vishwa Vidyapeetham, Coimbatore, finishing with a *CGPA of 8.87* and [the Silver Medal for academic excellence].",
+      traits: ["Silver Medal", "CGPA 8.87", "Amrita", "Coimbatore", "engineering", "convocation"],
+      educationIntro: "The degree, the medal, and the internship that overlapped my final semester.",
       education: [
         {
           title: "B.Tech, Computer and Communication Engineering",
