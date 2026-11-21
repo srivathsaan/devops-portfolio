@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 845" width="390" height="845" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+  <!-- Illustrative phone screen: an AWS console-style view of an ECS service and its CloudWatch metrics.
+       Not a real screenshot; data is made up. -->
+  <rect width="390" height="845" fill="#f2f3f3"/>
+  <rect width="390" height="118" fill="#232f3e"/>
+  <text x="28" y="31" font-size="15" font-weight="600" fill="#fff">9:41</text>
+  <g fill="#fff"><rect x="300" y="22" width="3" height="8" rx="1"/><rect x="305" y="19" width="3" height="11" rx="1"/><rect x="310" y="16" width="3" height="14" rx="1"/></g>
+  <rect x="330" y="18" width="26" height="13" rx="3.5" fill="none" stroke="#fff" stroke-opacity=".8"/><rect x="332.5" y="20.5" width="18" height="8" rx="2" fill="#fff"/>
+  <text x="24" y="86" font-size="24" font-weight="700" fill="#fff">Console</text>
+  <rect x="24" y="96" width="34" height="4" rx="2" fill="#ff9900"/>
+  <rect x="262" y="66" width="104" height="30" rx="15" fill="#37475a"/><text x="314" y="86" font-size="12.5" fill="#fff" text-anchor="middle">us-east-1 ▾</text>
+
+  <rect x="16" y="132" width="358" height="40" rx="8" fill="#fff" stroke="#d5dbdb"/>
+  <circle cx="40" cy="151" r="7" fill="none" stroke="#687078" stroke-width="2"/><path d="M45 156l5 5" stroke="#687078" stroke-width="2" stroke-linecap="round"/>
+  <text x="60" y="157" font-size="14" fill="#687078">Search services</text>
+
+  <!-- ECS card -->
+  <rect x="16" y="186" width="358" height="196" rx="10" fill="#fff" stroke="#e1e4e4"/>
+  <text x="32" y="214" font-size="12" font-weight="700" fill="#687078" letter-spacing=".06em">AMAZON ECS</text>
+  <text x="32" y="240" font-size="18" font-weight="700" fill="#16191f">nginx-service</text>
+  <text x="32" y="260" font-size="12.5" fill="#687078">Cluster web-prod · Fargate</text>
+  <rect x="290" y="226" width="68" height="24" rx="12" fill="#e6f4ea"/><circle cx="304" cy="238" r="4" fill="#1d8102"/><text x="336" y="242" font-size="12" font-weight="600" fill="#1d8102" text-anchor="middle">Active</text>
+  <rect x="32" y="276" width="326" height="1" fill="#eaeded"/>
+  <text x="32" y="302" font-size="12.5" fill="#687078">Running tasks</text>
+  <text x="358" y="302" font-size="14" font-weight="700" fill="#16191f" text-anchor="end">4 / 4</text>
+  <g fill="#1d8102"><rect x="32" y="314" width="76" height="12" rx="3"/><rect x="114" y="314" width="76" height="12" rx="3"/><rect x="196" y="314" width="76" height="12" rx="3"/><rect x="278" y="314" width="80" height="12" rx="3"/></g>
+  <text x="32" y="358" font-size="12.5" fill="#687078">Last deployment</text>
+  <text x="358" y="358" font-size="12.5" font-weight="600" fill="#16191f" text-anchor="end">Completed · Terraform</text>
+
+  <!-- CloudWatch card -->
+  <rect x="16" y="396" width="358" height="226" rx="10" fill="#fff" stroke="#e1e4e4"/>
+  <text x="32" y="424" font-size="12" font-weight="700" fill="#687078" letter-spacing=".06em">CLOUDWATCH</text>
+  <text x="32" y="448" font-size="16" font-weight="700" fill="#16191f">CPUUtilization · 3 h</text>
+  <rect x="314" y="430" width="44" height="24" rx="12" fill="#e6f4ea"/><text x="336" y="447" font-size="12" font-weight="700" fill="#1d8102" text-anchor="middle">OK</text>
+  <g stroke="#eaeded"><path d="M32 480H358M32 520H358M32 560H358M32 600H358"/></g>
+  <g font-size="10" fill="#879196"><text x="32" y="476">80%</text><text x="32" y="516">60%</text><text x="32" y="556">40%</text><text x="32" y="596">20%</text></g>
+  <path d="M32 506H358" stroke="#d13212" stroke-dasharray="5 4" stroke-width="1.5"/>
+  <text x="358" y="500" font-size="10" fill="#d13212" text-anchor="end">alarm 70%</text>
+  <path d="M32 572 L58 566 L84 570 L110 556 L136 548 L162 530 L188 522 L214 536 L240 552 L266 558 L292 548 L318 554 L344 546 L358 549" fill="none" stroke="#ff9900" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M32 572 L58 566 L84 570 L110 556 L136 548 L162 530 L188 522 L214 536 L240 552 L266 558 L292 548 L318 554 L344 546 L358 549 V600 H32 Z" fill="#ff9900" fill-opacity=".12"/>
+
+  <!-- Health card -->
+  <rect x="16" y="636" width="358" height="118" rx="10" fill="#fff" stroke="#e1e4e4"/>
+  <text x="32" y="664" font-size="12" font-weight="700" fill="#687078" letter-spacing=".06em">SERVICE HEALTH</text>
+  <text x="32" y="704" font-size="30" font-weight="700" fill="#16191f">99.99%</text>
+  <text x="32" y="730" font-size="12.5" fill="#687078">uptime · 30 days</text>
+  <text x="358" y="696" font-size="12.5" fill="#687078" text-anchor="end">Auto scaling</text>
+  <text x="358" y="716" font-size="13" font-weight="600" fill="#16191f" text-anchor="end">target 60% CPU</text>
+  <text x="358" y="736" font-size="12.5" fill="#1d8102" text-anchor="end">0 open issues</text>
+
+  <rect x="0" y="770" width="390" height="75" fill="#fff"/><rect x="0" y="770" width="390" height="1" fill="#e1e4e4"/>
+  <g fill="#aab7b8"><rect x="58" y="792" width="22" height="18" rx="4" fill="#ec7211"/><circle cx="160" cy="801" r="10"/><rect x="220" y="791" width="22" height="20" rx="4"/><circle cx="330" cy="801" r="10"/></g>
+  <text x="69" y="828" font-size="10.5" font-weight="600" fill="#ec7211" text-anchor="middle">Home</text>
+  <text x="160" y="828" font-size="10.5" fill="#879196" text-anchor="middle">Services</text>
+  <text x="231" y="828" font-size="10.5" fill="#879196" text-anchor="middle">Alarms</text>
+  <text x="330" y="828" font-size="10.5" fill="#879196" text-anchor="middle">Account</text>
+</svg>

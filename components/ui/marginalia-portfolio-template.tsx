@@ -41,7 +41,8 @@ import { MorphSVGPlugin } from "gsap/MorphSVGPlugin"
 
 /* ------------------------------------------------------------------ types */
 
-export type MgnScreen = "cover" | "feed" | "detail" | "stats"
+/** "image" (local addition) fills the screen with that phone's own image: images[0] left, [1] middle, [2] right. */
+export type MgnScreen = "cover" | "feed" | "detail" | "stats" | "image"
 export type MgnDoodle =
   | "guitar" | "dumbbell" | "music" | "plane" | "coffee" | "camera"
   | "plant" | "book" | "headphones" | "globe" | "cat" | "pencil" | "mountain" | "heart"
@@ -1319,6 +1320,13 @@ function Screen({ kind, p, shift }: { kind: MgnScreen; p: MgnProject; shift: num
   const n = Math.max(1, p.images.length)
   const im = (k: number) => photo(p.images[(shift + k) % n] || "", 520)
   const abs = { position: "absolute" } as React.CSSProperties
+
+  if (kind === "image")
+    return (
+      <div className="mgn-screen">
+        <Pic src={im(0)} />
+      </div>
+    )
 
   if (kind === "cover")
     return (

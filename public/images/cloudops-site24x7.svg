@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 845" width="390" height="845" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+  <!-- Illustrative phone screen: a Site24x7-style monitor dashboard. Not a real screenshot; data is made up. -->
+  <rect width="390" height="845" fill="#f4f6fa"/>
+  <rect width="390" height="118" fill="#1b3a5c"/>
+  <text x="28" y="31" font-size="15" font-weight="600" fill="#fff">9:41</text>
+  <g fill="#fff"><rect x="300" y="22" width="3" height="8" rx="1"/><rect x="305" y="19" width="3" height="11" rx="1"/><rect x="310" y="16" width="3" height="14" rx="1"/></g>
+  <rect x="330" y="18" width="26" height="13" rx="3.5" fill="none" stroke="#fff" stroke-opacity=".8"/><rect x="332.5" y="20.5" width="18" height="8" rx="2" fill="#fff"/>
+  <text x="24" y="84" font-size="24" font-weight="700" fill="#fff">Monitors</text>
+  <text x="24" y="106" font-size="13" fill="#a9c1da">All monitors · last 24 hours</text>
+
+  <!-- summary -->
+  <rect x="16" y="132" width="358" height="150" rx="14" fill="#fff"/>
+  <g transform="translate(86 207) rotate(-90)" fill="none" stroke-width="16">
+    <circle r="46" stroke="#e8edf3"/>
+    <circle r="46" stroke="#2fb171" stroke-dasharray="270.6 289" />
+    <circle r="46" stroke="#f2a93b" stroke-dasharray="11.8 289" stroke-dashoffset="-272.6"/>
+    <circle r="46" stroke="#e5484d" stroke-dasharray="4.6 289" stroke-dashoffset="-284.4"/>
+  </g>
+  <text x="86" y="207" font-size="22" font-weight="700" fill="#14273d" text-anchor="middle">49</text>
+  <text x="86" y="224" font-size="11" fill="#6b7d91" text-anchor="middle">monitors</text>
+  <g font-size="14">
+    <circle cx="176" cy="172" r="6" fill="#2fb171"/><text x="190" y="177" fill="#14273d">Up</text><text x="356" y="177" font-weight="700" fill="#14273d" text-anchor="end">46</text>
+    <circle cx="176" cy="204" r="6" fill="#f2a93b"/><text x="190" y="209" fill="#14273d">Trouble</text><text x="356" y="209" font-weight="700" fill="#14273d" text-anchor="end">2</text>
+    <circle cx="176" cy="236" r="6" fill="#e5484d"/><text x="190" y="241" fill="#14273d">Down</text><text x="356" y="241" font-weight="700" fill="#14273d" text-anchor="end">1</text>
+  </g>
+  <rect x="176" y="254" width="180" height="1" fill="#edf1f6"/>
+  <text x="176" y="272" font-size="12" fill="#6b7d91">Availability</text><text x="356" y="272" font-size="12" font-weight="700" fill="#2fb171" text-anchor="end">99.98%</text>
+
+  <!-- monitor rows -->
+  <g font-size="15">
+    <rect x="16" y="296" width="358" height="74" rx="12" fill="#fff"/>
+    <circle cx="38" cy="333" r="7" fill="#2fb171"/>
+    <text x="56" y="328" font-weight="700" fill="#14273d">checkout-web</text><text x="56" y="350" font-size="12" fill="#6b7d91">HTTPS · 182 ms</text>
+    <path d="M262 342 L272 336 L282 339 L292 330 L302 334 L312 328 L322 332 L332 326 L342 330 L356 324" fill="none" stroke="#2fb171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="16" y="380" width="358" height="74" rx="12" fill="#fff"/>
+    <circle cx="38" cy="417" r="7" fill="#e5484d"/>
+    <text x="56" y="412" font-weight="700" fill="#14273d">db-replica-2</text><text x="56" y="434" font-size="12" fill="#e5484d">Server · down for 3 min</text>
+    <path d="M262 420 L272 418 L282 421 L292 416 L302 419 L312 417 L322 440 L332 440 L342 440 L356 440" fill="none" stroke="#e5484d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="16" y="464" width="358" height="74" rx="12" fill="#fff"/>
+    <circle cx="38" cy="501" r="7" fill="#f2a93b"/>
+    <text x="56" y="496" font-weight="700" fill="#14273d">nginx-edge</text><text x="56" y="518" font-size="12" fill="#6b7d91">Website · 640 ms, slow</text>
+    <path d="M262 514 L272 510 L282 512 L292 500 L302 494 L312 498 L322 488 L332 492 L342 484 L356 486" fill="none" stroke="#f2a93b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="16" y="548" width="358" height="74" rx="12" fill="#fff"/>
+    <circle cx="38" cy="585" r="7" fill="#2fb171"/>
+    <text x="56" y="580" font-weight="700" fill="#14273d">api-gateway</text><text x="56" y="602" font-size="12" fill="#6b7d91">REST API · 96 ms</text>
+    <path d="M262 592 L272 590 L282 594 L292 588 L302 590 L312 586 L322 589 L332 584 L342 587 L356 583" fill="none" stroke="#2fb171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="16" y="632" width="358" height="74" rx="12" fill="#fff"/>
+    <circle cx="38" cy="669" r="7" fill="#2fb171"/>
+    <text x="56" y="664" font-weight="700" fill="#14273d">sso-login</text><text x="56" y="686" font-size="12" fill="#6b7d91">HTTPS · 131 ms</text>
+    <path d="M262 676 L272 672 L282 674 L292 668 L302 671 L312 666 L322 670 L332 667 L342 669 L356 664" fill="none" stroke="#2fb171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <rect x="0" y="770" width="390" height="75" fill="#fff"/><rect x="0" y="770" width="390" height="1" fill="#e4e9f0"/>
+  <g fill="#a3b1c2"><rect x="58" y="792" width="22" height="18" rx="4" fill="#1b3a5c"/><circle cx="160" cy="801" r="10"/><rect x="220" y="791" width="22" height="20" rx="4"/><circle cx="330" cy="801" r="10"/></g>
+  <text x="69" y="828" font-size="10.5" font-weight="600" fill="#1b3a5c" text-anchor="middle">Monitors</text>
+  <text x="160" y="828" font-size="10.5" fill="#8797aa" text-anchor="middle">Alarms</text>
+  <text x="231" y="828" font-size="10.5" fill="#8797aa" text-anchor="middle">Reports</text>
+  <text x="330" y="828" font-size="10.5" fill="#8797aa" text-anchor="middle">Settings</text>
+</svg>

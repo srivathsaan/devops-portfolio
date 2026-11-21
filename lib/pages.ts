@@ -38,8 +38,6 @@ export const contactLinks = {
 };
 
 const RESUME_URL = "https://www.srivathsaan.com/resume.pdf";
-// The template sizes Unsplash URLs itself, so keep them bare (no query string).
-const U = "https://images.unsplash.com/photo-";
 
 export const sitePages: SitePage[] = [
   {
@@ -113,9 +111,9 @@ export const sitePages: SitePage[] = [
             { value: 30, suffix: "+", label: "security incidents" },
             { value: 99.99, decimals: 2, suffix: "%", label: "uptime at peak traffic on AWS ECS" },
           ],
-          // Unsplash photos (free to use): a server rack, a monitoring dashboard, a patch panel.
-          images: [U + "1558494949-ef010cbdcc31", U + "1551288049-bebda4e38f71", U + "1544197150-b99a580bb7a8"],
-          screens: ["stats", "cover", "feed"],
+          // Illustrated screens of the day-to-day tools (made-up data, not screenshots).
+          images: ["/images/cloudops-servicenow.svg", "/images/cloudops-aws.svg", "/images/cloudops-site24x7.svg"],
+          screens: ["image", "image", "image"],
           accent: "#3d7fb0",
         },
         {
