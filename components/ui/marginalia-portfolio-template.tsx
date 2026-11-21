@@ -4,7 +4,8 @@
 /* eslint-disable @next/next/no-img-element, prefer-const, react/no-unescaped-entities */
 
 // Local additions (all optional; defaults match upstream): `chrome`, `headings`,
-// `portraitAlt`, `portraitShape`, `educationPhoto`, and per-project `challengeLabel` / `linkLabel`.
+// `portraitAlt`, `portraitShape`, `educationPhoto`, and per-project `challengeLabel` / `linkLabel` /
+// `photo`.
 //
 // Marginalia Portfolio Template — a designer's CV laid out like a printed
 // portfolio somebody went over with a periwinkle pen. Pale paper sheets and
@@ -75,7 +76,12 @@ export type MgnProject = {
   challengeLabel?: string
   /** Replaces "see the full case study" on the link. */
   linkLabel?: string
+  /** A snapshot under the case-study copy. */
+  photo?: MgnSnap
 }
+
+/** A photo shown as a printed snapshot (cropped to 3:2) with an optional handwritten caption. */
+export type MgnSnap = { src: string; alt: string; caption?: string }
 
 export type MgnTool = { name: string; mark: string; bg: string; fg: string; note?: string }
 export type MgnEducation = { title: string; place?: string; period?: string; circled?: boolean }
@@ -110,7 +116,7 @@ export type MarginaliaPortfolioTemplateProps = {
   cvUrl?: string | null
   cvNote?: string
   /** A snapshot under the QR code on the Education sheet, with a handwritten caption. */
-  educationPhoto?: { src: string; alt: string; caption?: string }
+  educationPhoto?: MgnSnap
   languages?: MgnLanguage[]
   tools?: MgnTool[]
   toolNote?: string
@@ -1714,9 +1720,25 @@ function Hello({ info, portrait, portraitAlt, wide, traits, greeting, bio }: {
   )
 }
 
+// A printed snapshot with a handwritten caption (local addition).
+function Snap({ src, alt, caption }: MgnSnap) {
+  return (
+    <figure className="mgn-snap" data-ink>
+      <div className="mgn-snap-img">
+        <img src={photo(src, 900)} alt={alt} loading="lazy" decoding="async" />
+      </div>
+      {caption && (
+        <figcaption className="mgn-hand">
+          <span className="mgn-write">{caption}</span>
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
 function Education({ info, heading, intro, education, cvUrl, cvNote, photo: snap, languages }: {
   info: SheetInfo; heading: string; intro: string; education: MgnEducation[]; cvUrl: string | null; cvNote: string
-  photo?: { src: string; alt: string; caption?: string }; languages: MgnLanguage[]
+  photo?: MgnSnap; languages: MgnLanguage[]
 }) {
   return (
     <Sheet info={info}>
@@ -1765,18 +1787,7 @@ function Education({ info, heading, intro, education, cvUrl, cvNote, photo: snap
               </div>
             </div>
           )}
-          {snap && (
-            <figure className="mgn-snap" data-ink>
-              <div className="mgn-snap-img">
-                <img src={photo(snap.src, 900)} alt={snap.alt} loading="lazy" decoding="async" />
-              </div>
-              {snap.caption && (
-                <figcaption className="mgn-hand">
-                  <span className="mgn-write">{snap.caption}</span>
-                </figcaption>
-              )}
-            </figure>
-          )}
+          {snap && <Snap {...snap} />}
           {languages.length > 0 && (
             <div className="mgn-langs" data-ink>
               <h3>Languages</h3>
@@ -1960,6 +1971,7 @@ function Case({ info, p, i, flip }: { info: SheetInfo; p: MgnProject; i: number;
               </svg>
             </a>
           )}
+          {p.photo && <Snap {...p.photo} />}
         </div>
         <div className="mgn-trio">
           {trio.map((k, slot) => (

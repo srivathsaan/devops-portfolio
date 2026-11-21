@@ -126,6 +126,11 @@ export const sitePages: SitePage[] = [
           summary:
             "Built *full-stack web applications* with React.js, Node.js, MongoDB and AWS, delivering data-driven features for production use, and [earned an upgraded full-time offer] at the end of it.",
           note: "full-time offer, upgraded in May 2023",
+          photo: {
+            src: "/images/bounteous-internship.jpg",
+            alt: "Srivathsaan, holding a sheet of paper, shaking hands with a colleague in a Bounteous office as another colleague smiles",
+            caption: "end of the internship, May 2023",
+          },
           // Unsplash photos (free to use): code on a laptop, developers at work, code up close.
           images: [U + "1555066931-4365d14bab8c", U + "1551434678-e076c223a692", U + "1461749280684-dccba630e2f6"],
           screens: ["feed", "cover", "stats"],
