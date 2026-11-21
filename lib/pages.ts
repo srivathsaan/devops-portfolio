@@ -167,6 +167,11 @@ export const sitePages: SitePage[] = [
       ],
       cvUrl: RESUME_URL,
       cvNote: "the whole story",
+      educationPhoto: {
+        src: "/images/msc-tedxntu.jpg",
+        alt: "Srivathsaan in a black volunteer T-shirt, fixing a queue barrier tape between rows of red seats at TEDxNTU",
+        caption: "TEDxNTU, setting up the hall",
+      },
       languages: [],
     },
   },

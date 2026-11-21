@@ -4,7 +4,7 @@
 /* eslint-disable @next/next/no-img-element, prefer-const, react/no-unescaped-entities */
 
 // Local additions (all optional; defaults match upstream): `chrome`, `headings`,
-// `portraitAlt`, `portraitShape`, and per-project `challengeLabel` / `linkLabel`.
+// `portraitAlt`, `portraitShape`, `educationPhoto`, and per-project `challengeLabel` / `linkLabel`.
 //
 // Marginalia Portfolio Template — a designer's CV laid out like a printed
 // portfolio somebody went over with a periwinkle pen. Pale paper sheets and
@@ -109,6 +109,8 @@ export type MarginaliaPortfolioTemplateProps = {
   /** What the QR code opens; null hides the code. */
   cvUrl?: string | null
   cvNote?: string
+  /** A snapshot under the QR code on the Education sheet, with a handwritten caption. */
+  educationPhoto?: { src: string; alt: string; caption?: string }
   languages?: MgnLanguage[]
   tools?: MgnTool[]
   toolNote?: string
@@ -834,6 +836,12 @@ const CSS = `
 .mgn-qr-tag{position:absolute;left:8px;top:-22px;font-family:var(--mgn-hand);font-size:17px;color:var(--mgn-pen)}
 .mgn-cvnote{position:relative;font-size:clamp(24px,2.6cqi,38px);max-width:7em}
 .mgn-cvnote svg{display:block;width:clamp(60px,6cqi,90px);height:auto;aspect-ratio:90/60;margin:0 0 6px -6px}
+.mgn-snap{margin:clamp(40px,4.6cqi,72px) 0 0;max-width:460px}
+.mgn-snap-img{padding:10px;background:#fff;border-radius:6px;box-shadow:0 18px 40px -22px rgba(0,0,0,.35);transform:rotate(1.5deg);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.mgn-snap-img img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:2px;filter:grayscale(1) contrast(1.05);transition:filter .7s ease}
+.mgn-snap:hover .mgn-snap-img{transform:rotate(0deg) scale(1.03)}
+.mgn-snap:hover .mgn-snap-img img{filter:grayscale(0) contrast(1)}
+.mgn-snap figcaption{margin-top:14px;font-size:clamp(20px,2cqi,28px);color:var(--mgn-pen)}
 .mgn-langs{margin-top:clamp(40px,5cqi,80px)}
 .mgn-langs h3{font-family:var(--mgn-display);font-weight:400;font-size:clamp(30px,3.6cqi,56px);margin:0 0 clamp(14px,1.8cqi,24px);color:var(--fg)}
 .mgn-lang{display:grid;grid-template-columns:6.5em 3.5em minmax(0,1fr);align-items:center;gap:14px;padding:10px 0;border-top:1px solid var(--rule);font-size:clamp(13px,1.05cqi,15px)}
@@ -992,7 +1000,7 @@ const CSS = `
   .mgn-deal-stage{position:relative;height:auto;min-height:var(--mgn-h)}
   .mgn-hint svg,.mgn-fact:hover svg,.mgn-note-swap{animation:none}
   .mgn-index,.mgn-index[data-open=true]{transition:none}
-  .mgn-portrait-img img,.mgn-tool,.mgn-card>button,.mgn-qr{transition:none}
+  .mgn-portrait-img img,.mgn-tool,.mgn-card>button,.mgn-qr,.mgn-snap-img,.mgn-snap-img img{transition:none}
 }
 `
 
@@ -1706,8 +1714,9 @@ function Hello({ info, portrait, portraitAlt, wide, traits, greeting, bio }: {
   )
 }
 
-function Education({ info, heading, intro, education, cvUrl, cvNote, languages }: {
-  info: SheetInfo; heading: string; intro: string; education: MgnEducation[]; cvUrl: string | null; cvNote: string; languages: MgnLanguage[]
+function Education({ info, heading, intro, education, cvUrl, cvNote, photo: snap, languages }: {
+  info: SheetInfo; heading: string; intro: string; education: MgnEducation[]; cvUrl: string | null; cvNote: string
+  photo?: { src: string; alt: string; caption?: string }; languages: MgnLanguage[]
 }) {
   return (
     <Sheet info={info}>
@@ -1755,6 +1764,18 @@ function Education({ info, heading, intro, education, cvUrl, cvNote, languages }
                 <span className="mgn-write">{cvNote}</span>
               </div>
             </div>
+          )}
+          {snap && (
+            <figure className="mgn-snap" data-ink>
+              <div className="mgn-snap-img">
+                <img src={photo(snap.src, 900)} alt={snap.alt} loading="lazy" decoding="async" />
+              </div>
+              {snap.caption && (
+                <figcaption className="mgn-hand">
+                  <span className="mgn-write">{snap.caption}</span>
+                </figcaption>
+              )}
+            </figure>
           )}
           {languages.length > 0 && (
             <div className="mgn-langs" data-ink>
@@ -2458,7 +2479,7 @@ export default function MarginaliaPortfolioTemplate(props: MarginaliaPortfolioTe
           case "hello":
             return <Hello key={info.id} info={info} portrait={portrait} portraitAlt={portraitAlt} wide={props.portraitShape === "wide"} traits={traits} greeting={greeting} bio={bio} />
           case "education":
-            return <Education key={info.id} info={info} heading={headings.education || "Education"} intro={educationIntro} education={education} cvUrl={cvUrl} cvNote={cvNote} languages={languages} />
+            return <Education key={info.id} info={info} heading={headings.education || "Education"} intro={educationIntro} education={education} cvUrl={cvUrl} cvNote={cvNote} photo={props.educationPhoto} languages={languages} />
           case "skills":
             return <Skills key={info.id} info={info} heading={headings.skills || "Skills"} tools={tools} toolNote={toolNote} intro={skillsIntro} skills={skills} books={books} booksNote={booksNote} />
           case "projects":
