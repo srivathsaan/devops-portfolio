@@ -214,8 +214,9 @@ export const sitePages: SitePage[] = [
           ],
           href: "https://github.com/Devesh-Singh05/PolicyPulse",
           linkLabel: "see it on GitHub",
-          images: [],
-          screens: ["cover", "feed", "stats"],
+          // Phone-width screenshots of the live demo (policypulse-six.vercel.app): the check, the hero, the steps.
+          images: ["/images/policypulse-check.jpg", "/images/policypulse-hero.jpg", "/images/policypulse-steps.jpg"],
+          screens: ["image", "image", "image"],
           accent: "#9c4a3c",
           tone: "paper",
         },
