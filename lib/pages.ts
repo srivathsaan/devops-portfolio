@@ -236,8 +236,9 @@ export const sitePages: SitePage[] = [
             { value: 565, suffix: "×", label: "the no-skill PR-AUC" },
             { value: 3, label: "quarters' median early warning" },
           ],
-          images: [],
-          screens: ["stats", "cover", "feed"],
+          // Phone screens built from the project's slide deck charts: temporal test, risk deciles, unseen banks.
+          images: ["/images/earlywarning-temporal.jpg", "/images/earlywarning-risk.jpg", "/images/earlywarning-cv.jpg"],
+          screens: ["image", "image", "image"],
           accent: "#9c4a3c",
           tone: "paper",
         },
