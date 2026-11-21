@@ -189,6 +189,7 @@ export const sitePages: SitePage[] = [
     description:
       "Srivathsaan Nakkeeran's projects (PolicyPulse, an FDIC bank-failure early-warning model, freelance web development for Thenkondar), certifications, skills, and contact details.",
     accent: "#9c4a3c",
+    portrait: { src: "/images/contact-headshot.jpg", alt: "Srivathsaan in a dark blazer and white shirt" },
     sheets: {
       sections: ["cover", "cases", "skills", "education", "thanks"],
       title: "Projects",
