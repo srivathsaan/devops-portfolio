@@ -38,6 +38,8 @@ export const contactLinks = {
 };
 
 const RESUME_URL = "https://www.srivathsaan.com/resume.pdf";
+// The template sizes Unsplash URLs itself, so keep them bare (no query string).
+const U = "https://images.unsplash.com/photo-";
 
 export const sitePages: SitePage[] = [
   {
@@ -111,7 +113,8 @@ export const sitePages: SitePage[] = [
             { value: 30, suffix: "+", label: "security incidents" },
             { value: 99.99, decimals: 2, suffix: "%", label: "uptime at peak traffic on AWS ECS" },
           ],
-          images: [],
+          // Unsplash photos (free to use): a server rack, a monitoring dashboard, a patch panel.
+          images: [U + "1558494949-ef010cbdcc31", U + "1551288049-bebda4e38f71", U + "1544197150-b99a580bb7a8"],
           screens: ["stats", "cover", "feed"],
           accent: "#3d7fb0",
         },
@@ -123,7 +126,8 @@ export const sitePages: SitePage[] = [
           summary:
             "Built *full-stack web applications* with React.js, Node.js, MongoDB and AWS, delivering data-driven features for production use, and [earned an upgraded full-time offer] at the end of it.",
           note: "full-time offer, upgraded in May 2023",
-          images: [],
+          // Unsplash photos (free to use): code on a laptop, developers at work, code up close.
+          images: [U + "1555066931-4365d14bab8c", U + "1551434678-e076c223a692", U + "1461749280684-dccba630e2f6"],
           screens: ["feed", "cover", "stats"],
           accent: "#3d7fb0",
         },
