@@ -179,48 +179,6 @@ function signpost(
   colliders.push({ x, z, radius: 0.15 });
 }
 
-/** A slim radio mast with a red beacon — the "get in touch" landmark of the contact zone. */
-function radioMast(parent: THREE.Group, colliders: Collider[], x: number, z: number) {
-  const group = new THREE.Group();
-  parent.add(group);
-  const steelMat = new THREE.MeshStandardMaterial({ color: 0xc9d1d9, roughness: 0.5, metalness: 0.5 });
-  const HEIGHT = 4.4;
-
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.42, 0.22, 8), steelMat);
-  base.position.set(x, 0.11, z);
-  base.castShadow = true;
-  group.add(base);
-
-  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.13, HEIGHT, 6), steelMat);
-  mast.position.set(x, HEIGHT / 2, z);
-  mast.castShadow = true;
-  group.add(mast);
-
-  // Antenna crossbars, narrowing toward the top.
-  [2.6, 3.2, 3.8].forEach((y, i) => {
-    const bar = new THREE.Mesh(new THREE.BoxGeometry(1.0 - i * 0.25, 0.05, 0.05), steelMat);
-    bar.position.set(x, y, z);
-    bar.castShadow = true;
-    group.add(bar);
-  });
-
-  // A dish facing the path.
-  const dish = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.2, 0.08, 14), steelMat);
-  dish.rotation.x = Math.PI / 2;
-  dish.position.set(x, 2.1, z + 0.16);
-  dish.castShadow = true;
-  group.add(dish);
-
-  const beacon = new THREE.Mesh(
-    new THREE.SphereGeometry(0.09, 10, 8),
-    new THREE.MeshStandardMaterial({ color: 0xff4d3d, emissive: 0xff2a1a, emissiveIntensity: 1.2 })
-  );
-  beacon.position.set(x, HEIGHT + 0.07, z);
-  group.add(beacon);
-
-  colliders.push({ x, z, radius: 0.42 });
-}
-
 /**
  * Modern glass-and-steel office block for the Bounteous tech-park campus — flat roof,
  * blue-tinted curtain-wall glass with dark spandrel bands marking each floor, plus a
@@ -618,68 +576,186 @@ function buildNtuZone(world: THREE.Group, cx: number, colliders: Collider[], ent
 }
 
 /**
- * A small cozy house, closing out the journey on a literal "home" — warm walls, a pitched
- * roof, a lit doorway and windows, a chimney, and a couple of bushes by the door.
+ * Marina Bay Sands, closing out the journey in Singapore: three twin-legged towers on a
+ * low podium, joined at the top by the boat-shaped SkyPark with its pool and trees.
  */
-function homeBuilding(parent: THREE.Group, colliders: Collider[], entrances: Entrance[], x: number, z: number) {
+function marinaBaySands(parent: THREE.Group, colliders: Collider[], entrances: Entrance[], x: number, z: number) {
   // Own group, so the occlusion fader can treat the whole building as one unit.
   const group = new THREE.Group();
   parent.add(group);
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0xf3e3c8, roughness: 0.85 });
-  const roofMat = new THREE.MeshStandardMaterial({ color: 0x9c4a3c, roughness: 0.75 });
-  const doorMat = new THREE.MeshStandardMaterial({ color: 0x5b3a24, roughness: 0.7 });
-  const windowMat = new THREE.MeshStandardMaterial({
+  const concreteMat = new THREE.MeshStandardMaterial({ color: 0xe8e3d9, roughness: 0.8 });
+  const glassMat = new THREE.MeshStandardMaterial({ color: 0x8fb4cc, roughness: 0.3, metalness: 0.3 });
+  const litMat = new THREE.MeshStandardMaterial({
     color: 0xffd37a,
     roughness: 0.4,
     emissive: 0xffb347,
     emissiveIntensity: 0.5,
   });
-  const chimneyMat = new THREE.MeshStandardMaterial({ color: 0x8a7968, roughness: 0.9 });
+  const poolMat = new THREE.MeshStandardMaterial({ color: 0x4fc3e8, roughness: 0.2, emissive: 0x1f8fbf, emissiveIntensity: 0.25 });
+  const foliageMat = new THREE.MeshStandardMaterial({ color: 0x4f7942, roughness: 1 });
 
-  const WIDTH = 2.6;
-  const HEIGHT = 1.5;
-  const DEPTH = 2.2;
-  const frontZ = z + DEPTH / 2;
+  const PODIUM_W = 10;
+  const PODIUM_H = 1.1;
+  const PODIUM_D = 2.6;
+  const frontZ = z + PODIUM_D / 2;
+  roundedBox(group, PODIUM_W, PODIUM_H, PODIUM_D, x, PODIUM_H / 2, z, concreteMat, 0.08);
+  // No step-up logic in the collision system, so the podium blocks its whole footprint
+  // (otherwise the character walks into it and renders buried, as with the Hive's podium).
+  colliders.push({ x, z, width: PODIUM_W, depth: PODIUM_D });
 
-  roundedBox(group, WIDTH, HEIGHT, DEPTH, x, HEIGHT / 2, z, wallMat, 0.05);
-  colliders.push({ x, z, width: WIDTH, depth: DEPTH });
-
-  // Hip roof (a 4-sided cone stretched over the footprint), same technique as the
-  // B.Tech building's roof.
-  const roof = new THREE.Mesh(new THREE.ConeGeometry(1, 0.9, 4), roofMat);
-  roof.rotation.y = Math.PI / 4;
-  roof.scale.set(WIDTH * 0.75, 1, DEPTH * 0.75);
-  roof.position.set(x, HEIGHT + 0.45, z);
-  roof.castShadow = true;
-  group.add(roof);
-
-  const chimney = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.55, 0.26), chimneyMat);
-  chimney.position.set(x + 0.6, HEIGHT + 0.6, z - 0.25);
-  chimney.castShadow = true;
-  group.add(chimney);
+  const frontage = new THREE.Mesh(new THREE.BoxGeometry(PODIUM_W - 0.6, 0.22, 0.04), glassMat);
+  frontage.position.set(x, 0.78, frontZ + 0.01);
+  group.add(frontage);
 
   const doorZ = frontZ + 0.03;
-  const door = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.95, 0.06), doorMat);
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.95, 0.06), litMat);
   door.position.set(x, 0.48, doorZ);
   group.add(door);
   entrances.push({ x, z: doorZ, zoneId: "contact" });
 
-  for (const dx of [-0.85, 0.85]) {
-    const windowPane = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.06), windowMat);
-    windowPane.position.set(x + dx, 0.85, frontZ + 0.03);
-    group.add(windowPane);
+  // Each tower is two slab legs: one upright, one leaning in to meet it at the top. Kept a
+  // little lower than the Hive so the chase camera still frames the SkyPark on approach.
+  const LEG_H = 3.6;
+  const LEG_W = 1.0;
+  const LEG_D = 0.8;
+  const LEAN = Math.atan(0.7 / LEG_H);
+  const topY = PODIUM_H + LEG_H;
+  for (const tx of [x - 3.2, x, x + 3.2]) {
+    const legs: Array<[cx: number, tilt: number]> = [
+      [tx + 0.45, 0],
+      [tx - 0.4, -LEAN],
+    ];
+    legs.forEach(([lx, tilt]) => {
+      // A pivot group per leg, so the window bands tilt with it.
+      const pivot = new THREE.Group();
+      pivot.position.set(lx, PODIUM_H + LEG_H / 2, z);
+      pivot.rotation.z = tilt;
+      group.add(pivot);
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(LEG_W, LEG_H / Math.cos(tilt), LEG_D), concreteMat);
+      leg.castShadow = true;
+      leg.receiveShadow = true;
+      pivot.add(leg);
+      let floor = 0;
+      for (let by = -LEG_H / 2 + 0.35; by < LEG_H / 2 - 0.2; by += 0.42) {
+        const band = new THREE.Mesh(new THREE.BoxGeometry(LEG_W - 0.08, 0.16, 0.02), floor % 4 === 2 ? litMat : glassMat);
+        band.position.set(0, by, LEG_D / 2 + 0.01);
+        pivot.add(band);
+        floor++;
+      }
+    });
   }
 
-  plant(group, x - 1.2, frontZ + 0.3, 0.9);
-  plant(group, x + 1.2, frontZ + 0.3, 0.9);
+  // The SkyPark: a long hull across all three tower tops, its bow cantilevered past the end tower.
+  const hull = new THREE.Shape();
+  hull.moveTo(-4.4, -0.5);
+  hull.lineTo(4.6, -0.5);
+  hull.lineTo(6.0, -0.15);
+  hull.lineTo(6.25, 0);
+  hull.lineTo(6.0, 0.15);
+  hull.lineTo(4.6, 0.5);
+  hull.lineTo(-4.4, 0.5);
+  hull.quadraticCurveTo(-4.85, 0, -4.4, -0.5);
+  const DECK_T = 0.32;
+  const deck = new THREE.Mesh(new THREE.ExtrudeGeometry(hull, { depth: DECK_T, bevelEnabled: false }), concreteMat);
+  // Lay the shape flat: its y becomes world -z and the extrusion rises along +y.
+  deck.rotation.x = -Math.PI / 2;
+  deck.position.set(x, topY - 0.05, z);
+  deck.castShadow = true;
+  group.add(deck);
+
+  const deckTop = topY - 0.05 + DECK_T;
+  const pool = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.05, 0.24), poolMat);
+  pool.position.set(x + 0.4, deckTop + 0.025, z + 0.22);
+  group.add(pool);
+  for (let px = -3.9; px <= 4.4; px += 0.55) {
+    const tree = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 6), foliageMat);
+    tree.position.set(x + px, deckTop + 0.12, z - 0.2);
+    group.add(tree);
+  }
+}
+
+/** The ArtScience Museum beside it: a white lotus of upturned petals on a round base. */
+function artScienceMuseum(parent: THREE.Group, colliders: Collider[], x: number, z: number) {
+  const group = new THREE.Group();
+  parent.add(group);
+  const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf4f2ee, roughness: 0.5 });
+
+  const BASE_H = 0.4;
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.85, BASE_H, 16), whiteMat);
+  base.position.set(x, BASE_H / 2, z);
+  base.castShadow = true;
+  base.receiveShadow = true;
+  group.add(base);
+
+  const PETALS = 9;
+  for (let i = 0; i < PETALS; i++) {
+    // Each petal pivots at the base and tilts outward, alternating long and short.
+    const pivot = new THREE.Group();
+    pivot.position.set(x, BASE_H, z);
+    pivot.rotation.y = (i / PETALS) * Math.PI * 2;
+    group.add(pivot);
+    const length = i % 2 === 0 ? 1.0 : 0.8;
+    const petal = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 10), whiteMat);
+    petal.scale.set(0.16, length, 0.42);
+    petal.rotation.z = -0.5;
+    petal.position.set(0.45, length * 0.85, 0);
+    petal.castShadow = true;
+    pivot.add(petal);
+  }
+
+  colliders.push({ x, z, radius: 1.4 });
+}
+
+/**
+ * A strip of bay water between the path and Marina Bay Sands, with a boardwalk across to
+ * its door at `doorX`. The water either side is blocked so the character can't walk on it.
+ */
+function bayWater(parent: THREE.Group, colliders: Collider[], xStart: number, xEnd: number, doorX: number) {
+  const group = new THREE.Group();
+  parent.add(group);
+  const waterMat = new THREE.MeshStandardMaterial({ color: 0x3f8fc4, roughness: 0.25, metalness: 0.1 });
+  const kerbMat = new THREE.MeshStandardMaterial({ color: 0xcfc8bb, roughness: 0.9 });
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0xb08a5a, roughness: 0.8 });
+
+  const Z_FRONT = -2.9;
+  const Z_BACK = -5.2;
+  const depth = Z_FRONT - Z_BACK;
+  const zMid = (Z_FRONT + Z_BACK) / 2;
+  const WALK = 1.6;
+
+  const spans: Array<[number, number]> = [
+    [xStart, doorX - WALK / 2],
+    [doorX + WALK / 2, xEnd],
+  ];
+  for (const [a, b] of spans) {
+    const width = b - a;
+    const water = new THREE.Mesh(new THREE.PlaneGeometry(width, depth), waterMat);
+    water.rotation.x = -Math.PI / 2;
+    // Just above the ground slab (and clear of the lane stripes at z = 0), so no z-fighting.
+    water.position.set((a + b) / 2, 0.015, zMid);
+    water.receiveShadow = true;
+    group.add(water);
+    const kerb = new THREE.Mesh(new THREE.BoxGeometry(width, 0.1, 0.12), kerbMat);
+    kerb.position.set((a + b) / 2, 0.05, Z_FRONT);
+    kerb.receiveShadow = true;
+    group.add(kerb);
+    colliders.push({ x: (a + b) / 2, z: zMid, width, depth });
+  }
+
+  const boardwalk = new THREE.Mesh(new THREE.BoxGeometry(WALK, 0.06, depth), woodMat);
+  boardwalk.position.set(doorX, 0.03, zMid);
+  boardwalk.receiveShadow = true;
+  group.add(boardwalk);
 }
 
 function buildContactZone(world: THREE.Group, cx: number, colliders: Collider[], entrances: Entrance[]) {
   groundSegment(world, cx, 0x6b7280);
   stripes(world, cx - 9, cx + 9, 0xffffff, [1.4, 0.2]);
 
-  homeBuilding(world, colliders, entrances, cx - 6, -6);
+  const mbsX = cx - 5;
+  marinaBaySands(world, colliders, entrances, mbsX, -7);
+  bayWater(world, colliders, cx - 9, cx + 4, mbsX);
+  artScienceMuseum(world, colliders, cx + 6.5, -6);
 
-  radioMast(world, colliders, cx + 8, -5);
   signpost(world, colliders, cx - 1.5, -1.8, "SAY HELLO", 0xff7a1a, "#ffffff");
 }

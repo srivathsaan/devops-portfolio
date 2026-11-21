@@ -91,8 +91,8 @@ export const zones: ZoneContent[] = [
     },
     x: 80,
     z: 0,
-    // The home building's door sits ~7.7 units from the zone center, just outside the
-    // usual 7-unit radius, which made the info card disappear right at the door.
+    // Marina Bay Sands' door sits ~7.6 units from the zone center, just outside the
+    // usual 7-unit radius, which would make the info card disappear right at the door.
     radius: 8,
   },
 ];
