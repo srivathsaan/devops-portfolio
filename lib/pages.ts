@@ -253,9 +253,9 @@ export const sitePages: SitePage[] = [
           note: "freelance, Singapore",
           href: "https://thenkondar.com",
           linkLabel: "visit thenkondar.com",
-          images: [],
-          // No stats for this one, so no stats screen.
-          screens: ["cover", "feed", "detail"],
+          // Phone-width screenshots of the live site: the story, the hero, the products.
+          images: ["/images/thenkondar-story.jpg", "/images/thenkondar-hero.jpg", "/images/thenkondar-products.jpg"],
+          screens: ["image", "image", "image"],
           accent: "#9c4a3c",
           tone: "paper",
         },
