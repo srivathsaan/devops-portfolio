@@ -4,8 +4,7 @@
 /* eslint-disable @next/next/no-img-element, prefer-const, react/no-unescaped-entities */
 
 // Local additions (all optional; defaults match upstream): `chrome`, `headings`,
-// `portraitAlt`, `portraitShape`, `educationPhoto`, and per-project `challengeLabel` / `linkLabel` /
-// `photo`.
+// `portraitAlt`, `portraitShape`, `educationPhoto`, and per-project `challengeLabel` / `linkLabel`.
 //
 // Marginalia Portfolio Template — a designer's CV laid out like a printed
 // portfolio somebody went over with a periwinkle pen. Pale paper sheets and
@@ -76,8 +75,6 @@ export type MgnProject = {
   challengeLabel?: string
   /** Replaces "see the full case study" on the link. */
   linkLabel?: string
-  /** A snapshot under the case-study copy. */
-  photo?: MgnSnap
 }
 
 /** A photo shown as a printed snapshot (cropped to 3:2) with an optional handwritten caption. */
@@ -1971,7 +1968,6 @@ function Case({ info, p, i, flip }: { info: SheetInfo; p: MgnProject; i: number;
               </svg>
             </a>
           )}
-          {p.photo && <Snap {...p.photo} />}
         </div>
         <div className="mgn-trio">
           {trio.map((k, slot) => (
