@@ -4,7 +4,8 @@
 /* eslint-disable @next/next/no-img-element, prefer-const, react/no-unescaped-entities */
 
 // Local additions (all optional; defaults match upstream): `chrome`, `headings`,
-// `portraitAlt`, `portraitShape`, `educationPhoto`, and per-project `challengeLabel` / `linkLabel`.
+// `portraitAlt`, `portraitShape`, `educationPhoto`, and per-project `challengeLabel` / `linkLabel` /
+// `photo`.
 //
 // Marginalia Portfolio Template — a designer's CV laid out like a printed
 // portfolio somebody went over with a periwinkle pen. Pale paper sheets and
@@ -75,9 +76,11 @@ export type MgnProject = {
   challengeLabel?: string
   /** Replaces "see the full case study" on the link. */
   linkLabel?: string
+  /** Shown in place of the three phones, uncropped; `note` becomes its caption if it has none. */
+  photo?: MgnSnap
 }
 
-/** A photo shown as a printed snapshot (cropped to 3:2) with an optional handwritten caption. */
+/** A photo shown as a printed snapshot (3:2 unless a case study's) with an optional handwritten caption. */
 export type MgnSnap = { src: string; alt: string; caption?: string }
 
 export type MgnTool = { name: string; mark: string; bg: string; fg: string; note?: string }
@@ -927,6 +930,9 @@ const CSS = `
 .mgn-trio-p[data-slot="2"] .mgn-tilt{transform:rotate(6deg)}
 .mgn-case-note{position:absolute;z-index:4;font-size:clamp(19px,1.9cqi,27px);max-width:9em;line-height:1.05}
 .mgn-case-note svg{display:block;width:60px;height:46px}
+.mgn-case-photo{width:100%;max-width:720px;margin:0 auto}
+.mgn-case-photo .mgn-snap{max-width:none;margin:0}
+.mgn-case-photo .mgn-snap-img img{aspect-ratio:auto}
 .mgn-case-wrap .mgn-case-note{left:-2%;bottom:2%;transform:rotate(-5deg)}
 .mgn-case-wrap[data-flip=true] .mgn-case-note{left:auto;right:-2%;text-align:right;transform:rotate(5deg)}
 
@@ -1969,19 +1975,25 @@ function Case({ info, p, i, flip }: { info: SheetInfo; p: MgnProject; i: number;
             </a>
           )}
         </div>
-        <div className="mgn-trio">
-          {trio.map((k, slot) => (
-            <TiltPhone key={slot} slot={slot} p={p} kind={k} />
-          ))}
-          {p.note && (
-            <div className="mgn-case-note mgn-hand" data-ink>
-              <svg viewBox="0 0 60 46" className="mgn-ink" aria-hidden="true" style={flip ? { marginLeft: "auto", transform: "scaleX(-1)" } : undefined}>
-                <Arrow a={[8, 44]} b={[46, 6]} bend={-0.3} head={8} />
-              </svg>
-              <span className="mgn-write">{p.note}</span>
-            </div>
-          )}
-        </div>
+        {p.photo ? (
+          <div className="mgn-case-photo">
+            <Snap {...p.photo} caption={p.photo.caption ?? p.note} />
+          </div>
+        ) : (
+          <div className="mgn-trio">
+            {trio.map((k, slot) => (
+              <TiltPhone key={slot} slot={slot} p={p} kind={k} />
+            ))}
+            {p.note && (
+              <div className="mgn-case-note mgn-hand" data-ink>
+                <svg viewBox="0 0 60 46" className="mgn-ink" aria-hidden="true" style={flip ? { marginLeft: "auto", transform: "scaleX(-1)" } : undefined}>
+                  <Arrow a={[8, 44]} b={[46, 6]} bend={-0.3} head={8} />
+                </svg>
+                <span className="mgn-write">{p.note}</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </Sheet>
   )
